@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 
 use App\Models\Partner;
@@ -62,10 +64,20 @@ class PartnerController extends Controller
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = uniqid() . '.webp';
 
-            // Simpan file ke storage/app/public/image_hero
-            $file->storeAs('public/image_partner', $fileName);
+            // Proses gambar menggunakan Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            
+            // Resize jika lebar lebih dari 400px (logo partner)
+            $image->scaleDown(width: 400);
+            
+            // Convert ke WebP dengan kualitas 80%
+            $encoded = $image->toWebp(80);
+            
+            // Simpan file ke storage/app/public/image_partner
+            Storage::disk('public')->put('image_partner/' . $fileName, (string) $encoded);
 
             // Simpan nama file di database
             $partner->gambar = $fileName;
@@ -130,15 +142,25 @@ class PartnerController extends Controller
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = uniqid() . '.webp';
 
             // Hapus gambar lama jika ada
             if ($partner->gambar) {
                 Storage::disk('public')->delete('image_partner/' . $partner->gambar);
             }
 
-            // Simpan file baru ke storage/app/public/image_hero
-            $file->storeAs('public/image_partner', $fileName);
+            // Proses gambar menggunakan Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            
+            // Resize jika lebar lebih dari 400px
+            $image->scaleDown(width: 400);
+            
+            // Convert ke WebP
+            $encoded = $image->toWebp(80);
+            
+            // Simpan file ke storage/app/public/image_partner
+            Storage::disk('public')->put('image_partner/' . $fileName, (string) $encoded);
 
             // Simpan nama file di database
             $partner->gambar = $fileName;

@@ -41,14 +41,19 @@ class HomeController extends Controller
         
         $userAgent = $request->userAgent() ?? '';
         $isMobile = preg_match("/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i", $userAgent);
-        $limit = $isMobile ? 10 : 9;
+        $limit = 12;
         
         $items = collect([]);
 
         if ($id == 1) { // DOOH
             $query = \App\Models\Lokasi::query();
             if ($search) {
-                $query->where('nama', 'LIKE', "%{$search}%");
+                $query->where(function($q) use ($search) {
+                    $q->where('nama', 'LIKE', "%{$search}%")
+                      ->orWhere('provinsi', 'LIKE', "%{$search}%")
+                      ->orWhere('deskripsi_lokasi', 'LIKE', "%{$search}%")
+                      ->orWhere('tagline', 'LIKE', "%{$search}%");
+                });
             }
             $items = $query->paginate($limit);
             
@@ -80,13 +85,19 @@ class HomeController extends Controller
                         'kota'       => $i->kota,
                         'media'      => $i->media,
                         'size'       => $i->size,
+                        'availability' => $i->availability ?? 'Available',
                     ];
                 });
             }
         } elseif ($id == 2) { // OOH
             $query = \App\Models\Lokasiooh::query();
             if ($search) {
-                $query->where('nama', 'LIKE', "%{$search}%");
+                $query->where(function($q) use ($search) {
+                    $q->where('nama', 'LIKE', "%{$search}%")
+                      ->orWhere('wilayah', 'LIKE', "%{$search}%")
+                      ->orWhere('provinsi', 'LIKE', "%{$search}%")
+                      ->orWhere('deskripsi_lokasi', 'LIKE', "%{$search}%");
+                });
             }
             $items = $query->paginate($limit);
             
@@ -113,6 +124,7 @@ class HomeController extends Controller
                         'kota'       => $i->wilayah ?? $i->kota,
                         'media'      => $i->tipe ?? $i->type,
                         'size'       => $i->ukuran ?? $i->size,
+                        'availability' => $i->availability ?? 'Available',
                     ];
                 });
             }
@@ -136,7 +148,7 @@ class HomeController extends Controller
         // Detect if user is on a mobile device (excluding tablets if possible) to set pagination limit
         $userAgent = $request->userAgent() ?? '';
         $isMobile = preg_match("/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i", $userAgent);
-        $limit = $isMobile ? 10 : 9;
+        $limit = 12;
         
         $items = collect([]);
 
@@ -353,7 +365,8 @@ class HomeController extends Controller
 
     public function legality()
     {
-        return view('pages.legality');
+        $legalities = \App\Models\Legality::where('is_active', true)->orderBy('sort_order')->get();
+        return view('pages.legality', compact('legalities'));
     }
 
     public function portofolio()
@@ -362,14 +375,19 @@ class HomeController extends Controller
         return view('pages.portofolio.index', compact('categories'));
     }
 
-    public function portofolioList($id)
+    public function portofolioList(Request $request, $id)
     {
         $category = \App\Models\PortofolioCategory::findOrFail($id);
+        
         $portfolios = \App\Models\Portofolio::where('kategori', $id)
             ->with('firstImage')
-            ->latest()
-            ->get();
-        return view('pages.portofolio.list', compact('category', 'portfolios'));
+            ->latest('created_at')
+            ->paginate(9);
+
+        // All categories for filter dropdown (if needed elsewhere)
+        $allCategories = \App\Models\PortofolioCategory::all();
+
+        return view('pages.portofolio.list', compact('category', 'portfolios', 'allCategories'));
     }
 
     public function portofolioDetail($id)
@@ -382,7 +400,8 @@ class HomeController extends Controller
 
     public function contact()
     {
-        return view('pages.contact');
+        $faqs = \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->get();
+        return view('pages.contact', compact('faqs'));
     }
 
     public function storeContact(Request $request)

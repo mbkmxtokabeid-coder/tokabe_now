@@ -14,6 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
+            \VinkiusLabs\LaravelPageSpeed\Middleware\InlineCss::class,
+            \VinkiusLabs\LaravelPageSpeed\Middleware\ElideAttributes::class,
+            \VinkiusLabs\LaravelPageSpeed\Middleware\InsertDNSPrefetch::class,
+            \VinkiusLabs\LaravelPageSpeed\Middleware\RemoveComments::class,
+            \VinkiusLabs\LaravelPageSpeed\Middleware\TrimUrls::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

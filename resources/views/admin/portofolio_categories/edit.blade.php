@@ -73,13 +73,24 @@
                                             </div>
 
                                             {{-- Nama --}}
+                                            @php
+                                                $namaArray = json_decode($category->nama_kategori, true);
+                                                $nama_id = is_array($namaArray) ? ($namaArray['id'] ?? $category->nama_kategori) : $category->nama_kategori;
+                                                $nama_en = is_array($namaArray) ? ($namaArray['en'] ?? '') : '';
+                                            @endphp
                                             <div class="form-group mb-3">
-                                                <label>Nama Kategori</label>
+                                                <label>Nama Kategori (Indonesia)</label>
                                                 <input type="text"
-                                                       name="nama_kategori"
-                                                       class="form-control"
-                                                       value="{{ old('nama_kategori', $category->nama_kategori) }}"
+                                                       name="nama_kategori_id"
+                                                       class="form-control mb-2"
+                                                       value="{{ old('nama_kategori_id', $nama_id) }}"
                                                        required>
+                                                       
+                                                <label>Nama Kategori (English)</label>
+                                                <input type="text"
+                                                       name="nama_kategori_en"
+                                                       class="form-control"
+                                                       value="{{ old('nama_kategori_en', $nama_en) }}">
                                             </div>
 
                                             {{-- Action --}}

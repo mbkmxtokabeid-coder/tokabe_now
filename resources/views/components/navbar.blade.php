@@ -52,14 +52,22 @@
         font-size: 0.85rem; 
         transition: all 0.2s; 
     }
-    .dropdown-menu a:hover { 
-        background: rgba(212,160,23,0.1); 
-        color: #d4a017; 
-        padding-left: 1.6rem; 
+    @media (hover: hover) {
+        .dropdown-menu a:hover { 
+            background: rgba(212,160,23,0.1); 
+            color: #d4a017; 
+            padding-left: 1.6rem; 
+        }
     }
     /* ... keep the rest ... */
     .btn-cut-corner {
         clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+    }
+    
+    .active-menu-item {
+        background: rgba(212,160,23,0.1); 
+        color: #d4a017 !important; 
+        padding-left: 1.6rem !important;
     }
     
     /* Menghapus outline dan underline */
@@ -69,13 +77,14 @@
     }
 </style>
 
-<nav id="main-navbar" class="fixed top-0 left-0 right-0 w-full z-50 px-6 py-7 {{ $theme == 'dark' ? 'scrolled' : '' }}" style="{{ $theme == 'dark' ? '' : 'background: linear-gradient(180deg, rgba(26,15,6,0.95) 0%, transparent 100%);' }}" data-theme="{{ $theme }}">
+<nav id="main-navbar" class="fixed top-0 left-0 right-0 w-full z-50 px-6 py-7 transition-all duration-300 {{ $theme == 'dark' ? 'scrolled' : '' }}" data-theme="{{ $theme }}">
     <div class="max-w-[1600px] mx-auto flex items-center justify-between gap-4 sm:gap-8">
         
         <!-- Logo -->
         <a href="/" class="flex-shrink-0 flex items-center group">
             <img src="{{ asset('images/logo-tokabe.png') }}" 
                  alt="{{ \App\Helpers\SeoHelper::getImageAlt('logo', 'Logo Tokabe.id') }}" 
+                 width="160" height="48" loading="lazy"
                  class="h-12 w-auto object-contain filter drop-shadow-md onError-fallback"
                  onerror="this.style.display='none'; document.getElementById('logo-text-fallback').style.display='block';">
             <span id="logo-text-fallback" class="hidden text-xl font-bold text-white tracking-tight drop-shadow-md">
@@ -140,20 +149,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-                <div class="dropdown-menu absolute right-0 top-full mt-4 w-max min-w-[120px] rounded-xl bg-white/95 backdrop-blur-xl border border-gray-100 p-2 shadow-2xl origin-top-right z-50">
-                    <div class="relative flex flex-col gap-1">
-                        <div id="lang-slider" class="absolute left-0 w-full h-[38px] bg-[#2C1A0E] rounded-lg transition-transform duration-300 ease-out z-0 shadow-sm" style="transform: translateY({{ app()->getLocale() == 'en' ? '0' : '42px' }})"></div>
-                        <a href="{{ route('lang.switch', 'en') }}" onclick="document.getElementById('lang-slider').style.transform = 'translateY(0px)'" class="relative z-10 flex items-center justify-center h-[38px] px-4 text-[14px] rounded-lg transition-colors font-medium drop-shadow-sm whitespace-nowrap {{ app()->getLocale() == 'en' ? 'text-white' : 'text-gray-900 hover:text-[#2C1A0E]' }}">
-                            English
-                        </a>
-                        <a href="{{ route('lang.switch', 'id') }}" onclick="document.getElementById('lang-slider').style.transform = 'translateY(42px)'" class="relative z-10 flex items-center justify-center h-[38px] px-4 text-[14px] rounded-lg transition-colors font-medium drop-shadow-sm whitespace-nowrap {{ app()->getLocale() == 'id' ? 'text-white' : 'text-gray-900 hover:text-[#2C1A0E]' }}">
-                            Indonesia
-                        </a>
-                    </div>
+                <div class="dropdown-menu" style="left: auto; right: -24px; min-width: 140px;">
+                    <a href="{{ route('lang.switch', 'en') }}" class="{{ app()->getLocale() == 'en' ? 'active-menu-item' : '' }}">English</a>
+                    <a href="{{ route('lang.switch', 'id') }}" class="{{ app()->getLocale() == 'id' ? 'active-menu-item' : '' }}">Indonesia</a>
                 </div>
             </div>
 
-            <a href="https://loker.tokabe.id/" target="_blank" class="px-6 py-2.5 bg-[#D4A574] text-[#2C1A0E] text-sm font-bold tracking-wide btn-cut-corner hover:bg-[#c2925f] transition-all duration-300 flex items-center gap-2">
+            <a href="https://loker.tokabe.id/" target="_blank" class="px-6 py-2.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#2C1A0E] text-sm font-bold tracking-wide btn-cut-corner shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:scale-105 transition-all duration-300 flex items-center gap-2">
                 {{ strtoupper(__('Career')) }}
             </a>
         </div>
@@ -166,7 +168,7 @@
                 <a href="{{ route('lang.switch', 'id') }}" class="transition-colors {{ app()->getLocale() == 'id' ? 'text-[#D4A574] font-bold' : 'text-white/70 hover:text-[#D4A574]' }}">ID</a>
             </div>
 
-            <button id="mobile-menu-button" type="button" class="p-2 text-[#f2ebe2] hover:text-[#D4A574] transition-colors focus:outline-none" aria-expanded="false">
+            <button id="mobile-menu-button" type="button" aria-label="Buka menu navigasi" class="p-2 text-[#f2ebe2] hover:text-[#D4A574] transition-colors focus:outline-none" aria-expanded="false">
                 <svg id="hamburger-icon" class="w-6 h-6 block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
@@ -224,13 +226,9 @@
             <a href="{{ route('portofolio') }}" class="text-[#f2ebe2] hover:text-[#D4A574] text-sm font-medium transition-colors">{{ __('Portofolio') }}</a>
             <a href="{{ route('legalitas') }}" class="text-[#f2ebe2] hover:text-[#D4A574] text-sm font-medium transition-colors">{{ __('Legality') }}</a>
             
-            @php
-                $navPhone = isset($globalContact) && $globalContact->phone ? $globalContact->phone : '628115239999';
-                $navMessage = isset($globalContact) && $globalContact->message ? urlencode($globalContact->message) : 'Halo%20Admin';
-            @endphp
-            <a href="https://api.whatsapp.com/send/?phone={{ $navPhone }}&text={{ $navMessage }}" target="_blank" class="text-[#f2ebe2] hover:text-[#D4A574] text-sm font-medium transition-colors">{{ __('Contact') }}</a>
+            <a href="{{ route('contact') }}" class="text-[#f2ebe2] hover:text-[#D4A574] text-sm font-medium transition-colors">{{ __('Contact') }}</a>
 
-            <a href="https://loker.tokabe.id/" target="_blank" class="bg-[#D4A574] text-[#2C1A0E] text-sm font-bold btn-cut-corner hover:bg-[#c2925f] transition-colors duration-300 inline-block text-center mt-2 py-2.5">
+            <a href="https://loker.tokabe.id/" target="_blank" class="bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#2C1A0E] text-sm font-bold btn-cut-corner shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:scale-105 transition-all duration-300 inline-block text-center mt-2 py-2.5">
                 {{ strtoupper(__('Career')) }}
             </a>
         </div>
@@ -243,35 +241,42 @@
         const mobileMenu = document.getElementById('mobile-menu');
         
         // Logika Navbar Scroll
-        window.addEventListener('scroll', function() {
-            const isDarkTheme = navbar.getAttribute('data-theme') === 'dark';
-            const isMobileMenuOpen = !mobileMenu.classList.contains('max-h-0');
-            
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-                navbar.style.background = ''; // remove inline gradient
-            } else {
-                if (isDarkTheme || isMobileMenuOpen) {
+        const handleScroll = function() {
+            requestAnimationFrame(() => {
+                const isDarkTheme = navbar.getAttribute('data-theme') === 'dark';
+                const isMobileMenuOpen = !mobileMenu.classList.contains('max-h-0');
+                
+                if (window.scrollY > 50) {
                     navbar.classList.add('scrolled');
                     navbar.style.background = '';
                 } else {
-                    navbar.classList.remove('scrolled');
-                    navbar.style.background = 'linear-gradient(180deg, rgba(26,15,6,0.95) 0%, transparent 100%)';
+                    if (isDarkTheme || isMobileMenuOpen) {
+                        navbar.classList.add('scrolled');
+                        navbar.style.background = '';
+                    } else {
+                        navbar.classList.remove('scrolled');
+                        navbar.style.background = 'transparent';
+                    }
                 }
-            }
-        });
+            });
+        };
 
-        // Logika Dropdown Desktop (opsional jika css pure hover tidak cukup di safari dsb)
+        window.addEventListener('scroll', handleScroll);
+        // Panggil sekali saat dimuat untuk mengatur status awal
+        handleScroll();
+
         const dropdownContainers = document.querySelectorAll('.dropdown-container');
         dropdownContainers.forEach(container => {
             const btn = container.querySelector('.dropdown-btn');
             const menu = container.querySelector('.dropdown-menu');
             const arrow = container.querySelector('.dropdown-arrow');
 
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                // Toggle logik sederhana jika diperlukan
-            });
+            if (btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    // Toggle logik sederhana jika diperlukan
+                });
+            }
         });
 
         // Logika Mobile Menu Toggle
@@ -293,7 +298,7 @@
                     // Reset bg jika di atas scroll
                     if (window.scrollY <= 50 && !isDarkTheme) {
                         navbar.classList.remove('scrolled');
-                        navbar.style.background = 'linear-gradient(180deg, rgba(26,15,6,0.95) 0%, transparent 100%)';
+                        navbar.style.background = 'transparent';
                     }
                     
                     hamburgerIcon.classList.remove('hidden');

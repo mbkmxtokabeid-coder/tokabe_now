@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -16,10 +16,11 @@
     <meta property="og:url" content="{{ url()->current() }}">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-[#F9F0D6] antialiased text-gray-900 font-sans">
+<body class="bg-[#2C1A0E] antialiased text-gray-900 font-sans">
     <x-navbar />
     <main>
         <!-- Header Hero Section -->
@@ -39,43 +40,177 @@
         </div>
 
         <!-- Categories Grid Minimalis (Style Shopee) -->
-        <div class="bg-gray-50 py-12 sm:py-16">
+        <div class="py-12 sm:py-16">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5 px-2 sm:px-0">
-            @forelse($categories as $index => $item)
-                <a href="{{ route('portofolio.list', $item->id) }}" class="group block" data-aos="fade-up" data-aos-delay="{{ ($index % 5) * 100 }}">
-                    <div class="bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-xl border border-white/25 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 flex flex-col h-full text-left">
-                        
-                        <!-- Image Container (Square Full Width) -->
-                        <div class="w-full aspect-square overflow-hidden bg-gray-900 flex-shrink-0">
-                            @php
-                                $namaKatData = $item->nama_kategori ?: ($item->getRawOriginal ? $item->getRawOriginal('nama_kategori') : '');
-                                if (is_string($namaKatData) && str_starts_with($namaKatData, '{')) {
-                                    $namaKatArray = json_decode($namaKatData, true);
-                                } else {
-                                    $namaKatArray = $namaKatData;
-                                }
-                                if (is_array($namaKatArray)) {
-                                    $namaKategori = $namaKatArray[app()->getLocale()] ?? $namaKatArray['id'] ?? $namaKatArray['en'] ?? collect($namaKatArray)->first() ?? '';
-                                } else {
-                                    $namaKategori = $namaKatArray;
-                                }
-                            @endphp
-                            <img src="{{ $item->image ? asset('storage/' . $item->image) : asset('images/default-category.jpg') }}" 
-                                 alt="{{ \App\Helpers\SeoHelper::getImageAlt('event', $namaKategori) }}" 
-                                 class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 ease-in-out"
-                                 loading="lazy">
+                <!-- Filter UI -->
+                <div x-data="{ open: false }" class="relative mb-10" data-aos="fade-up" data-aos-delay="100">
+                    
+                    <!-- Desktop Filter (Only on Extra Large Screens) -->
+                    <div class="hidden xl:flex flex-wrap items-center justify-center gap-4">
+                        <button class="px-6 py-2.5 rounded-full bg-[#D4A574] text-[#1A0F07] font-bold text-sm hover:scale-105 transition-all shadow-[0_0_15px_rgba(212,165,116,0.3)]">
+                            {{ __('Semua') }}
+                        </button>
+                        <button class="px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
+                            {{ __('DOOH / Videotron') }}
+                        </button>
+                        <button class="px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
+                            {{ __('OOH / Billboard') }}
+                        </button>
+                        <button class="px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
+                            {{ __('Event & Brand Activity') }}
+                        </button>
+                        <button class="px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
+                            {{ __('Videography & Photography') }}
+                        </button>
+                        <button class="px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
+                            {{ __('Ruang Digital') }}
+                        </button>
+                    </div>
+
+                    <!-- Mobile & Tablet & Laptop Filter (Hidden on XL Desktop) -->
+                    <div class="xl:hidden relative z-30 h-12 w-full px-2 mb-6" x-data="{ open: false }">
+                        <!-- Active Filter Text (Mobile) / Scrollable Menu (Tablet/Laptop) -->
+                        <div class="absolute top-0 left-0 h-12 flex items-center z-40 transition-all duration-300 pl-2 w-[calc(100%-56px)]" :class="open ? 'opacity-0 pointer-events-none' : 'opacity-100'">
+                            <!-- Mobile Text -->
+                            <span class="md:hidden text-[#F5EFE7] font-semibold text-sm">Semua</span>
+                            
+                            <!-- Tablet/Laptop Scrollable Buttons -->
+                            <div class="hidden md:flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full gap-3 pr-4 items-center">
+                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#D4A574] text-[#1A0F07] font-bold text-sm hover:scale-105 transition-all shadow-[0_0_15px_rgba(212,165,116,0.3)]">
+                                    {{ __('Semua') }}
+                                </button>
+                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
+                                    {{ __('DOOH / Videotron') }}
+                                </button>
+                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
+                                    {{ __('OOH / Billboard') }}
+                                </button>
+                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
+                                    {{ __('Event & Brand Activity') }}
+                                </button>
+                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
+                                    {{ __('Videography & Photography') }}
+                                </button>
+                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
+                                    {{ __('Ruang Digital') }}
+                                </button>
+                            </div>
                         </div>
-                        
-                        <!-- Content Minimalis -->
-                        <div class="p-3 sm:p-4 flex-grow flex flex-col justify-center">
-                            <h3 class="text-xs sm:text-sm font-bold text-white group-hover:text-[#D4A574] transition-colors truncate mb-1">
+
+                        <!-- Morphing Container -->
+                        <div 
+                            class="absolute top-0 right-0 bg-[#2C1A0E]/85 border border-[#8B5E3C]/40 backdrop-blur-md shadow-2xl transition-all duration-300 overflow-hidden flex flex-col z-50"
+                            style="transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);"
+                            :class="open ? 'w-[calc(100vw-48px)] sm:w-[400px] h-[430px] rounded-3xl p-5' : 'w-12 h-12 rounded-3xl p-0 cursor-pointer hover:bg-[#5C3317]/70'"
+                            @click="if(!open) open = true"
+                            @click.away="open = false"
+                        >
+                            <!-- Icon when closed -->
+                            <div 
+                                class="absolute top-0 right-0 w-12 h-12 flex items-center justify-center transition-all duration-200"
+                                :class="open ? 'opacity-0 scale-50 pointer-events-none' : 'opacity-100 scale-100'"
+                            >
+                                <i class="fas fa-filter text-[#D4A574] text-lg"></i>
+                            </div>
+                            
+                            <!-- Content when open -->
+                            <div 
+                                class="flex flex-col w-full h-full"
+                                x-show="open"
+                                x-transition:enter="transition ease-out duration-300 delay-150"
+                                x-transition:enter-start="opacity-0 translate-y-2"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-200"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 translate-y-2"
+                                x-cloak
+                            >
+                                <div class="flex justify-between items-center mb-5">
+                                    <span class="text-[#D4A574] font-bold text-sm uppercase tracking-wider pl-1">Filter Portofolio</span>
+                                    <button @click.stop="open = false" class="text-gray-400 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="flex flex-col gap-2.5 w-full">
+                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#D4A574] text-[#1A0F07] font-bold text-sm shadow-md">
+                                        {{ __('Semua') }}
+                                    </button>
+                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white transition-all">
+                                        {{ __('DOOH / Videotron') }}
+                                    </button>
+                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white transition-all">
+                                        {{ __('OOH / Billboard') }}
+                                    </button>
+                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white transition-all">
+                                        {{ __('Event & Brand Activity') }}
+                                    </button>
+                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white transition-all">
+                                        {{ __('Videography & Photography') }}
+                                    </button>
+                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white transition-all">
+                                        {{ __('Ruang Digital') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-0">
+            @forelse($categories as $index => $item)
+                @php
+                    $namaKatData = $item->nama_kategori ?: ($item->getRawOriginal ? $item->getRawOriginal('nama_kategori') : '');
+                    if (is_string($namaKatData) && str_starts_with($namaKatData, '{')) {
+                        $namaKatArray = json_decode($namaKatData, true);
+                    } else {
+                        $namaKatArray = $namaKatData;
+                    }
+                    if (is_array($namaKatArray)) {
+                        $namaKategori = $namaKatArray[app()->getLocale()] ?? $namaKatArray['id'] ?? $namaKatArray['en'] ?? collect($namaKatArray)->first() ?? '';
+                    } else {
+                        $namaKategori = $namaKatArray;
+                    }
+                @endphp
+                <a href="{{ route('portofolio.list', $item->id) }}" class="group block relative w-full aspect-[4/5] rounded-[1.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500" data-aos="fade-up" data-aos-delay="{{ ($index % 5) * 100 }}">
+                    
+                    <!-- Background Image -->
+                    <img src="{{ $item->image ? asset('storage/' . $item->image) : asset('images/default-category.jpg') }}" 
+                         alt="{{ \App\Helpers\SeoHelper::getImageAlt('event', $namaKategori) }}" 
+                         class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                         loading="lazy">
+                         
+                    <!-- Gradient Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#5C3317]/95 via-[#8B5E3C]/60 to-transparent transition-opacity duration-500"></div>
+                    
+                    <!-- Content Wrapper -->
+                    <div class="absolute inset-0 flex flex-col justify-end p-6 z-10 text-left overflow-hidden">
+                        <!-- Translate Container -->
+                        <div class="transform translate-y-[56px] group-hover:translate-y-0 transition-transform duration-500 ease-out flex flex-col">
+                            
+                            <h3 class="text-2xl sm:text-3xl font-black text-white leading-tight mb-5 drop-shadow-lg line-clamp-2">
                                 {{ __($namaKategori) }}
                             </h3>
-                            <p class="text-[10px] sm:text-xs text-gray-400 truncate">
-                                {{ $item->portofolios()->count() }} {{ __('Proyek') }}
-                            </p>
+                            
+                            <!-- Overview -->
+                            <div class="mb-4">
+                                <h4 class="text-[10px] font-bold text-white uppercase tracking-widest mb-2 drop-shadow-md opacity-90">{{ __('Overview') }}</h4>
+                                <p class="text-xs sm:text-sm text-gray-300 line-clamp-3 leading-relaxed drop-shadow-md">
+                                    {{ __('Jelajahi berbagai karya terbaik kami dalam kategori ini. Kami berkomitmen memberikan hasil yang luar biasa dan berdampak nyata untuk setiap klien.') }}
+                                </p>
+                            </div>
+                            
+                            <!-- Action / Price Row (Fades in) -->
+                            <div class="flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-500 delay-75 mt-1 h-[48px]">
+                                <div class="flex items-baseline gap-1.5">
+                                    <span class="text-3xl sm:text-4xl font-black text-white">{{ $item->portofolios()->count() }}</span>
+                                    <span class="text-xs sm:text-sm text-gray-300 font-medium">{{ __('Proyek') }}</span>
+                                </div>
+                                <div class="bg-white text-black text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg flex items-center gap-2">
+                                    {{ __('Lihat') }} <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                 </a>

@@ -34,7 +34,13 @@
                                                 <td>{{ $loop->iteration }}</td>
 
                                                    {{-- NAMA --}}
-                                                <td>{{ $category->nama_kategori }}</td>
+                                                <td>
+                                                    @php
+                                                        $katDecoded = json_decode($category->nama_kategori, true);
+                                                        $katText = is_array($katDecoded) ? ($katDecoded['id'] ?? $category->nama_kategori) : $category->nama_kategori;
+                                                    @endphp
+                                                    {{ $katText }}
+                                                </td>
 
                                                 {{-- GAMBAR --}}
                                                 <td>

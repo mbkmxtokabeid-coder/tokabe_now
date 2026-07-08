@@ -10,6 +10,13 @@ export default {
     ],
 
     theme: {
+        screens: {
+            'sm': '640px',
+            'md': '768px',
+            'lg': '768px', // Force desktop layouts to trigger on tablets
+            'xl': '1024px',
+            '2xl': '1280px',
+        },
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],

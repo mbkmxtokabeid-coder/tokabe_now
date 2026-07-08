@@ -43,13 +43,22 @@
                                     @csrf
 
                                     {{-- JUDUL --}}
-                                    <div class="form-group mb-3">
-                                        <label>Judul</label>
-                                        <input type="text"
-                                               name="judul"
-                                               class="form-control"
-                                               value="{{ old('judul') }}"
-                                               required>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group mb-3">
+                                            <label>Judul (Indonesia)</label>
+                                            <input type="text"
+                                                   name="judul_id"
+                                                   class="form-control"
+                                                   value="{{ old('judul_id') }}"
+                                                   required>
+                                        </div>
+                                        <div class="col-md-6 form-group mb-3">
+                                            <label>Judul (English)</label>
+                                            <input type="text"
+                                                   name="judul_en"
+                                                   class="form-control"
+                                                   value="{{ old('judul_en') }}">
+                                        </div>
                                     </div>
 
                                     {{-- KATEGORI (DINAMIS DARI DATABASE) --}}
@@ -96,11 +105,19 @@
                                     </div>
 
                                     {{-- DESKRIPSI --}}
-                                    <div class="form-group mb-3">
-                                        <label>Deskripsi</label>
-                                        <textarea name="deskripsi"
-                                                  class="form-control"
-                                                  rows="4">{{ old('deskripsi') }}</textarea>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group mb-3">
+                                            <label>Deskripsi (Indonesia)</label>
+                                            <textarea name="deskripsi_id"
+                                                      class="form-control"
+                                                      rows="4">{{ old('deskripsi_id') }}</textarea>
+                                        </div>
+                                        <div class="col-md-6 form-group mb-3">
+                                            <label>Deskripsi (English)</label>
+                                            <textarea name="deskripsi_en"
+                                                      class="form-control"
+                                                      rows="4">{{ old('deskripsi_en') }}</textarea>
+                                        </div>
                                     </div>
 
                                     {{-- IMAGES DINAMIS --}}

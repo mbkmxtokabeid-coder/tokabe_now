@@ -87,6 +87,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/contact/edit/{id}', [\App\Http\Controllers\Admin\ContactController::class, 'edit'])->name('edit.contact');
     Route::put('/admin/contact/update/{id}', [\App\Http\Controllers\Admin\ContactController::class, 'update'])->name('update.contact');
 
+    // FAQ
+    Route::resource('/admin/faq', \App\Http\Controllers\Admin\FaqController::class)->names('admin.faq');
+
+    // Legality
+    Route::resource('/admin/legality', \App\Http\Controllers\Admin\LegalityController::class)->names('admin.legality');
+
     // Brand
     Route::get('/admin/brand-list', [BrandController::class, 'index'])->name('brand-list');
     Route::get('/admin/brand/create-brand', [BrandController::class, 'create'])->name('brand.create');

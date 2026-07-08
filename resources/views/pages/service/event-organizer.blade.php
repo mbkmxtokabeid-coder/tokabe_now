@@ -6,6 +6,18 @@
 @section('og_description', __('Layanan Event Organizer (EO) Tokabe.id. Solusi profesional untuk perencanaan dan pelaksanaan event korporat, pameran, konser, dan promosi di Sumatera.'))
 @section('og_image', asset('images/service/iklan.jpg'))
 @section('content')
+<div class="bg-dark-theme-wrapper" style="background-color: #2C1A0E !important; color: #F5EFE7 !important; min-height: 100vh; width: 100%;">
+  <style>
+      .bg-dark-theme-wrapper hr {
+          border-color: rgba(212, 165, 116, 0.3) !important;
+      }
+      .bg-dark-theme-wrapper p, .bg-dark-theme-wrapper h3, .bg-dark-theme-wrapper h4, .bg-dark-theme-wrapper h6, .bg-dark-theme-wrapper ul {
+          color: #F5EFE7 !important;
+      }
+      body {
+          background-color: #2C1A0E !important;
+      }
+  </style>
   <!-- ***** Main Banner Area Start ***** -->
   <div class="banner">
     <div class="swiper-container" id="top">
@@ -82,5 +94,6 @@
     </ul>
 
   </div>
+</div>
 </div>
   @endsection

@@ -35,29 +35,28 @@
         width: 220px;
         height: 80px;
         flex-shrink: 0;
-        margin: 0 6px;
-        border: 1px solid rgba(212, 160, 23, 0.2);
-        border-radius: 6px;
-        background: rgba(255,255,255,0.02);
+        margin: 0 8px;
+        border-radius: 12px;
+        background: #f2ebe2;
+        border: 1px solid rgba(212, 160, 23, 0.3);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         white-space: nowrap;
-        transition: background 0.2s, border-color 0.2s;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         cursor: default;
-        overflow: hidden;
-        padding: 12px 18px;
+        padding: 12px 24px;
     }
     .logo-pill:hover {
-        background: rgba(212, 160, 23, 0.07);
-        border-color: rgba(212, 160, 23, 0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(212, 160, 23, 0.15);
     }
     .logo-pill img {
         width: 100%;
         height: 100%;
         object-fit: contain;
-        filter: brightness(0.95);
-        transition: filter 0.2s;
+        transition: transform 0.3s ease;
     }
     .logo-pill:hover img {
-        filter: brightness(1.1);
+        transform: scale(1.05);
     }
 </style>
 
@@ -106,6 +105,7 @@
                                 <img
                                     src="{{ $partner->gambar ? asset('storage/image_partner/' . $partner->gambar) : 'https://via.placeholder.com/120x40?text=Logo' }}"
                                     alt="{{ \App\Helpers\SeoHelper::getImageAlt('partner', $partner->judul ?? 'Partner') }}"
+                                    loading="lazy"
                                 />
                             </div>
                         @endforeach
@@ -124,6 +124,7 @@
                                 <img
                                     src="{{ $partner->gambar ? asset('storage/image_partner/' . $partner->gambar) : 'https://via.placeholder.com/120x40?text=Logo' }}"
                                     alt="{{ \App\Helpers\SeoHelper::getImageAlt('partner', $partner->judul ?? 'Partner') }}"
+                                    loading="lazy"
                                 />
                             </div>
                         @endforeach

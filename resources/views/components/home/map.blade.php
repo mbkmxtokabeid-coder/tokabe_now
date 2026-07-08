@@ -78,113 +78,121 @@
     </div>
 </section>
 
-<script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-(async function() {
-    const geoJsonUrl = '/geojson/id.json';
-    const apiUrl = '/api/map-data';
+let mapInitialized = false;
+function initMap() {
+    if (mapInitialized) return;
+    mapInitialized = true;
+    
+    const script = document.createElement('script');
+    script.src = "https://d3js.org/d3.v7.min.js";
+    script.onload = async function() {
+        const geoJsonUrl = '/geojson/id.json';
+        const apiUrl = '/api/map-data';
 
-    const sumatraProvNames = [
-        'Aceh','Sumatera Utara','Sumatera Barat','Riau','Kepulauan Riau',
-        'Jambi','Bengkulu','Sumatera Selatan','Bangka Belitung','Lampung','Bangka-Belitung',
-    ];
+        const sumatraProvNames = [
+            'Aceh','Sumatera Utara','Sumatera Barat','Riau','Kepulauan Riau',
+            'Jambi','Bengkulu','Sumatera Selatan','Bangka Belitung','Lampung','Bangka-Belitung',
+        ];
 
-    const svg = d3.select('#sumatraSvg');
-    const g = svg.append('g');
-    const projection = d3.geoMercator();
-    const pathGen = d3.geoPath().projection(projection);
-    let fc = null; 
+        const svg = d3.select('#sumatraSvg');
+        const g = svg.append('g');
+        const projection = d3.geoMercator();
+        const pathGen = d3.geoPath().projection(projection);
+        let fc = null; 
 
-    function showInfo(props, data) {
-        const name = props.NAME_1 || props.name || props.provinsi || '';
-        const found = data.find(item => item.provinsi && name.toLowerCase().includes(item.provinsi.toLowerCase()));
-        
-        const billboards = found ? found.billboards : 0;
-        const videotron = found ? found.videotron : 0;
-        const allLocations = [...(found?.lokasi_ooh || []), ...(found?.lokasi_videotron || [])];
-        const topLocations = allLocations.length > 0 ? allLocations.sort(() => 0.5 - Math.random()).slice(0, 3) : ['{{ __('Location data is currently unavailable') }}'];
+        function showInfo(props, data) {
+            const name = props.NAME_1 || props.name || props.provinsi || '';
+            const found = data.find(item => item.provinsi && name.toLowerCase().includes(item.provinsi.toLowerCase()));
+            
+            const billboards = found ? found.billboards : 0;
+            const videotron = found ? found.videotron : 0;
+            const allLocations = [...(found?.lokasi_ooh || []), ...(found?.lokasi_videotron || [])];
+            const topLocations = allLocations.length > 0 ? allLocations.sort(() => 0.5 - Math.random()).slice(0, 3) : ['{{ __('Location data is currently unavailable') }}'];
 
-        document.getElementById('mapInfoContent').innerHTML = `
-            <div class="font-sans text-[15px] leading-relaxed text-gray-300">
-                <div class="font-bold text-2xl text-white">${name}</div>
-                <div class="text-gray-300 mt-1 mb-4">{{ __('OOH/DOOH Information') }}</div>
-                <div class="border-t border-white/20 pt-4">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-gray-300">{{ __('Billboard') }}</span><strong class="text-lg text-white">${billboards}</strong>
+            document.getElementById('mapInfoContent').innerHTML = `
+                <div class="font-sans text-[15px] leading-relaxed text-gray-300">
+                    <div class="font-bold text-2xl text-white">${name}</div>
+                    <div class="text-gray-300 mt-1 mb-4">{{ __('OOH/DOOH Information') }}</div>
+                    <div class="border-t border-white/20 pt-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-300">{{ __('Billboard') }}</span><strong class="text-lg text-white">${billboards}</strong>
+                        </div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-gray-300">{{ __('Videotron') }}</span><strong class="text-lg text-white">${videotron}</strong>
+                        </div>
+                        <div class="mt-4">
+                            <strong class="text-white">{{ __('Top Locations') }}</strong>
+                            <ul class="mt-3 space-y-2 max-h-36 overflow-y-auto pr-2 map-scrollbar">
+                                ${topLocations.map(l => `
+                                    <li class="relative pl-5 text-gray-300">
+                                        <span class="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#D4A574] rounded-full"></span>
+                                        ${l}
+                                    </li>`).join('')}
+                            </ul>
+                        </div>
+                        <a href="/discover?region=${encodeURIComponent(name)}" class="inline-flex items-center gap-2 mt-6 px-6 py-2.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-extrabold rounded-full shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-0.5 hover:scale-105 transition-all duration-300">
+                            {{ __('Discover More') }} <i class="fas fa-arrow-right text-sm"></i>
+                        </a>
                     </div>
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-gray-300">{{ __('Videotron') }}</span><strong class="text-lg text-white">${videotron}</strong>
-                    </div>
-                    <div class="mt-4">
-                        <strong class="text-white">{{ __('Top Locations') }}</strong>
-                        <ul class="mt-3 space-y-2 max-h-36 overflow-y-auto pr-2 map-scrollbar">
-                            ${topLocations.map(l => `
-                                <li class="relative pl-5 text-gray-300">
-                                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#D4A574] rounded-full"></span>
-                                    ${l}
-                                </li>`).join('')}
-                        </ul>
-                    </div>
-                    <a href="/discover?region=${encodeURIComponent(name)}" class="inline-flex items-center gap-2 mt-6 px-6 py-2.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-extrabold rounded-full shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-0.5 hover:scale-105 transition-all duration-300">
-                        {{ __('Discover More') }} <i class="fas fa-arrow-right text-sm"></i>
-                    </a>
-                </div>
-            </div>`;
-    }
-
-    try {
-        const [apiData, geojson] = await Promise.all([
-            fetch(apiUrl).then(r => r.ok ? r.json() : []),
-            d3.json(geoJsonUrl)
-        ]);
-
-        const features = (geojson.features || []).filter(f => {
-            const n = (f.properties.NAME_1 || f.properties.name || f.properties.provinsi || '').toString();
-            return sumatraProvNames.some(s => n.toLowerCase().includes(s.toLowerCase()));
-        });
-
-        fc = { type: 'FeatureCollection', features };
-
-        function renderMap() {
-            if (!fc) return;
-            const container = svg.node().getBoundingClientRect();
-            if (container.width === 0) return; // Prevent error if hidden
-            projection.fitSize([container.width, container.height], fc);
-            g.selectAll('path').attr('d', pathGen);
+                </div>`;
         }
 
-        g.selectAll('path')
-            .data(fc.features)
-            .enter()
-            .append('path')
-            .attr('fill', '#ffffff')
-            .attr('stroke', '#8B5E3C')
-            .attr('stroke-width', 1.5)
-            .style('cursor', 'pointer')
-            .style('transition', 'fill 0.2s ease')
-            .on('mouseenter', function() { 
-                const isSelected = d3.select(this).attr('data-selected') === 'true';
-                if(!isSelected) d3.select(this).attr('fill', '#E5D5C5'); 
-            })
-            .on('mouseleave', function() { 
-                const isSelected = d3.select(this).attr('data-selected') === 'true';
-                if(!isSelected) d3.select(this).attr('fill', '#ffffff'); 
-            })
-            .on('click', function(event, d) {
-                g.selectAll('path').attr('stroke', '#8B5E3C').attr('stroke-width', 1.5).attr('fill', '#ffffff').attr('data-selected', 'false');
-                d3.select(this).attr('stroke', '#5C3317').attr('stroke-width', 2.5).attr('fill', '#D4A574').attr('data-selected', 'true');
-                showInfo(d.properties, apiData);
+        try {
+            const [apiData, geojson] = await Promise.all([
+                fetch(apiUrl).then(r => r.ok ? r.json() : []),
+                d3.json(geoJsonUrl)
+            ]);
+
+            const features = (geojson.features || []).filter(f => {
+                const n = (f.properties.NAME_1 || f.properties.name || f.properties.provinsi || '').toString();
+                return sumatraProvNames.some(s => n.toLowerCase().includes(s.toLowerCase()));
             });
 
-        setTimeout(renderMap, 100);
-        window.addEventListener('resize', renderMap);
-        const observer = new ResizeObserver(() => renderMap());
-        observer.observe(document.getElementById('mapInfo').parentElement);
+            fc = { type: 'FeatureCollection', features };
 
-    } catch (error) {
-        console.error("Error loading map data:", error);
-    }
-})();
+            function renderMap() {
+                if (!fc) return;
+                const container = svg.node().getBoundingClientRect();
+                if (container.width === 0) return; // Prevent error if hidden
+                projection.fitSize([container.width, container.height], fc);
+                g.selectAll('path').attr('d', pathGen);
+            }
+
+            g.selectAll('path')
+                .data(fc.features)
+                .enter()
+                .append('path')
+                .attr('fill', '#ffffff')
+                .attr('stroke', '#8B5E3C')
+                .attr('stroke-width', 1.5)
+                .style('cursor', 'pointer')
+                .style('transition', 'fill 0.2s ease')
+                .on('mouseenter', function() { 
+                    const isSelected = d3.select(this).attr('data-selected') === 'true';
+                    if(!isSelected) d3.select(this).attr('fill', '#E5D5C5'); 
+                })
+                .on('mouseleave', function() { 
+                    const isSelected = d3.select(this).attr('data-selected') === 'true';
+                    if(!isSelected) d3.select(this).attr('fill', '#ffffff'); 
+                })
+                .on('click', function(event, d) {
+                    g.selectAll('path').attr('stroke', '#8B5E3C').attr('stroke-width', 1.5).attr('fill', '#ffffff').attr('data-selected', 'false');
+                    d3.select(this).attr('stroke', '#5C3317').attr('stroke-width', 2.5).attr('fill', '#D4A574').attr('data-selected', 'true');
+                    showInfo(d.properties, apiData);
+                });
+
+            setTimeout(renderMap, 100);
+            window.addEventListener('resize', renderMap);
+            const observer = new ResizeObserver(() => renderMap());
+            observer.observe(document.getElementById('mapInfo').parentElement);
+
+        } catch (error) {
+            console.error("Error loading map data:", error);
+        }
+    };
+    document.head.appendChild(script);
+}
 
 // ⚙️ SCRIPT ANIMASI SCROLL (NEW!)
 document.addEventListener("DOMContentLoaded", function() {
@@ -198,10 +206,11 @@ document.addEventListener("DOMContentLoaded", function() {
             if (entry.isIntersecting) {
                 entry.target.classList.add('smooth-active-map');
                 obs.unobserve(entry.target); 
+                initMap(); // Lazy load the map resources when section becomes visible
             }
         });
     }, observerOptions);
 
-    document.querySelectorAll('.reveal-target-map').forEach(el => observerMap.observe(el));
+    document.querySelectorAll('.reveal-target-map, #sumatraSvg').forEach(el => observerMap.observe(el));
 });
 </script>

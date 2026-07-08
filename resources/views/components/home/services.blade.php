@@ -26,17 +26,22 @@
         margin-top: 24px;
     }
     .services-swiper .swiper-pagination-bullet {
-        width: 10px;
-        height: 10px;
-        background-color: #9CA3AF; /* gray-400 */
+        width: 12px !important;
+        height: 12px !important;
+        margin: 0 12px !important;
+        padding: 8px; /* 12 + 16 = 28px touch area */
+        box-sizing: content-box;
+        background-clip: content-box; /* Ensures padding remains transparent */
+        background-color: #9CA3AF;
         opacity: 0.6;
         transition: all 0.3s ease;
+        border-radius: 9999px !important;
     }
     .services-swiper .swiper-pagination-bullet-active {
         background-color: #D4A574; /* gold */
         opacity: 1;
-        width: 24px;
-        border-radius: 5px;
+        width: 24px !important;
+        border-radius: 9999px !important;
     }
 </style>
 
@@ -71,12 +76,12 @@
         </div>
 
         <!-- Desktop View (Swiper) -->
-        <div class="relative group/slider hidden lg:block">
+        <div class="relative group/slider hidden md:block">
             <!-- Container Slider -->
             <div id="services-slider" class="swiper services-swiper w-full !pt-6 !pb-12 !-mt-6 !-mb-12">
                 <div class="swiper-wrapper">
                     @foreach($services as $index => $item)
-                    <div class="swiper-slide !h-auto flex">
+                    <div class="swiper-slide !h-auto flex w-full sm:w-1/2 lg:w-1/3">
                         @php
                             // Get title properly handling JSON arrays if any
                             $judul = is_array($item->judul) ? ($item->judul[app()->getLocale()] ?? $item->judul['id'] ?? $item->judul['en'] ?? collect($item->judul)->first() ?? '') : $item->judul;
@@ -92,13 +97,22 @@
                             
                             <div>
                                 <!-- Bagian Gambar / Media -->
-                                <div class="w-full aspect-[16/10] overflow-hidden bg-gray-900 relative">
+                                <div class="w-full aspect-[16/10] overflow-hidden bg-[#2C1A0E] relative">
+                                    <!-- Premium Skeleton Loader -->
+                                    <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
+                                        <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
+                                        <div class="relative flex flex-col items-center gap-3 animate-pulse">
+                                            <i class="fas fa-image text-[#D4A574]/30 text-5xl"></i>
+                                            <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
+                                        </div>
+                                    </div>
+                                    
                                     @if(Str::endsWith($item->gambar, ['.mp4', '.webm', '.ogg']))
-                                        <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                        <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2;" onloadeddata="this.previousElementSibling.style.display='none'">
                                             <source src="{{ asset('storage/image_service/' . $item->gambar) }}" type="video/mp4">
                                         </video>
                                     @elseif($item->gambar)
-                                        <img src="{{ asset('storage/image_service/' . $item->gambar) }}" alt="{{ \App\Helpers\SeoHelper::getImageAlt('service', $judul) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                        <img src="{{ asset('storage/image_service/' . $item->gambar) }}" onload="this.previousElementSibling.style.display='none'" alt="{{ \App\Helpers\SeoHelper::getImageAlt('service', $judul) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2;" loading="lazy">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center bg-[#2C1A0E]">
                                             <i class="{{ $item->ikon ?? 'fas fa-desktop' }} text-3xl text-white/50"></i>
@@ -107,12 +121,12 @@
                                 </div>
 
                                 <!-- Bagian Teks -->
-                                <div class="p-6">
-                                    <h3 class="text-lg font-bold text-white mb-3 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
+                                <div class="p-6 lg:p-4 xl:p-6">
+                                    <h3 class="text-lg lg:text-sm xl:text-lg font-bold text-white mb-3 lg:mb-2 xl:mb-3 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
                                         {{ $judul }}
                                     </h3>
                                     
-                                    <div class="border-t border-white/20 pt-4 text-xs sm:text-sm text-gray-200">
+                                    <div class="border-t border-white/20 pt-4 lg:pt-3 xl:pt-4 text-xs sm:text-sm lg:text-[10px] xl:text-sm text-gray-200">
                                         <p class="line-clamp-2">
                                             {{ $shortDesc }}
                                         </p>
@@ -120,10 +134,10 @@
                                 </div>
                             </div>
 
-                            <div class="px-6 pb-6 pt-1 mt-auto">
-                                <a href="{{ route('services.show', $item->id) }}" class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
-                                    {{ __('Lihat Detail') }} 
-                                    <i class="fas fa-arrow-right text-xs transition-transform duration-300 group-hover/btn:translate-x-1"></i>
+                            <div class="px-6 pb-6 lg:px-4 lg:pb-4 xl:px-6 xl:pb-6 pt-1 mt-auto">
+                                <a href="{{ route('services.show', $item->id) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 px-6 py-3 lg:px-4 lg:py-2 xl:px-6 xl:py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm lg:text-[10px] xl:text-sm uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
+                                    <span>{{ __('Lihat Detail') }}</span>
+                                    <i class="fas fa-arrow-right text-xs lg:text-[10px] xl:text-xs transition-transform duration-300 group-hover/btn:translate-x-1"></i>
                                 </a>
                             </div>
                         </div>
@@ -136,17 +150,18 @@
             </div>
         
             <!-- Navigation Buttons -->
-            <button class="services-button-prev absolute left-2 lg:-left-5 top-1/2 -translate-y-1/2 z-10 bg-white border border-gray-200 text-gray-800 w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition-all opacity-0 group-hover/slider:opacity-100 hidden md:flex">
-                <i class="fas fa-chevron-left text-sm"></i>
-            </button>
-
-            <button class="services-button-next absolute right-2 lg:-right-5 top-1/2 -translate-y-1/2 z-10 bg-white border border-gray-200 text-gray-800 w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition-all opacity-0 group-hover/slider:opacity-100 hidden md:flex">
-                <i class="fas fa-chevron-right text-sm"></i>
-            </button>
+            <div class="absolute right-0 -top-8 lg:-top-6 xl:-top-16 z-10 hidden md:flex gap-2 lg:gap-2 xl:gap-3">
+                <button class="services-button-prev bg-[#1F1611] border border-[#D4A574]/30 text-[#D4A574] w-10 h-10 lg:w-9 lg:h-9 xl:w-12 xl:h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-[#D4A574] hover:text-[#1F1611] hover:border-[#D4A574] hover:shadow-[0_0_15px_rgba(212,165,116,0.4)] transition-all duration-300 group">
+                    <i class="fas fa-chevron-left text-xs lg:text-[10px] xl:text-sm group-hover:-translate-x-1 transition-transform duration-300"></i>
+                </button>
+                <button class="services-button-next bg-[#1F1611] border border-[#D4A574]/30 text-[#D4A574] w-10 h-10 lg:w-9 lg:h-9 xl:w-12 xl:h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-[#D4A574] hover:text-[#1F1611] hover:border-[#D4A574] hover:shadow-[0_0_15px_rgba(212,165,116,0.4)] transition-all duration-300 group">
+                    <i class="fas fa-chevron-right text-xs lg:text-[10px] xl:text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
+                </button>
+            </div>
         </div>
 
         <!-- Mobile View (Scroll Stack) -->
-        <div class="scroll-stack-scroller w-full relative block lg:hidden">
+        <div class="scroll-stack-scroller w-full relative block md:hidden">
             <div class="scroll-stack-inner pt-4 px-2 pb-8">
                 @foreach($services as $index => $item)
                 @php
@@ -159,13 +174,22 @@
                     <div class="scroll-stack-card w-full h-auto cursor-pointer bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.1)] border border-white/25 transform-origin-top will-change-transform flex flex-col justify-between" style="backface-visibility: hidden; transform-style: preserve-3d; transform: translateZ(0); perspective: 1000px;" onclick="window.location.href='{{ route('services.show', $item->id) }}'">
                         <div>
                             <!-- Bagian Gambar / Media -->
-                            <div class="w-full aspect-[16/10] overflow-hidden bg-gray-900 relative">
+                            <div class="w-full aspect-[16/10] overflow-hidden bg-[#2C1A0E] relative">
+                                <!-- Premium Skeleton Loader -->
+                                <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
+                                    <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
+                                    <div class="relative flex flex-col items-center gap-3 animate-pulse">
+                                        <i class="fas fa-image text-[#D4A574]/30 text-5xl"></i>
+                                        <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
+                                    </div>
+                                </div>
+                                
                                 @if(Str::endsWith($item->gambar, ['.mp4', '.webm', '.ogg']))
-                                    <video autoplay loop muted playsinline class="w-full h-full object-cover">
+                                    <video autoplay loop muted playsinline class="w-full h-full object-cover relative" style="z-index: 2;" onloadeddata="this.previousElementSibling.style.display='none'">
                                         <source src="{{ asset('storage/image_service/' . $item->gambar) }}" type="video/mp4">
                                     </video>
                                 @elseif($item->gambar)
-                                    <img src="{{ asset('storage/image_service/' . $item->gambar) }}" alt="{{ \App\Helpers\SeoHelper::getImageAlt('service', $judul) }}" class="w-full h-full object-cover">
+                                    <img src="{{ asset('storage/image_service/' . $item->gambar) }}" onload="this.previousElementSibling.style.display='none'" alt="{{ \App\Helpers\SeoHelper::getImageAlt('service', $judul) }}" class="w-full h-full object-cover relative" style="z-index: 2;" loading="lazy">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center bg-[#2C1A0E]">
                                         <i class="{{ $item->ikon ?? 'fas fa-desktop' }} text-3xl text-white/50"></i>
@@ -188,8 +212,8 @@
                         </div>
 
                         <div class="px-6 pb-6 pt-1 mt-auto">
-                            <a href="{{ route('services.show', $item->id) }}" class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm uppercase tracking-wider rounded-full shadow-sm">
-                                {{ __('Lihat Detail') }} 
+                            <a href="{{ route('services.show', $item->id) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm uppercase tracking-wider rounded-full shadow-sm">
+                                <span>{{ __('Lihat Detail') }}</span>
                                 <i class="fas fa-arrow-right text-xs"></i>
                             </a>
                         </div>
@@ -243,6 +267,10 @@
                 breakpoints: {
                     640: {
                         slidesPerView: 2,
+                        spaceBetween: 24,
+                    },
+                    768: {
+                        slidesPerView: 3,
                         spaceBetween: 24,
                     },
                     1024: {
@@ -404,7 +432,7 @@
         };
 
         // Initialize based on screen size
-        if (window.innerWidth >= 1024) {
+        if (window.innerWidth >= 768) {
             initSwiper();
         } else {
             initScrollStack();
@@ -417,7 +445,7 @@
             resizeTimer = setTimeout(() => {
                 // To safely switch between desktop and mobile, a page reload might be best,
                 // but let's just initialize if it wasn't initialized.
-                if (window.innerWidth >= 1024) {
+                if (window.innerWidth >= 768) {
                     if (!document.querySelector('.services-swiper').swiper) {
                         initSwiper();
                     }

@@ -68,7 +68,7 @@
             </div>
         </div>
 
-        <x-servicecomponent />
+
         </div>
     </div>
 @endsection

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 
 class ContactController extends Controller
@@ -36,8 +39,25 @@ class ContactController extends Controller
         
         if ($request->hasFile('cta_image')) {
             $request->validate(['cta_image' => 'image|mimes:jpeg,png,jpg,webp,svg|max:2048']);
-            $path = $request->file('cta_image')->store('cta', 'public');
-            $contact->cta_image = $path;
+            $file = $request->file('cta_image');
+            
+            // Jika file adalah SVG, jangan diubah oleh Intervention
+            if ($file->getClientOriginalExtension() === 'svg' || $file->getClientMimeType() === 'image/svg+xml') {
+                $path = $file->store('cta', 'public');
+                $contact->cta_image = $path;
+            } else {
+                $fileName = uniqid() . '.webp';
+                $manager = new ImageManager(new Driver());
+                $image = $manager->read($file->getRealPath());
+                
+                // Resize jika lebar lebih dari 1200px
+                $image->scaleDown(width: 1200);
+                
+                $encoded = $image->toWebp(80);
+                Storage::disk('public')->put('cta/' . $fileName, (string) $encoded);
+                
+                $contact->cta_image = 'cta/' . $fileName;
+            }
         }
 
         $contact->phone = $request->phone;

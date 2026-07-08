@@ -9,6 +9,8 @@ use App\Models\PortofolioVideo;
 use App\Models\PortofolioCategory; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class PortofolioController extends Controller
 {
@@ -30,8 +32,10 @@ class PortofolioController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'judul'       => 'required|string|max:255',
-            'deskripsi'   => 'nullable|string',
+            'judul_id'    => 'required|string|max:255',
+            'judul_en'    => 'nullable|string|max:255',
+            'deskripsi_id'=> 'nullable|string',
+            'deskripsi_en'=> 'nullable|string',
             'kategori'    => 'required|exists:portofolio_categories,id',
             'klien'       => 'nullable|string|max:255',
             'tanggal'     => 'nullable|date',
@@ -43,8 +47,8 @@ class PortofolioController extends Controller
         ]);
 
         $portofolio = Portofolio::create([
-            'judul'       => $request->judul,
-            'deskripsi'   => $request->deskripsi,
+            'judul'       => json_encode(['id' => $request->judul_id, 'en' => $request->judul_en]),
+            'deskripsi'   => json_encode(['id' => $request->deskripsi_id, 'en' => $request->deskripsi_en]),
             'kategori'    => $request->kategori, 
             'klien'       => $request->klien,
             'tanggal'     => $request->tanggal,
@@ -52,9 +56,17 @@ class PortofolioController extends Controller
         ]);
 
         if ($request->hasFile('images')) {
+            $manager = new ImageManager(new Driver());
             foreach ($request->file('images') as $image) {
-                $filename = uniqid() . '.' . $image->getClientOriginalExtension();
-                $path = $image->storeAs('portofolio', $filename, 'public');
+                $filename = uniqid() . '.webp';
+                
+                // Proses gambar menggunakan Intervention Image v3
+                $img = $manager->read($image->getRealPath());
+                $img->scaleDown(width: 1920); // Resize if too large
+                $encoded = $img->toWebp(80);
+                
+                $path = 'portofolio/' . $filename;
+                Storage::disk('public')->put($path, (string) $encoded);
 
                 PortofolioImage::create([
                     'portofolio_id' => $portofolio->id,
@@ -91,7 +103,10 @@ class PortofolioController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'judul'          => 'required|string|max:255',
+            'judul_id'       => 'required|string|max:255',
+            'judul_en'       => 'nullable|string|max:255',
+            'deskripsi_id'   => 'nullable|string',
+            'deskripsi_en'   => 'nullable|string',
             'kategori'       => 'required|exists:portofolio_categories,id',
             'images'         => 'nullable|array',
             'images.*'       => 'file|image|mimes:jpeg,png,jpg,webp|max:10240',
@@ -105,8 +120,8 @@ class PortofolioController extends Controller
 
         // 1. Update Basic Info
         $portofolio->update([
-            'judul'       => $request->judul,
-            'deskripsi'   => $request->deskripsi,
+            'judul'       => json_encode(['id' => $request->judul_id, 'en' => $request->judul_en]),
+            'deskripsi'   => json_encode(['id' => $request->deskripsi_id, 'en' => $request->deskripsi_en]),
             'kategori'    => $request->kategori,
             'klien'       => $request->klien,
             'tanggal'     => $request->tanggal,
@@ -136,9 +151,17 @@ class PortofolioController extends Controller
 
         // 3. Handle New Uploads (Append to existing)
         if ($request->hasFile('images')) {
+            $manager = new ImageManager(new Driver());
             foreach ($request->file('images') as $image) {
-                $filename = uniqid() . '.' . $image->getClientOriginalExtension();
-                $path = $image->storeAs('portofolio', $filename, 'public');
+                $filename = uniqid() . '.webp';
+                
+                // Proses gambar menggunakan Intervention Image v3
+                $img = $manager->read($image->getRealPath());
+                $img->scaleDown(width: 1920); // Resize if too large
+                $encoded = $img->toWebp(80);
+                
+                $path = 'portofolio/' . $filename;
+                Storage::disk('public')->put($path, (string) $encoded);
 
                 PortofolioImage::create([
                     'portofolio_id' => $portofolio->id,

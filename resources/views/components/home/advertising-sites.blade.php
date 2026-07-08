@@ -29,7 +29,8 @@
         ]
     ];
 
-    $oohData = (is_countable($lokasiooh) && count($lokasiooh) >= 3) ? collect($lokasiooh)->take(3) : $dummyOoh;
+    $activeOoh = collect($lokasiooh)->where('status', 'Aktif');
+    $oohData = $activeOoh->isNotEmpty() ? $activeOoh->take(3) : $dummyOoh;
 @endphp
 
 <style>
@@ -69,17 +70,23 @@
         margin-top: 24px;
     }
     .adv-swiper-dooh .swiper-pagination-bullet, .adv-swiper-ooh .swiper-pagination-bullet {
-        width: 10px;
-        height: 10px;
-        background-color: #9CA3AF;
+        width: 12px !important;
+        height: 12px !important;
+        margin: 0 12px !important;
+        padding: 8px; /* Touch area */
+        box-sizing: content-box;
+        background-clip: content-box; /* Ensures padding is transparent */
+        background-color: #9CA3AF; /* gray-400 */
         opacity: 0.6;
         transition: all 0.3s ease;
+        border-radius: 9999px !important;
     }
+    
     .adv-swiper-dooh .swiper-pagination-bullet-active, .adv-swiper-ooh .swiper-pagination-bullet-active {
-        background-color: #D4A574;
+        background-color: #D4A574; /* gold */
         opacity: 1;
-        width: 24px;
-        border-radius: 5px;
+        width: 24px !important;
+        border-radius: 9999px !important;
     }
 
     /* Tab switcher pill styling */
@@ -176,7 +183,10 @@
             <div id="content-dooh" class="tab-content active">
                 <div class="swiper adv-swiper-dooh w-full !pt-6 !pb-12 !-mt-6 !-mb-12">
                     <div class="swiper-wrapper">
-                        @foreach($lokasi->take(3) as $index => $item)
+                        @php
+                            $activeDooh = collect($lokasi)->where('status', 'Aktif')->take(3);
+                        @endphp
+                        @foreach($activeDooh as $index => $item)
                         @php
                             $namaData = $item->nama ?: ($item->getRawOriginal ? $item->getRawOriginal('nama') : '');
                             $namaArray = is_string($namaData) && str_starts_with($namaData, '{') ? json_decode($namaData, true) : $namaData;
@@ -184,41 +194,63 @@
                             if (empty(trim($namaDOOH))) {
                                 $namaDOOH = ($item->provinsi ?? '') . ' - ' . ($item->media ?? '');
                             }
+                            $isAvailable = ($item->availability ?? 'Available') !== 'Not Available';
                         @endphp
-                        <div class="swiper-slide !h-auto flex">
+                        <div class="swiper-slide !h-auto flex w-full sm:w-1/2 lg:w-1/3">
                             <div onclick="window.location.href='{{ route('dooh.detail', $item->id) }}'" 
                                  class="w-full h-full cursor-pointer bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-xl border border-white/25 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group flex flex-col justify-between">
                     <div>
-                        <div class="w-full aspect-[16/10] overflow-hidden bg-gray-900 relative">
+                        <div class="w-full aspect-[16/10] overflow-hidden bg-[#2C1A0E] relative">
+                            <!-- Premium Skeleton Loader -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
+                                <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
+                                <div class="relative flex flex-col items-center gap-3 animate-pulse">
+                                    <i class="fas fa-image text-[#D4A574]/30 text-5xl"></i>
+                                    <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
+                                </div>
+                            </div>
+                            
                             <img src="{{ $item->gambar ? (Str::startsWith($item->gambar, 'http') ? $item->gambar : asset('storage/image_lokasi/' . $item->gambar)) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop' }}" 
+                                 onload="this.previousElementSibling.style.display='none'"
                                  alt="{{ \App\Helpers\SeoHelper::getImageAlt('dooh', $namaDOOH, $item->kota ?? 'Medan') }}" 
-                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                            <span class="absolute top-4 left-4 px-3 py-1.5 bg-black/70 backdrop-blur-md text-[#D4A574] text-xs font-bold uppercase tracking-widest rounded-full shadow-md">
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2; {{ !$isAvailable ? 'filter: grayscale(100%);' : '' }}" loading="lazy">
+                            
+                            @if(!$isAvailable)
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/40" style="z-index: 10; pointer-events: none;">
+                                <div class="transform -rotate-45 border-4 border-red-600 rounded-lg px-4 py-2 bg-black/50 backdrop-blur-sm">
+                                    <span class="text-red-500 text-2xl md:text-3xl font-black uppercase tracking-widest" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+                                        Not Available
+                                    </span>
+                                </div>
+                            </div>
+                            @endif
+                            
+                            <span class="absolute top-4 left-4 px-3 py-1.5 bg-black/70 backdrop-blur-md text-[#D4A574] text-xs font-bold uppercase tracking-widest rounded-full shadow-md" style="z-index: 3;">
                                 {{ $item->wilayah ?? $item->kota ?? 'Medan' }}
                             </span>
                         </div>
 
-                        <div class="p-6">
-                            <h3 class="text-lg font-bold text-white mb-3 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
+                        <div class="p-6 md:p-4">
+                            <h3 class="text-lg md:text-sm font-bold text-white mb-3 md:mb-2 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
                                 {{ __($namaDOOH) }}
                             </h3>
-                            <div class="grid grid-cols-2 gap-4 border-t border-white/20 pt-4 text-xs sm:text-sm text-gray-200">
+                            <div class="flex flex-col gap-3 border-t border-white/20 pt-4 md:pt-3 text-xs md:text-[11px] xl:text-xs text-gray-200">
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-layer-group text-[#D4A574]"></i>
                                     <span>{{ $item->media ?? $item->tipe ?? $item->type ?? 'Videotron' }}</span>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-expand-arrows-alt text-[#D4A574]"></i>
-                                    <span>{{ $item->size ?? $item->ukuran ?? '-' }}</span>
+                                <div class="flex items-start gap-2">
+                                    <i class="fas fa-expand-arrows-alt text-[#D4A574] mt-0.5"></i>
+                                    <span class="leading-snug">{{ $item->size ?? $item->ukuran ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="px-6 pb-6 pt-1">
-                        <a href="{{ route('dooh.detail', $item->id) }}" class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
-                            {{ __('View Detail') }} 
-                            <i class="fas fa-arrow-right text-xs transition-transform duration-300 group-hover/btn:translate-x-1"></i>
+                    <div class="px-6 pb-6 md:px-4 md:pb-4 pt-1">
+                        <a href="{{ route('dooh.detail', $item->id) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 md:gap-1.5 px-6 py-3 md:px-2 md:py-2 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm md:text-[11px] uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
+                            <span>{{ __('View Detail') }}</span>
+                            <i class="fas fa-arrow-right text-xs md:text-[10px] transition-transform duration-300 group-hover/btn:translate-x-1"></i>
                         </a>
                     </div>
                             </div>
@@ -241,41 +273,63 @@
                             if (empty(trim($namaOOH))) {
                                 $namaOOH = ($item->provinsi ?? '') . ' - ' . ($item->media ?? '');
                             }
+                            $isAvailable = ($item->availability ?? 'Available') !== 'Not Available';
                         @endphp
-                        <div class="swiper-slide !h-auto flex">
+                        <div class="swiper-slide !h-auto flex w-full sm:w-1/2 lg:w-1/3">
                             <div onclick="window.location.href='{{ route('ooh.detail', $item->id) }}'" 
                                  class="w-full h-full cursor-pointer bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-xl border border-white/25 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group flex flex-col justify-between">
                     <div>
-                        <div class="w-full aspect-[16/10] overflow-hidden bg-gray-900 relative">
+                        <div class="w-full aspect-[16/10] overflow-hidden bg-[#2C1A0E] relative">
+                            <!-- Premium Skeleton Loader -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
+                                <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
+                                <div class="relative flex flex-col items-center gap-3 animate-pulse">
+                                    <i class="fas fa-image text-[#D4A574]/30 text-5xl"></i>
+                                    <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
+                                </div>
+                            </div>
+                            
                             <img src="{{ Str::startsWith($item->gambar, 'http') ? $item->gambar : asset('storage/image_lokasiooh/' . $item->gambar) }}" 
+                                 onload="this.previousElementSibling.style.display='none'"
                                  alt="{{ \App\Helpers\SeoHelper::getImageAlt('ooh', $namaOOH, $item->kota ?? 'Medan') }}" 
-                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                            <span class="absolute top-4 left-4 px-3 py-1.5 bg-black/70 backdrop-blur-md text-[#D4A574] text-xs font-bold uppercase tracking-widest rounded-full shadow-md">
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2; {{ !$isAvailable ? 'filter: grayscale(100%);' : '' }}" loading="lazy">
+                            
+                            @if(!$isAvailable)
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/40" style="z-index: 10; pointer-events: none;">
+                                <div class="transform -rotate-45 border-4 border-red-600 rounded-lg px-4 py-2 bg-black/50 backdrop-blur-sm">
+                                    <span class="text-red-500 text-2xl md:text-3xl font-black uppercase tracking-widest" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+                                        Not Available
+                                    </span>
+                                </div>
+                            </div>
+                            @endif
+                            
+                            <span class="absolute top-4 left-4 px-3 py-1.5 bg-black/70 backdrop-blur-md text-[#D4A574] text-xs font-bold uppercase tracking-widest rounded-full shadow-md" style="z-index: 3;">
                                 {{ $item->kota ?? 'Medan' }}
                             </span>
                         </div>
 
-                        <div class="p-6">
-                            <h3 class="text-lg font-bold text-white mb-3 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
+                        <div class="p-6 md:p-4">
+                            <h3 class="text-lg md:text-sm font-bold text-white mb-3 md:mb-2 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
                                 {{ __($namaOOH) }}
                             </h3>
-                            <div class="grid grid-cols-2 gap-4 border-t border-white/20 pt-4 text-xs sm:text-sm text-gray-200">
+                            <div class="flex flex-col gap-3 border-t border-white/20 pt-4 md:pt-3 text-xs md:text-[11px] xl:text-xs text-gray-200">
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-layer-group text-[#D4A574]"></i>
                                     <span>{{ $item->tipe ?? $item->type ?? 'Billboard' }}</span>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-expand-arrows-alt text-[#D4A574]"></i>
-                                    <span>{{ $item->ukuran ?? $item->size ?? '-' }}</span>
+                                <div class="flex items-start gap-2">
+                                    <i class="fas fa-expand-arrows-alt text-[#D4A574] mt-0.5"></i>
+                                    <span class="leading-snug">{{ $item->ukuran ?? $item->size ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="px-6 pb-6 pt-1">
-                        <a href="{{ route('ooh.detail', $item->id) }}" class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
-                            {{ __('View Detail') }} 
-                            <i class="fas fa-arrow-right text-xs transition-transform duration-300 group-hover/btn:translate-x-1"></i>
+                    <div class="px-6 pb-6 md:px-4 md:pb-4 pt-1">
+                        <a href="{{ route('ooh.detail', $item->id) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 md:gap-1.5 px-6 py-3 md:px-2 md:py-2 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm md:text-[11px] uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
+                            <span class="whitespace-nowrap">{{ __('View Detail') }}</span>
+                            <i class="fas fa-arrow-right text-xs md:text-[10px] transition-transform duration-300 group-hover/btn:translate-x-1"></i>
                         </a>
                     </div>
                             </div>
@@ -358,6 +412,10 @@
                 breakpoints: {
                     640: {
                         slidesPerView: 2,
+                        spaceBetween: 24,
+                    },
+                    768: {
+                        slidesPerView: 3,
                         spaceBetween: 24,
                     },
                     1024: {

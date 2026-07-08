@@ -28,13 +28,23 @@
             cursor: pointer;
         }
     </style>
-
-    <section class="pcoded-main-container">
+<section class="pcoded-main-container">
     <div class="pcoded-wrapper">
         <div class="pcoded-content">
             <div class="pcoded-inner-content">
                 <div class="main-body">
                     <div class="page-wrapper">
+                        @if (session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if(session('error'))
+                            <div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                         <div class="page-header">
                             <div class="page-block">
                                 <div class="row align-items-center">
@@ -153,10 +163,19 @@
 
                                                 <div class="col-lg-6 mb-3">
                                                     <label class="form-label">Status</label>
-                                                    <select class="form-control" name="status">
+                                                    <select class="form-control" name="status" id="oohStatusSelect">
                                                         <option value="Aktif" {{ old('status', $lokasiooh->status) == 'Aktif' ? 'selected' : '' }}>Aktif</option>
                                                         <option value="Tidak aktif" {{ old('status', $lokasiooh->status) == 'Tidak aktif' ? 'selected' : '' }}>Tidak aktif</option>
                                                     </select>
+                                                </div>
+
+                                                <div class="col-lg-6 mb-3">
+                                                    <label class="form-label">Availability</label>
+                                                    <select class="form-control" name="availability" id="oohAvailabilitySelect">
+                                                        <option value="Available" {{ old('availability', $lokasiooh->availability) == 'Available' ? 'selected' : '' }}>Available</option>
+                                                        <option value="Not Available" {{ old('availability', $lokasiooh->availability) == 'Not Available' ? 'selected' : '' }}>Not Available</option>
+                                                    </select>
+                                                    @error('availability') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
 
                                                 <div class="col-lg-6 mb-3">
@@ -181,6 +200,28 @@
                                                 <a href="{{ route('lokasi-list-ooh', $lokasiooh->wilayah) }}" class="btn btn-secondary">Batal</a>
                                             </div>
                                         </form>
+                                        <script>
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                                const statusSelect = document.getElementById('oohStatusSelect');
+                                                const availabilitySelect = document.getElementById('oohAvailabilitySelect');
+                                                
+                                                function checkAvailability() {
+                                                    if (availabilitySelect.value === 'Not Available') {
+                                                        statusSelect.value = 'Tidak aktif';
+                                                        Array.from(statusSelect.options).forEach(opt => {
+                                                            if (opt.value === 'Aktif') opt.disabled = true;
+                                                        });
+                                                    } else {
+                                                        Array.from(statusSelect.options).forEach(opt => {
+                                                            if (opt.value === 'Aktif') opt.disabled = false;
+                                                        });
+                                                    }
+                                                }
+                                                
+                                                availabilitySelect.addEventListener('change', checkAvailability);
+                                                checkAvailability();
+                                            });
+                                        </script>
                                     </div>
                                 </div>
                             </div>

@@ -46,10 +46,18 @@
         <div class="bg-gradient-to-br from-[#2C1A0E] via-[#3D2514] to-[#2C1A0E] rounded-3xl shadow-2xl overflow-hidden border border-white/10 max-w-5xl mx-auto">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
                 <!-- Image -->
-                <div class="h-64 md:h-auto overflow-hidden relative">
+                <div class="h-64 md:h-auto overflow-hidden relative bg-[#2C1A0E]">
+                    <!-- Premium Skeleton Loader -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
+                        <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
+                        <div class="relative flex flex-col items-center gap-3 animate-pulse">
+                            <i class="fas fa-image text-[#D4A574]/30 text-5xl"></i>
+                            <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
+                        </div>
+                    </div>
                     <img src="{{ Str::startsWith($brand->gambar, 'http') ? $brand->gambar : asset('storage/image_brand/' . $brand->gambar) }}" 
                         alt="{{ \App\Helpers\SeoHelper::getImageAlt('brand', $brand->judul ?? $brand->nama_brand ?? 'Brand Activity') }}"
-                        class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                        class="w-full h-full object-cover transition-transform duration-700 hover:scale-110 relative" style="z-index: 2;" onload="this.previousElementSibling.style.display='none'" loading="lazy">
                 </div>
                 <!-- Text -->
                 <div class="p-8 md:p-12 flex flex-col justify-center">
@@ -88,12 +96,21 @@
                          @click="if (isTouch) expanded = !expanded"
                          class="relative w-full bg-gradient-to-br from-[#2C1A0E] via-[#3D2514] to-[#2C1A0E] rounded-3xl shadow-xl overflow-hidden border border-white/10 transition-all duration-300 ease-out cursor-pointer flex flex-col"
                          :class="expanded ? '-translate-y-2 shadow-2xl shadow-black/50' : ''">
-                        <div class="h-48 overflow-hidden relative shrink-0">
+                        <div class="h-48 overflow-hidden relative shrink-0 bg-[#2C1A0E]">
+                            <!-- Premium Skeleton Loader -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
+                                <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
+                                <div class="relative flex flex-col items-center gap-3 animate-pulse">
+                                    <i class="fas fa-image text-[#D4A574]/30 text-3xl"></i>
+                                    <div class="h-1.5 w-16 bg-[#D4A574]/20 rounded-full"></div>
+                                </div>
+                            </div>
                             <img src="{{ Str::startsWith($d['image_url'], 'http') ? $d['image_url'] : asset('storage/image_brand_details/' . $d['image_url']) }}" 
-                                class="w-full h-full object-cover transition-transform duration-700" 
+                                class="w-full h-full object-cover transition-transform duration-700 relative" style="z-index: 2;"
                                 :class="expanded ? 'scale-110' : ''"
+                                onload="this.previousElementSibling.style.display='none'" loading="lazy"
                                 alt="{{ \App\Helpers\SeoHelper::getImageAlt('brand', $d['title'] ?? 'Brand Activity Detail') }}">
-                            <div class="absolute inset-0 transition-colors" :class="expanded ? 'bg-black/0' : 'bg-black/20'"></div>
+                            <div class="absolute inset-0 transition-colors" style="z-index: 3;" :class="expanded ? 'bg-black/0' : 'bg-black/20'"></div>
                         </div>
                         <div class="p-6 text-center flex flex-col flex-1">
                             <h4 class="text-xl font-bold text-white mb-2 uppercase tracking-tight transition-all duration-300">{{ $dTitle }}</h4>
@@ -126,12 +143,21 @@
                          @click="if (isTouch) expanded = !expanded"
                          class="relative w-full bg-gradient-to-br from-[#2C1A0E] via-[#3D2514] to-[#2C1A0E] rounded-3xl shadow-xl overflow-hidden border border-white/10 transition-all duration-300 ease-out cursor-pointer flex flex-col"
                          :class="expanded ? '-translate-y-2 shadow-2xl shadow-black/50' : ''">
-                        <div class="h-48 overflow-hidden relative shrink-0">
+                        <div class="h-48 overflow-hidden relative shrink-0 bg-[#2C1A0E]">
+                            <!-- Premium Skeleton Loader -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
+                                <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
+                                <div class="relative flex flex-col items-center gap-3 animate-pulse">
+                                    <i class="fas fa-image text-[#D4A574]/30 text-3xl"></i>
+                                    <div class="h-1.5 w-16 bg-[#D4A574]/20 rounded-full"></div>
+                                </div>
+                            </div>
                             <img src="{{ Str::startsWith($d['image_url'], 'http') ? $d['image_url'] : asset('storage/image_brand_details/' . $d['image_url']) }}" 
-                                class="w-full h-full object-cover transition-transform duration-700" 
+                                class="w-full h-full object-cover transition-transform duration-700 relative" style="z-index: 2;"
                                 :class="expanded ? 'scale-110' : ''"
+                                onload="this.previousElementSibling.style.display='none'" loading="lazy"
                                 alt="{{ \App\Helpers\SeoHelper::getImageAlt('brand', $d['title'] ?? 'Brand Activity Detail') }}">
-                            <div class="absolute inset-0 transition-colors" :class="expanded ? 'bg-black/0' : 'bg-black/20'"></div>
+                            <div class="absolute inset-0 transition-colors" style="z-index: 3;" :class="expanded ? 'bg-black/0' : 'bg-black/20'"></div>
                         </div>
                         <div class="p-6 text-center flex flex-col flex-1">
                             <h4 class="text-xl font-bold text-white mb-2 uppercase tracking-tight transition-all duration-300">{{ $dTitle }}</h4>

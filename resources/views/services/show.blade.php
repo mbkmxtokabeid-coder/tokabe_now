@@ -17,8 +17,12 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta name="robots" content="index, follow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript></noscript>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-[#2C1A0E] antialiased text-gray-900 font-sans">
@@ -42,7 +46,7 @@
             </p>
 
             <!-- Search Bar -->
-            <form action="{{ route('services.show', $service->id) }}" method="GET" class="max-w-2xl mx-auto relative group">
+            <form action="{{ in_array($service->id, [1, 2]) ? route('periklanan.show', $service->id) : route('services.show', $service->id) }}" method="GET" class="max-w-2xl mx-auto relative group">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg class="h-6 w-6 text-gray-400 group-focus-within:text-[#D4A569] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -65,10 +69,36 @@
                 @foreach($items as $item)
                     <div onclick="window.location.href='{{ isset($item->detail_url) ? $item->detail_url : route('dummy.detail') }}'" class="cursor-pointer bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-xl border border-white/25 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group flex flex-col justify-between h-full">
                         <div>
-                            <div class="w-full aspect-[16/9] overflow-hidden bg-gray-900 relative">
-                                <img src="{{ $item->image }}" alt="{{ \App\Helpers\SeoHelper::getImageAlt($service->judul, $item->title) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div class="w-full aspect-[16/9] overflow-hidden bg-[#2C1A0E] relative">
+                                <!-- Premium Skeleton Loader -->
+                                <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
+                                    <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
+                                    <div class="relative flex flex-col items-center gap-3 animate-pulse">
+                                        <i class="fas fa-image text-[#D4A574]/30 text-5xl"></i>
+                                        <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
+                                    </div>
+                                </div>
+                                
+                                @php
+                                    $isAvailable = ($item->availability ?? 'Available') !== 'Not Available';
+                                @endphp
+                                <img src="{{ $item->image }}" 
+                                     onload="this.previousElementSibling.style.display='none'"
+                                     alt="{{ \App\Helpers\SeoHelper::getImageAlt($service->judul, $item->title) }}" 
+                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2; {{ !$isAvailable ? 'filter: grayscale(100%);' : '' }}" loading="lazy">
+                                
+                                @if(!$isAvailable)
+                                <div class="absolute inset-0 flex items-center justify-center bg-black/40" style="z-index: 10; pointer-events: none;">
+                                    <div class="transform -rotate-45 border-2 border-red-600 rounded px-2 py-1 bg-black/50 backdrop-blur-sm text-center whitespace-nowrap">
+                                        <span class="text-red-500 font-black text-[10px] sm:text-xs md:text-[10px] lg:text-xs xl:text-sm tracking-widest uppercase" style="text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">
+                                            NOT AVAILABLE
+                                        </span>
+                                    </div>
+                                </div>
+                                @endif
+                                
                                 @if(!empty($item->kota))
-                                    <span class="hidden sm:inline-flex absolute top-4 left-4 px-3 py-1 bg-black/70 backdrop-blur-sm text-[#D4A574] text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-full border border-white/10 z-10">
+                                    <span class="hidden sm:inline-flex absolute top-4 left-4 px-3 py-1 bg-black/70 backdrop-blur-sm text-[#D4A574] text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-full border border-white/10" style="z-index: 3;">
                                         {{ $item->kota }}
                                     </span>
                                 @endif
@@ -100,8 +130,8 @@
                         </div>
 
                         <div class="px-3 sm:px-4 lg:px-6 pb-3 sm:pb-4 lg:pb-6 pt-1 mt-auto">
-                            <a href="{{ isset($item->detail_url) ? $item->detail_url : route('dummy.detail') }}" class="w-full inline-flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-[10px] sm:text-[11px] lg:text-sm uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
-                                {{ __('LIHAT DETAIL') }} 
+                            <a href="{{ isset($item->detail_url) ? $item->detail_url : route('dummy.detail') }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-[10px] sm:text-[11px] lg:text-sm uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
+                                <span>{{ __('LIHAT DETAIL') }}</span>
                                 <i class="fas fa-arrow-right text-[10px] sm:text-xs transition-transform duration-300 group-hover/btn:translate-x-1"></i>
                             </a>
                         </div>

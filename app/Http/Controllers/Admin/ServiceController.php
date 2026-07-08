@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Service;
 use App\Models\Heroe;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class ServiceController extends Controller
 {
@@ -67,10 +69,20 @@ class ServiceController extends Controller
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = uniqid() . '.webp';
 
+            // Proses gambar menggunakan Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            
+            // Resize jika lebar lebih dari 1920px
+            $image->scaleDown(width: 1920);
+            
+            // Convert ke WebP dengan kualitas 80%
+            $encoded = $image->toWebp(80);
+            
             // Simpan file ke storage/app/public/image_service
-            $file->storeAs('image_service', $fileName, 'public');
+            Storage::disk('public')->put('image_service/' . $fileName, (string) $encoded);
 
             // Simpan nama file di database
             $service->gambar = $fileName;
@@ -118,15 +130,25 @@ class ServiceController extends Controller
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = uniqid() . '.webp';
 
             // Hapus gambar lama jika ada
             if ($service->gambar && Storage::disk('public')->exists('image_service/' . $service->gambar)) {
                 Storage::disk('public')->delete('image_service/' . $service->gambar);
             }
 
+            // Proses gambar menggunakan Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            
+            // Resize jika lebar lebih dari 1920px
+            $image->scaleDown(width: 1920);
+            
+            // Convert ke WebP dengan kualitas 80%
+            $encoded = $image->toWebp(80);
+            
             // Simpan file baru ke storage/app/public/image_service
-            $file->storeAs('image_service', $fileName, 'public');
+            Storage::disk('public')->put('image_service/' . $fileName, (string) $encoded);
 
             // Simpan nama file di database
             $service->gambar = $fileName;

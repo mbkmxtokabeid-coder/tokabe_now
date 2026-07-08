@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Service;
 use App\Models\Lokasi;
 use App\Models\Heroe;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class LokasiController extends Controller
 {
@@ -67,6 +69,13 @@ class LokasiController extends Controller
             ]
         );
 
+        if ($request->status === 'Aktif') {
+            $activeCount = Lokasi::where('status', 'Aktif')->count();
+            if ($activeCount >= 3) {
+                return redirect()->back()->withInput()->with('error', 'Maksimal 3 lokasi DOOH yang dapat diaktifkan untuk ditampilkan di halaman beranda.');
+            }
+        }
+
         $lokasi = new Lokasi();
         $lokasi->nama = [
             'id' => $request->nama_id,
@@ -90,15 +99,30 @@ class LokasiController extends Controller
         $lokasi->brand = $request->brand;
         $lokasi->display = $request->display;
         $lokasi->status = $request->status ?? 'Tidak aktif';
+        $lokasi->availability = $request->availability ?? 'Available';
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('image_lokasi', $fileName, 'public');
+            $fileName = uniqid() . '.webp';
+            
+            // Proses gambar menggunakan Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            
+            // Resize jika lebar lebih dari 1920px (mencegah gambar raksasa)
+            $image->scaleDown(width: 1920);
+            
+            // Convert ke WebP dengan kualitas 80%
+            $encoded = $image->toWebp(80);
+            
+            // Simpan file ke storage/app/public/image_lokasi
+            Storage::disk('public')->put('image_lokasi/' . $fileName, (string) $encoded);
+            
             $lokasi->gambar = $fileName;
         }
 
         $lokasi->save();
+        \Illuminate\Support\Facades\Cache::forget('homepage_data');
 
         return redirect()->route('lokasi-list')->with('success', 'Lokasi berhasil ditambahkan!');
     }
@@ -128,6 +152,13 @@ class LokasiController extends Controller
             // 'gambar' => 'required|image|mimes:png,jpg,jpeg|max:102400',
         ]);
 
+        if ($request->status === 'Aktif') {
+            $activeCount = Lokasi::where('status', 'Aktif')->where('id', '!=', $id)->count();
+            if ($activeCount >= 3) {
+                return redirect()->back()->withInput()->with('error', 'Maksimal 3 lokasi DOOH yang dapat diaktifkan untuk ditampilkan di halaman beranda.');
+            }
+        }
+
         $lokasi->nama = [
             'id' => $request->nama_id,
             'en' => $request->nama_en,
@@ -150,24 +181,36 @@ class LokasiController extends Controller
             'en' => $request->deskripsi_lokasi_en,
         ];
         $lokasi->status = $request->status ?? 'Tidak aktif';
+        $lokasi->availability = $request->availability ?? 'Available';
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = uniqid() . '.webp';
 
             // Hapus gambar lama jika ada
             if ($lokasi->gambar) {
                 Storage::disk('public')->delete('image_lokasi/' . $lokasi->gambar);
             }
 
-            // Simpan file baru ke storage/app/public/image_lokasi
-            $file->storeAs('image_lokasi', $fileName, 'public');
+            // Proses gambar menggunakan Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            
+            // Resize jika lebar lebih dari 1920px
+            $image->scaleDown(width: 1920);
+            
+            // Convert ke WebP dengan kualitas 80%
+            $encoded = $image->toWebp(80);
+            
+            // Simpan file ke storage/app/public/image_lokasi
+            Storage::disk('public')->put('image_lokasi/' . $fileName, (string) $encoded);
 
             // Simpan nama file di database
             $lokasi->gambar = $fileName;
         }
 
         $lokasi->save();
+        \Illuminate\Support\Facades\Cache::forget('homepage_data');
         return redirect()->route('lokasi-list')->with('success', 'Kamu berhasil meng-update lokasi!');
     }
 
@@ -183,6 +226,7 @@ class LokasiController extends Controller
 
             // Hapus data dari database
             $lokasi->delete();
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
 
             return redirect('/admin/lokasi-list')->with('success', 'You have successfully deleted DOOH data');
         }

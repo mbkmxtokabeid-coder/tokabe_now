@@ -139,7 +139,7 @@
                                 </div>
                             </div>
                             <!-- Service disini -->
-                            <x-servicecomponent />
+
                         </div>
                     </div>
                 </div>

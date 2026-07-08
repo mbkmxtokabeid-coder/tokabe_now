@@ -11,6 +11,8 @@ use App\Models\Lokasi;
 use App\Models\Lokasiooh;
 use App\Models\Heroe;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class LokasioohController extends Controller
 {
@@ -57,6 +59,13 @@ class LokasioohController extends Controller
             'gambar' => 'required|image|mimes:png,jpg,jpeg|max:2048',
         ]);
 
+        if ($request->status === 'Aktif') {
+            $activeCount = Lokasiooh::where('status', 'Aktif')->count();
+            if ($activeCount >= 3) {
+                return redirect()->back()->withInput()->with('error', 'Maksimal 3 lokasi OOH yang dapat diaktifkan untuk ditampilkan di halaman beranda.');
+            }
+        }
+
         $lokasiooh = new Lokasiooh();
         
         // Simpan data multi-bahasa sebagai array
@@ -79,15 +88,30 @@ class LokasioohController extends Controller
         $lokasiooh->mobil = $request->mobil;
         $lokasiooh->lighting = $request->lighting;
         $lokasiooh->status = $request->status ?? 'Tidak aktif';
+        $lokasiooh->availability = $request->availability ?? 'Available';
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('image_lokasiooh', $fileName, 'public');
+            $fileName = uniqid() . '.webp';
+            
+            // Proses gambar menggunakan Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            
+            // Resize jika lebar lebih dari 1920px (mencegah gambar raksasa)
+            $image->scaleDown(width: 1920);
+            
+            // Convert ke WebP dengan kualitas 80%
+            $encoded = $image->toWebp(80);
+            
+            // Simpan file ke storage/app/public/image_lokasiooh
+            Storage::disk('public')->put('image_lokasiooh/' . $fileName, (string) $encoded);
+            
             $lokasiooh->gambar = $fileName;
         }
 
         $lokasiooh->save();
+        \Illuminate\Support\Facades\Cache::forget('homepage_data');
         return redirect('/admin/lokasiooh-wilayah')->with('success', 'Kamu berhasil menambahkan Lokasi baru!');
     }
 
@@ -110,6 +134,13 @@ class LokasioohController extends Controller
             'provinsi' => 'required',
         ]);
 
+        if ($request->status === 'Aktif') {
+            $activeCount = Lokasiooh::where('status', 'Aktif')->where('id', '!=', $id)->count();
+            if ($activeCount >= 3) {
+                return redirect()->back()->withInput()->with('error', 'Maksimal 3 lokasi OOH yang dapat diaktifkan untuk ditampilkan di halaman beranda.');
+            }
+        }
+
         // Update data multi-bahasa
         $lokasiooh->nama = [
             'id' => $request->nama_id,
@@ -128,22 +159,36 @@ class LokasioohController extends Controller
         $lokasiooh->motor = $request->motor;
         $lokasiooh->mobil = $request->mobil;
         $lokasiooh->status = $request->status ?? 'Tidak aktif';
+        $lokasiooh->availability = $request->availability ?? 'Available';
         $lokasiooh->provinsi = $request->provinsi;
         $lokasiooh->lighting = $request->lighting;
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = uniqid() . '.webp';
 
             if ($lokasiooh->gambar) {
                 Storage::disk('public')->delete('image_lokasiooh/' . $lokasiooh->gambar);
             }
 
-            $file->storeAs('image_lokasiooh', $fileName, 'public');
+            // Proses gambar menggunakan Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            
+            // Resize jika lebar lebih dari 1920px
+            $image->scaleDown(width: 1920);
+            
+            // Convert ke WebP dengan kualitas 80%
+            $encoded = $image->toWebp(80);
+            
+            // Simpan file ke storage/app/public/image_lokasiooh
+            Storage::disk('public')->put('image_lokasiooh/' . $fileName, (string) $encoded);
+            
             $lokasiooh->gambar = $fileName;
         }
 
         $lokasiooh->save();
+        \Illuminate\Support\Facades\Cache::forget('homepage_data');
         return redirect('/admin/lokasiooh-list/' . $lokasiooh->wilayah)->with('update', 'Kamu berhasil meng-update lokasi!');
     }
 
@@ -162,6 +207,7 @@ class LokasioohController extends Controller
         }
 
         $lokasiooh->delete();
+        \Illuminate\Support\Facades\Cache::forget('homepage_data');
 
         $remainingLocations = Lokasiooh::where('wilayah', $wilayah)->exists();
 

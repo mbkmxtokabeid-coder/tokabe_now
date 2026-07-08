@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Heroe;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class HeroController extends Controller
 {
@@ -69,10 +71,20 @@ class HeroController extends Controller
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = uniqid() . '.webp';
+            
+            // Proses gambar menggunakan Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            
+            // Resize jika lebar lebih dari 1920px (mencegah gambar raksasa)
+            $image->scaleDown(width: 1920);
+            
+            // Convert ke WebP dengan kualitas 80%
+            $encoded = $image->toWebp(80);
             
             // Simpan file ke storage/app/public/image_hero
-            $file->storeAs('image_hero', $fileName, 'public');
+            Storage::disk('public')->put('image_hero/' . $fileName, (string) $encoded);
 
             // Simpan nama file di database
             $hero->gambar = $fileName;
@@ -120,15 +132,25 @@ class HeroController extends Controller
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = uniqid() . '.webp';
 
             // Hapus gambar lama jika ada
             if ($hero->gambar) {
                 Storage::disk('public')->delete('image_hero/' . $hero->gambar);
             }
 
-            // Simpan file baru
-            $file->storeAs('image_hero', $fileName, 'public');
+            // Proses gambar menggunakan Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
+            
+            // Resize jika lebar lebih dari 1920px
+            $image->scaleDown(width: 1920);
+            
+            // Convert ke WebP dengan kualitas 80%
+            $encoded = $image->toWebp(80);
+            
+            // Simpan file ke storage/app/public/image_hero
+            Storage::disk('public')->put('image_hero/' . $fileName, (string) $encoded);
 
             // Simpan nama file di database
             $hero->gambar = $fileName;

@@ -45,7 +45,8 @@
             <div class="hero-slide w-full h-full flex-shrink-0 relative">
                 <div class="absolute inset-0 bg-gradient-to-br from-[#2C1A0E]/85 via-[#1A0F07]/60 to-[#2C1A0E]/80 z-10"></div>
                 @if($hero->gambar)
-                    <img src="{{ asset('storage/image_hero/' . $hero->gambar) }}" class="w-full h-full object-cover z-0" alt="{{ \App\Helpers\SeoHelper::getImageAlt('hero', $judul) }}">
+                    <img src="{{ asset('storage/image_hero/' . $hero->gambar) }}" class="w-full h-full object-cover z-0" alt="{{ \App\Helpers\SeoHelper::getImageAlt('hero', $judul) }}" 
+                    @if($index === 0) fetchpriority="high" @else loading="lazy" @endif>
                 @else
                     <div class="w-full h-full bg-gray-800 z-0"></div>
                 @endif
@@ -60,7 +61,7 @@
                         <div class="flex {{ $hasCounts ? 'flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 max-w-5xl' : 'flex-col items-center justify-center max-w-5xl' }} w-full mx-auto">
                             
                              <!-- Teks -->
-                            <div class="reveal-target-left reveal-left-hidden delay-text {{ $hasCounts ? 'text-center lg:text-left flex-1' : 'text-center w-full mb-12' }}">
+                            <div class="reveal-target-left {{ $index === 0 ? 'reveal-left-active' : 'reveal-left-hidden' }} delay-text {{ $hasCounts ? 'text-center lg:text-left flex-1' : 'text-center w-full mb-12' }}">
                                 @php
                                     $deskripsi = is_array($hero->deskripsi) ? ($hero->deskripsi[app()->getLocale()] ?? $hero->deskripsi['id'] ?? $hero->deskripsi['en'] ?? collect($hero->deskripsi)->first() ?? '') : $hero->deskripsi;
                                 @endphp
@@ -78,7 +79,7 @@
                             <!-- Kotak Statistik Sebelah Kanan -->
                             <div class="flex-shrink-0 flex flex-wrap justify-center gap-5">
                                 @if($hero->dooh_count > 0)
-                                <div class="reveal-target-right reveal-right-hidden delay-box-1 bg-white/10 backdrop-blur-md rounded-xl w-44 lg:w-52 aspect-square p-5 border border-white/20 shadow-xl text-center flex flex-col justify-center items-center group hover:-translate-y-2 hover:bg-white/20 hover:border-[#D4A574]/50 transition-all duration-500">
+                                <div class="reveal-target-right {{ $index === 0 ? 'reveal-right-active' : 'reveal-right-hidden' }} delay-box-1 bg-white/10 backdrop-blur-md rounded-xl w-44 lg:w-52 aspect-square p-5 border border-white/20 shadow-xl text-center flex flex-col justify-center items-center group hover:-translate-y-2 hover:bg-white/20 hover:border-[#D4A574]/50 transition-all duration-500">
                                     <div class="w-12 h-12 bg-gradient-to-r from-[#8B5E3C] to-[#A0522D] text-white rounded-xl flex items-center justify-center text-xl mb-3 shadow-lg group-hover:scale-110 transition-transform">
                                         <i class="fas fa-tv"></i>
                                     </div>
@@ -86,12 +87,12 @@
                                         <span class="rolling-counter text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->dooh_count }}">0</span>
                                         <span class="text-xl font-black text-[#D4A574] ml-1">+</span>
                                     </div>
-                                    <h4 class="text-xs font-bold text-gray-200 uppercase tracking-widest group-hover:text-white mt-auto">DOOH / VIDEOTRON</h4>
+                                    <h2 class="text-xs font-bold text-gray-200 uppercase tracking-widest group-hover:text-white mt-auto">DOOH / VIDEOTRON</h2>
                                 </div>
                                 @endif
 
                                 @if($hero->ooh_count > 0)
-                                <div class="reveal-target-right reveal-right-hidden delay-box-2 bg-white/10 backdrop-blur-md rounded-xl w-44 lg:w-52 aspect-square p-5 border border-white/20 shadow-xl text-center flex flex-col justify-center items-center group hover:-translate-y-2 hover:bg-white/20 hover:border-[#D4A574]/50 transition-all duration-500">
+                                <div class="reveal-target-right {{ $index === 0 ? 'reveal-right-active' : 'reveal-right-hidden' }} delay-box-2 bg-white/10 backdrop-blur-md rounded-xl w-44 lg:w-52 aspect-square p-5 border border-white/20 shadow-xl text-center flex flex-col justify-center items-center group hover:-translate-y-2 hover:bg-white/20 hover:border-[#D4A574]/50 transition-all duration-500">
                                     <div class="w-12 h-12 bg-gradient-to-r from-[#8B5E3C] to-[#A0522D] text-white rounded-xl flex items-center justify-center text-xl mb-3 shadow-lg group-hover:scale-110 transition-transform">
                                         <i class="fas fa-layer-group"></i>
                                     </div>
@@ -99,7 +100,7 @@
                                         <span class="rolling-counter text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->ooh_count }}">0</span>
                                         <span class="text-xl font-black text-[#D4A574] ml-1">+</span>
                                     </div>
-                                    <h4 class="text-xs font-bold text-gray-200 uppercase tracking-widest group-hover:text-white mt-auto">OOH / BILLBOARD</h4>
+                                    <h2 class="text-xs font-bold text-gray-200 uppercase tracking-widest group-hover:text-white mt-auto">OOH / BILLBOARD</h2>
                                 </div>
                                 @endif
                             </div>

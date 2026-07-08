@@ -44,24 +44,23 @@
                                               enctype="multipart/form-data">
                                             @csrf
 
-                                            {{-- NAMA KATEGORI (DINAMIS) --}}
-                                            <div class="form-group">
-                                                <label>Nama Kategori</label>
-                                                <div id="kategori-wrapper">
-                                                    <div class="input-group mb-2">
-                                                        <input type="text"
-                                                               name="nama_kategori[]"
-                                                               class="form-control"
-                                                               placeholder="Contoh: Web Design, Frontend">
-                                                        <button type="button"
-                                                                class="btn btn-danger remove-row">Hapus</button>
-                                                    </div>
+                                            {{-- NAMA KATEGORI --}}
+                                            <div class="row">
+                                                <div class="col-md-6 form-group mb-3">
+                                                    <label>Nama Kategori (Indonesia)</label>
+                                                    <input type="text"
+                                                           name="nama_kategori_id"
+                                                           class="form-control"
+                                                           value="{{ old('nama_kategori_id') }}"
+                                                           required>
                                                 </div>
-                                                <button type="button"
-                                                        id="add-row"
-                                                        class="btn btn-secondary mt-2">
-                                                    + Tambah Kategori
-                                                </button>
+                                                <div class="col-md-6 form-group mb-3">
+                                                    <label>Nama Kategori (English)</label>
+                                                    <input type="text"
+                                                           name="nama_kategori_en"
+                                                           class="form-control"
+                                                           value="{{ old('nama_kategori_en') }}">
+                                                </div>
                                             </div>
 
                                             {{-- GAMBAR KATEGORI --}}
@@ -110,25 +109,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
-    // tambah kategori
-    document.getElementById('add-row').addEventListener('click', function() {
-        const wrapper = document.getElementById('kategori-wrapper');
-        const row = document.createElement('div');
-        row.classList.add('input-group', 'mb-2');
-        row.innerHTML = `
-            <input type="text" name="nama_kategori[]" class="form-control"
-                   placeholder="Contoh: UI/UX, Mobile App">
-            <button type="button" class="btn btn-danger remove-row">Hapus</button>
-        `;
-        wrapper.appendChild(row);
-    });
 
-    // hapus kategori
-    document.getElementById('kategori-wrapper').addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-row')) {
-            e.target.closest('.input-group').remove();
-        }
-    });
 
     // preview gambar
     document.getElementById('imageInput').addEventListener('change', function(e) {

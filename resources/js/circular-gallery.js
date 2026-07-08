@@ -193,6 +193,8 @@ class Media {
         uniform sampler2D tMap;
         uniform sampler2D tText;
         uniform float uBorderRadius;
+        uniform float uTime;
+        uniform float uLoaded;
         varying vec2 vUv;
         
         float roundedBoxSDF(vec2 p, vec2 b, float r) {
@@ -209,7 +211,36 @@ class Media {
             vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
             vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
           );
-          vec4 color = texture2D(tMap, uv);
+          
+          vec4 color = vec4(0.0);
+          
+          if (uLoaded < 0.5) {
+              // Premium Skeleton Loader Effect
+              // Base gradient from #3E2718 to #2C1A0E
+              vec3 topColor = vec3(0.243, 0.153, 0.094); 
+              vec3 bottomColor = vec3(0.173, 0.102, 0.055);
+              vec3 gradColor = mix(topColor, bottomColor, vUv.y);
+              
+              // Read placeholder texture (gold icon and bar)
+              vec4 placeholder = texture2D(tMap, uv);
+              
+              // Composite icon over gradient
+              color.rgb = mix(gradColor, placeholder.rgb, placeholder.a);
+              color.a = 1.0;
+              
+              // Animated Pulse
+              float pulse = (sin(uTime * 2.0) * 0.5 + 0.5) * 0.15;
+              color.rgb -= pulse; 
+              
+              // Diagonal Shimmer Band
+              float shimmer = fract(vUv.x * 1.5 - vUv.y + uTime * 0.3);
+              if (shimmer > 0.7) {
+                  float intensity = smoothstep(0.7, 0.85, shimmer) * smoothstep(1.0, 0.85, shimmer);
+                  color.rgb += intensity * 0.15;
+              }
+          } else {
+              color = texture2D(tMap, uv);
+          }
           
           // Add dark gradient overlay at the bottom
           float gradient = smoothstep(0.0, 0.7, vUv.y);
@@ -235,19 +266,67 @@ class Media {
                 tMap: { value: texture },
                 tText: { value: tText },
                 uPlaneSizes: { value: [0, 0] },
-                uImageSizes: { value: [0, 0] },
+                uImageSizes: { value: [1, 1] },
                 uSpeed: { value: 0 },
                 uTime: { value: 100 * Math.random() },
-                uBorderRadius: { value: this.borderRadius }
+                uBorderRadius: { value: this.borderRadius },
+                uLoaded: { value: 0.0 }
             },
             transparent: true
         });
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = 1024; tempCanvas.height = 1024;
+        const ctx = tempCanvas.getContext('2d');
+        
+        // Draw icon and bar
+        const cx = 512, cy = 512, iconSize = 240, barWidth = 180, barHeight = 20;
+        
+        ctx.save();
+        ctx.translate(cx - iconSize/2, cy - iconSize/2 - 40);
+        
+        let x = 0, y = 0, w = iconSize, h = iconSize * 0.8, r = 24;
+        ctx.beginPath();
+        ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+        ctx.lineWidth = 20;
+        ctx.strokeStyle = 'rgba(212, 165, 116, 0.3)'; // #D4A574 with 30% opacity
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(iconSize * 0.7, iconSize * 0.25, iconSize * 0.12, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(212, 165, 116, 0.3)';
+        ctx.fill();
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+        ctx.clip();
+        
+        ctx.beginPath();
+        ctx.moveTo(-iconSize*0.1, iconSize*0.9);
+        ctx.lineTo(iconSize*0.3, iconSize*0.4);
+        ctx.lineTo(iconSize*0.6, iconSize*0.8);
+        ctx.lineTo(iconSize*0.8, iconSize*0.5);
+        ctx.lineTo(iconSize*1.2, iconSize*0.9);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+        ctx.restore();
+        
+        ctx.fillStyle = 'rgba(212, 165, 116, 0.2)'; // #D4A574 with 20% opacity
+        ctx.beginPath();
+        x = cx - barWidth/2; y = cy + iconSize/2 + 20; w = barWidth; h = barHeight; r = barHeight/2;
+        ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+        ctx.fill();
+        
+        texture.image = tempCanvas;
+
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.src = this.image;
         img.onload = () => {
             texture.image = img;
             this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
+            this.program.uniforms.uLoaded.value = 1.0;
         };
     }
     createMesh() {

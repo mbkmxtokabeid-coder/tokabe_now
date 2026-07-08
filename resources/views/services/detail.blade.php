@@ -4,8 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ is_array($service->judul) ? ($service->judul[app()->getLocale()] ?? $service->judul['id'] ?? $service->judul['en'] ?? '') : $service->judul }} - Tokabe.id</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-[#2C1A0E] antialiased text-white font-sans">
@@ -15,7 +18,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 @php
                     $waTitle = is_array($service->judul) ? ($service->judul[app()->getLocale()] ?? $service->judul['id'] ?? '') : $service->judul;
-                    $imageUrl = $service->gambar ? asset('storage/image_service/' . $service->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=1200&auto=format&fit=crop';
+                    $imageUrl = (isset($service->gambar) && $service->gambar) ? asset('storage/image_service/' . $service->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=1200&auto=format&fit=crop';
                     $svcPhone = isset($globalContact) && $globalContact->phone ? $globalContact->phone : '628115239999';
                     $svcMessage = isset($globalContact) && $globalContact->message 
                                     ? urlencode($globalContact->message) 
@@ -36,12 +39,20 @@
                 @endphp
 
                 <!-- Desktop View (Large Image Card Overlay) -->
-                <div class="hidden md:flex relative w-full rounded-3xl overflow-hidden shadow-2xl min-h-[600px] lg:min-h-[70vh] flex-col justify-end group">
+                <div class="hidden md:flex relative w-full rounded-3xl overflow-hidden shadow-2xl min-h-[600px] lg:min-h-[70vh] flex-col justify-end group bg-[#2C1A0E]">
+                    <!-- Premium Skeleton Loader -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
+                        <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
+                        <div class="relative flex flex-col items-center gap-3 animate-pulse">
+                            <i class="fas fa-image text-[#D4A574]/30 text-5xl"></i>
+                            <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
+                        </div>
+                    </div>
                     <!-- Background Image -->
-                    <img src="{{ $imageUrl }}" alt="{{ $waTitle }}" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
+                    <img src="{{ $imageUrl }}" alt="{{ $waTitle }}" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" style="z-index: 2;" onload="this.previousElementSibling.style.display='none'" fetchpriority="high">
                     
                     <!-- Gradient Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#1F1611] via-[#2C1A0E]/80 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#1F1611] via-[#2C1A0E]/80 to-transparent" style="z-index: 3;"></div>
                     
                     <!-- Content Over Image -->
                     <div class="relative z-10 p-8 md:p-12 w-full">
@@ -78,8 +89,16 @@
                 <!-- Mobile View (Stacked Layout) -->
                 <div class="flex flex-col md:hidden gap-6">
                     <!-- Image Card (No Gradient) -->
-                    <div class="w-full rounded-3xl overflow-hidden shadow-lg aspect-square sm:aspect-video relative">
-                        <img src="{{ $imageUrl }}" alt="{{ $waTitle }}" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="w-full rounded-3xl overflow-hidden shadow-lg aspect-square sm:aspect-video relative bg-[#2C1A0E]">
+                        <!-- Premium Skeleton Loader -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
+                            <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
+                            <div class="relative flex flex-col items-center gap-3 animate-pulse">
+                                <i class="fas fa-image text-[#D4A574]/30 text-5xl"></i>
+                                <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
+                            </div>
+                        </div>
+                        <img src="{{ $imageUrl }}" alt="{{ $waTitle }}" class="absolute inset-0 w-full h-full object-cover" style="z-index: 2;" onload="this.previousElementSibling.style.display='none'" fetchpriority="high">
                     </div>
                     
                     <!-- Content Below Image -->

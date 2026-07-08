@@ -27,18 +27,23 @@
     }
 </style>
 
-@if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
-
 <section class="pcoded-main-container">
     <div class="pcoded-wrapper">
         <div class="pcoded-content">
             <div class="pcoded-inner-content">
                 <div class="main-body">
                     <div class="page-wrapper">
+                        @if(session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if(session('error'))
+                            <div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                         <div class="page-header">
                             <div class="page-block">
                                 <div class="row align-items-center">
@@ -240,6 +245,18 @@
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
+
+                                                    <div class="col-lg-6 mt-3 mt-lg-0">
+                                                        <label class="form-label"
+                                                            for="availabilitySelect">Availability</label>
+                                                        <select class="form-control" name="availability" id="availabilitySelect">
+                                                            <option value="Available" {{ old('availability', $lokasis->availability) == 'Available' ? 'selected' : '' }}>Available</option>
+                                                            <option value="Not Available" {{ old('availability', $lokasis->availability) == 'Not Available' ? 'selected' : '' }}>Not Available</option>
+                                                        </select>
+                                                        @error('availability')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -248,6 +265,28 @@
                                                 <a href="/admin/lokasi-list" class="btn btn-danger">Cancel</a>
                                             </div>
                                         </form>
+                                        <script>
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                                const statusSelect = document.getElementById('exampleFormControlSelect1');
+                                                const availabilitySelect = document.getElementById('availabilitySelect');
+                                                
+                                                function checkAvailability() {
+                                                    if (availabilitySelect.value === 'Not Available') {
+                                                        statusSelect.value = 'Tidak aktif';
+                                                        Array.from(statusSelect.options).forEach(opt => {
+                                                            if (opt.value === 'Aktif') opt.disabled = true;
+                                                        });
+                                                    } else {
+                                                        Array.from(statusSelect.options).forEach(opt => {
+                                                            if (opt.value === 'Aktif') opt.disabled = false;
+                                                        });
+                                                    }
+                                                }
+                                                
+                                                availabilitySelect.addEventListener('change', checkAvailability);
+                                                checkAvailability();
+                                            });
+                                        </script>
                                     </div> <!-- card-body -->
                                 </div> <!-- card -->
                             </div> <!-- col-lg-12 -->

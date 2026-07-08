@@ -44,13 +44,27 @@
                                     @method('PUT')
 
                                     {{-- JUDUL --}}
-                                    <div class="form-group mb-3">
-                                        <label>Judul</label>
-                                        <input type="text"
-                                               name="judul"
-                                               class="form-control"
-                                               value="{{ old('judul', $portofolio->judul) }}"
-                                               required>
+                                    @php
+                                        $judulArray = json_decode($portofolio->judul, true);
+                                        $judul_id = is_array($judulArray) ? ($judulArray['id'] ?? $portofolio->judul) : $portofolio->judul;
+                                        $judul_en = is_array($judulArray) ? ($judulArray['en'] ?? '') : '';
+                                    @endphp
+                                    <div class="row">
+                                        <div class="col-md-6 form-group mb-3">
+                                            <label>Judul (Indonesia)</label>
+                                            <input type="text"
+                                                   name="judul_id"
+                                                   class="form-control"
+                                                   value="{{ old('judul_id', $judul_id) }}"
+                                                   required>
+                                        </div>
+                                        <div class="col-md-6 form-group mb-3">
+                                            <label>Judul (English)</label>
+                                            <input type="text"
+                                                   name="judul_en"
+                                                   class="form-control"
+                                                   value="{{ old('judul_en', $judul_en) }}">
+                                        </div>
                                     </div>
 
                                     {{-- KATEGORI --}}
@@ -85,9 +99,24 @@
                                     </div>
 
                                     {{-- DESKRIPSI --}}
-                                    <div class="form-group mb-3">
-                                        <label>Deskripsi</label>
-                                        <textarea name="deskripsi" class="form-control" rows="4">{{ old('deskripsi', $portofolio->deskripsi) }}</textarea>
+                                    @php
+                                        $deskripsiArray = json_decode($portofolio->deskripsi, true);
+                                        $deskripsi_id = is_array($deskripsiArray) ? ($deskripsiArray['id'] ?? $portofolio->deskripsi) : $portofolio->deskripsi;
+                                        $deskripsi_en = is_array($deskripsiArray) ? ($deskripsiArray['en'] ?? '') : '';
+                                    @endphp
+                                    <div class="row">
+                                        <div class="col-md-6 form-group mb-3">
+                                            <label>Deskripsi (Indonesia)</label>
+                                            <textarea name="deskripsi_id"
+                                                      class="form-control"
+                                                      rows="4">{{ old('deskripsi_id', $deskripsi_id) }}</textarea>
+                                        </div>
+                                        <div class="col-md-6 form-group mb-3">
+                                            <label>Deskripsi (English)</label>
+                                            <textarea name="deskripsi_en"
+                                                      class="form-control"
+                                                      rows="4">{{ old('deskripsi_en', $deskripsi_en) }}</textarea>
+                                        </div>
                                     </div>
 
                                     <hr class="my-4">

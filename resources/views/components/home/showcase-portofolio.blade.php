@@ -1,7 +1,5 @@
 @props(['categories', 'portofolios'])
 
-@vite(['resources/js/circular-gallery.js'])
-
 <style>
     .port-tab-container-relative {
         position: relative;
@@ -116,18 +114,38 @@
                         const items = @json($galleryItems);
                         const container = document.getElementById('circular-gallery-container');
                         
-                        // Small delay to ensure CircularGalleryApp is attached to window
-                        setTimeout(() => {
-                            if(container && window.CircularGalleryApp) {
-                                window.portofolioApp = new window.CircularGalleryApp(container, {
-                                    items: items,
-                                    bend: 2, 
-                                    textColor: '#ffffff',
-                                    borderRadius: 0.05,
-                                    font: 'bold 30px sans-serif'
+                        if(container && window.IntersectionObserver) {
+                            const observer = new IntersectionObserver((entries, obs) => {
+                                entries.forEach(async entry => {
+                                    if(entry.isIntersecting) {
+                                        // Dynamically import the gallery script only when visible
+                                        if(!window.CircularGalleryApp) {
+                                            try {
+                                                // We use Vite's dynamic import capabilities
+                                                await import('{{ Vite::asset('resources/js/circular-gallery.js') }}');
+                                            } catch (e) {
+                                                console.error("Failed to load 3D gallery module:", e);
+                                            }
+                                        }
+                                        
+                                        setTimeout(() => {
+                                            if(window.CircularGalleryApp && !window.portofolioApp) {
+                                                window.portofolioApp = new window.CircularGalleryApp(container, {
+                                                    items: items,
+                                                    bend: 2, 
+                                                    textColor: '#ffffff',
+                                                    borderRadius: 0.05,
+                                                    font: 'bold 30px sans-serif'
+                                                });
+                                            }
+                                        }, 100);
+                                        obs.unobserve(entry.target);
+                                    }
                                 });
-                            }
-                        }, 500);
+                            }, { rootMargin: '200px' });
+                            
+                            observer.observe(container);
+                        }
                     });
                 </script>
 
@@ -145,50 +163,17 @@
             <!-- Legality Grid (Hidden by default) -->
             <div id="legality-grid" class="port-tab-content">
                 @php
-                    $legalitasItems = [
-                        [
-                            'image' => asset('images/npwp.png'),
-                            'text' => 'NPWP',
+                    $legalities = \App\Models\Legality::where('is_active', true)->orderBy('sort_order')->get();
+                    $legalitasItems = [];
+                    foreach($legalities as $leg) {
+                        $legalitasItems[] = [
+                            'image' => $leg->image ? asset('storage/' . $leg->image) : '',
+                            'text' => app()->getLocale() == 'en' ? $leg->name_en : $leg->name_id,
                             'category' => 'LG',
-                            'date' => '40.705.xxx.x-xxx.000',
+                            'date' => app()->getLocale() == 'en' ? $leg->description_en : $leg->description_id,
                             'url' => '#'
-                        ],
-                        [
-                            'image' => asset('images/nib.jpeg'),
-                            'text' => 'NIB',
-                            'category' => 'LG',
-                            'date' => '28042xxxxxx93',
-                            'url' => '#'
-                        ],
-                        [
-                            'image' => asset('images/AHU-logo.png'),
-                            'text' => 'Kemenkumham AHU',
-                            'category' => 'LG',
-                            'date' => 'AHU-003xxxx.AH.01.01',
-                            'url' => '#'
-                        ],
-                        [
-                            'image' => asset('images/kadin.png'),
-                            'text' => 'KADIN',
-                            'category' => 'LG',
-                            'date' => '10201-24xxxxxx611',
-                            'url' => '#'
-                        ],
-                        [
-                            'image' => asset('images/bpjs.png'),
-                            'text' => 'BPJS Ketenagakerjaan',
-                            'category' => 'LG',
-                            'date' => '24xxxx73',
-                            'url' => '#'
-                        ],
-                        [
-                            'image' => asset('images/Logo-BNSP.png'),
-                            'text' => 'BNSP Event Organizer',
-                            'category' => 'LG',
-                            'date' => 'No. Reg EVN.2518.xxxx',
-                            'url' => '#'
-                        ]
-                    ];
+                        ];
+                    }
                 @endphp
 
                 <!-- Circular Gallery Canvas Container for Legality -->
@@ -199,19 +184,37 @@
                         const items = @json($legalitasItems);
                         const container = document.getElementById('circular-gallery-legality-container');
                         
-                        // Small delay to ensure CircularGalleryApp is attached to window
-                        setTimeout(() => {
-                            if(container && window.CircularGalleryApp) {
-                                window.legalityApp = new window.CircularGalleryApp(container, {
-                                    items: items,
-                                    bend: 2, 
-                                    textColor: '#ffffff',
-                                    borderRadius: 0.05,
-                                    font: 'bold 30px sans-serif',
-                                    showButton: false
+                        if(container && window.IntersectionObserver) {
+                            const observer = new IntersectionObserver((entries, obs) => {
+                                entries.forEach(async entry => {
+                                    if(entry.isIntersecting) {
+                                        // Initialize only when visible
+                                        if(!window.CircularGalleryApp) {
+                                            try {
+                                                await import('{{ Vite::asset('resources/js/circular-gallery.js') }}');
+                                            } catch (e) {
+                                                console.error("Failed to load 3D gallery module:", e);
+                                            }
+                                        }
+                                        setTimeout(() => {
+                                            if(window.CircularGalleryApp && !window.legalityApp) {
+                                                window.legalityApp = new window.CircularGalleryApp(container, {
+                                                    items: items,
+                                                    bend: 2, 
+                                                    textColor: '#ffffff',
+                                                    borderRadius: 0.05,
+                                                    font: 'bold 30px sans-serif',
+                                                    showButton: false
+                                                });
+                                            }
+                                        }, 100);
+                                        obs.unobserve(entry.target);
+                                    }
                                 });
-                            }
-                        }, 500);
+                            }, { rootMargin: '200px' });
+                            
+                            observer.observe(container);
+                        }
                     });
                 </script>
             </div>
@@ -264,57 +267,64 @@
             }
         });
 
-        function updateSlider(activeBtn) {
-            if(slider && activeBtn) {
-                slider.style.left = activeBtn.offsetLeft + 'px';
-                slider.style.width = activeBtn.offsetWidth + 'px';
+        const tabPortofolio = document.getElementById('tab-portofolio');
+        const tabLegalitas = document.getElementById('tab-legalitas');
+        const legalityGrid = document.getElementById('legality-grid');
+        const activeBg = document.getElementById('active-tab-bg');
+        const portfolioContainer = document.getElementById('portfolio-container');
+
+        if (tabPortofolio && tabLegalitas && activeBg) {
+            function updateSlider(element) {
+                if(!element) return;
+                
+                requestAnimationFrame(() => {
+                    const rect = element.getBoundingClientRect();
+                    const parentRect = element.parentElement.getBoundingClientRect();
+                    
+                    requestAnimationFrame(() => {
+                        activeBg.style.width = `${rect.width}px`;
+                        activeBg.style.left = `${rect.left - parentRect.left}px`;
+                    });
+                });
             }
+
+            setTimeout(() => updateSlider(tabPortofolio), 100);
+
+            window.addEventListener('resize', () => {
+                const activeBtn = tabPortofolio.classList.contains('text-[#2C1A0E]') ? tabPortofolio : tabLegalitas;
+                updateSlider(activeBtn);
+            });
+
+            tabPortofolio.addEventListener('click', function() {
+                tabPortofolio.classList.remove('text-white/80', 'hover:text-white');
+                tabPortofolio.classList.add('text-[#2C1A0E]');
+                
+                tabLegalitas.classList.remove('text-[#2C1A0E]');
+                tabLegalitas.classList.add('text-white/80', 'hover:text-white');
+
+                updateSlider(tabPortofolio);
+
+                if (portfolioContainer && legalityGrid) {
+                    legalityGrid.classList.remove('active');
+                    portfolioContainer.classList.add('active');
+                }
+            });
+
+            tabLegalitas.addEventListener('click', function() {
+                tabLegalitas.classList.remove('text-white/80', 'hover:text-white');
+                tabLegalitas.classList.add('text-[#2C1A0E]');
+                
+                tabPortofolio.classList.remove('text-[#2C1A0E]');
+                tabPortofolio.classList.add('text-white/80', 'hover:text-white');
+
+                updateSlider(tabLegalitas);
+
+                if (portfolioContainer && legalityGrid) {
+                    portfolioContainer.classList.remove('active');
+                    legalityGrid.classList.add('active');
+                }
+            });
         }
-
-        // Initialize slider position
-        setTimeout(() => {
-            updateSlider(tabPortofolio);
-        }, 100);
-
-        window.addEventListener('resize', () => {
-            const activeBtn = tabPortofolio.classList.contains('text-[#2C1A0E]') ? tabPortofolio : tabLegalitas;
-            updateSlider(activeBtn);
-        });
-
-        // Tab click listeners
-        tabPortofolio.addEventListener('click', function() {
-            // Update button styles
-            tabPortofolio.classList.remove('text-white/80', 'hover:text-white');
-            tabPortofolio.classList.add('text-[#2C1A0E]');
-            
-            tabLegalitas.classList.remove('text-[#2C1A0E]');
-            tabLegalitas.classList.add('text-white/80', 'hover:text-white');
-
-            updateSlider(tabPortofolio);
-
-            const portfolioContainer = document.getElementById('portfolio-container');
-
-            // Show portfolio, hide legality
-            legalityGrid.classList.remove('active');
-            portfolioContainer.classList.add('active');
-        });
-
-        tabLegalitas.addEventListener('click', function() {
-            // Update button styles
-            tabLegalitas.classList.remove('text-white/80', 'hover:text-white');
-            tabLegalitas.classList.add('text-[#2C1A0E]');
-            
-            tabPortofolio.classList.remove('text-[#2C1A0E]');
-            tabPortofolio.classList.add('text-white/80', 'hover:text-white');
-
-            updateSlider(tabLegalitas);
-
-            const portfolioContainer = document.getElementById('portfolio-container');
-
-            // Show legality, hide portfolio
-            portfolioContainer.classList.remove('active');
-            legalityGrid.classList.add('active');
-        });
 
         // Add ResizeObserver to auto-fix WebGL canvas dimensions
         // whenever the tab containers are shown/hidden or resized.

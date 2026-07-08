@@ -24,8 +24,8 @@ class PortofolioCategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_kategori'   => 'required|array',
-            'nama_kategori.*' => 'required|string|max:100',
+            'nama_kategori_id' => 'required|string|max:100',
+            'nama_kategori_en' => 'nullable|string|max:100',
             'tanggal'         => 'nullable|date',
             'klien'           => 'nullable|string|max:255',
             'lokasi'          => 'nullable|string|max:255',
@@ -38,15 +38,15 @@ class PortofolioCategoryController extends Controller
             $imagePath = $request->file('image')->store('kategori', 'public');
         }
 
-        foreach ($request->nama_kategori as $nama) {
-            PortofolioCategory::create([
-                'nama_kategori' => $nama,
-                'tanggal'       => $request->tanggal,
-                'klien'         => $request->klien,
-                'lokasi'        => $request->lokasi,
-                'image'         => $imagePath,
-            ]);
-        }
+        $nama_kategori = json_encode(['id' => $request->nama_kategori_id, 'en' => $request->nama_kategori_en]);
+
+        PortofolioCategory::create([
+            'nama_kategori' => $nama_kategori,
+            'tanggal'       => $request->tanggal,
+            'klien'         => $request->klien,
+            'lokasi'        => $request->lokasi,
+            'image'         => $imagePath,
+        ]);
 
         return redirect()
             ->route('portofolio_categories.index')
@@ -64,7 +64,8 @@ class PortofolioCategoryController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_kategori' => 'required|string|max:100',
+            'nama_kategori_id' => 'required|string|max:100',
+            'nama_kategori_en' => 'nullable|string|max:100',
             'tanggal'       => 'nullable|date',
             'klien'         => 'nullable|string|max:255',
             'lokasi'        => 'nullable|string|max:255',
@@ -81,7 +82,7 @@ class PortofolioCategoryController extends Controller
         }
 
         $category->update([
-            'nama_kategori' => $request->nama_kategori,
+            'nama_kategori' => json_encode(['id' => $request->nama_kategori_id, 'en' => $request->nama_kategori_en]),
             'tanggal'       => $request->tanggal,
             'klien'         => $request->klien,
             'lokasi'        => $request->lokasi,

@@ -57,7 +57,7 @@
                                                 <div class="dt-responsive table-responsive">
 
                                                     <table id="simpletable"
-                                                        class="table table-striped table-bordered nowrap">
+                                                        class="table table-striped table-bordered">
                                                         <thead>
                                                             <tr>
                                                                 <th>ID</th>
@@ -66,6 +66,7 @@
                                                                 <th>Region</th>
                                                                 <th>Provinsi</th>
                                                                 <th>Status</th>
+                                                                <th>Availability</th>
                                                                 <th>Image</th>
                                                                 <th>Action</th>
                                                             </tr>
@@ -75,24 +76,32 @@
                                                                 <tr>
                                                                     <td>{{ $loop->iteration }}</td>
                                                                     <td
-                                                                        style="white-space: normal; word-wrap: break-word; max-width: 300px;">
+                                                                        style="white-space: normal !important; word-wrap: break-word; min-width: 150px; max-width: 250px;">
                                                                         {{ \Illuminate\Support\Str::limit(is_array($item->nama) ? ($item->nama['en'] ?? '') : ($item->nama ?: $item->getRawOriginal('nama')), 50, '...') }}
                                                                     </td>
                                                                     <td
-                                                                        style="white-space: normal; word-wrap: break-word; max-width: 300px;">
+                                                                        style="white-space: normal !important; word-wrap: break-word; min-width: 150px; max-width: 250px;">
                                                                         {{ \Illuminate\Support\Str::limit(is_array($item->deskripsi_lokasi) ? ($item->deskripsi_lokasi['en'] ?? '') : ($item->deskripsi_lokasi ?: $item->getRawOriginal('deskripsi_lokasi')), 100, '...') }}
                                                                     </td>
                                                                     <td
-                                                                        style="white-space: normal; word-wrap: break-word; max-width: 300px;">
+                                                                        style="white-space: normal !important; word-wrap: break-word; min-width: 100px; max-width: 150px;">
                                                                         {{ $item->wilayah }}
                                                                     </td>
                                                                     <td
-                                                                        style="white-space: normal; word-wrap: break-word; max-width: 300px;">
+                                                                        style="white-space: normal !important; word-wrap: break-word; min-width: 100px; max-width: 150px;">
                                                                         {{ $item->provinsi }}
                                                                     </td>
                                                                     <td
-                                                                        style="white-space: normal; word-wrap: break-word; max-width: 300px;">
+                                                                        style="white-space: normal !important; word-wrap: break-word; max-width: 100px;">
                                                                         {{ $item->status }}
+                                                                    </td>
+                                                                    <td
+                                                                        style="white-space: normal !important; word-wrap: break-word; max-width: 100px;">
+                                                                        @if(($item->availability ?? 'Available') === 'Available')
+                                                                            <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em; display: inline-block;">Available</span>
+                                                                        @else
+                                                                            <span style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em; display: inline-block;">Not Available</span>
+                                                                        @endif
                                                                     </td>
                                                                     <td>
                                                                         @if ($item->gambar)

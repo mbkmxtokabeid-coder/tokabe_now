@@ -1,6 +1,0 @@
-﻿Fixed ID 60: gambar set to ''
-Fixed ID 61: gambar set to ''
-Fixed ID 62: gambar set to ''
-
-=== CEK YANG BELUM BILINGUAL ===
-Total belum bilingual: 0
