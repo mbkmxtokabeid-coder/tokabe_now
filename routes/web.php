@@ -45,9 +45,7 @@ Route::get('/discover', [App\Http\Controllers\DiscoverController::class, 'index'
 Route::get('/contact', [\App\Http\Controllers\HomeController::class, 'contact'])->name('contact');
 Route::post('/contact', [\App\Http\Controllers\HomeController::class, 'storeContact'])->name('contact.store');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::redirect('/dashboard', '/admin')->name('dashboard');
 
 Route::get('/lang/{locale}', function ($locale) {
     if (in_array($locale, ['en', 'id'])) {

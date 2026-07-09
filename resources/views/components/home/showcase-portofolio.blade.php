@@ -267,13 +267,9 @@
             }
         });
 
-        const tabPortofolio = document.getElementById('tab-portofolio');
-        const tabLegalitas = document.getElementById('tab-legalitas');
-        const legalityGrid = document.getElementById('legality-grid');
-        const activeBg = document.getElementById('active-tab-bg');
         const portfolioContainer = document.getElementById('portfolio-container');
 
-        if (tabPortofolio && tabLegalitas && activeBg) {
+        if (tabPortofolio && tabLegalitas && slider) {
             function updateSlider(element) {
                 if(!element) return;
                 
@@ -282,8 +278,8 @@
                     const parentRect = element.parentElement.getBoundingClientRect();
                     
                     requestAnimationFrame(() => {
-                        activeBg.style.width = `${rect.width}px`;
-                        activeBg.style.left = `${rect.left - parentRect.left}px`;
+                        slider.style.width = `${rect.width}px`;
+                        slider.style.left = `${rect.left - parentRect.left}px`;
                     });
                 });
             }
