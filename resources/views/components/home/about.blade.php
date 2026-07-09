@@ -40,7 +40,7 @@
                         </div>
                         <h3 class="text-sm sm:text-xl lg:text-base xl:text-xl font-bold text-white mb-1 sm:mb-2 leading-tight">{{ __('Videotron (DOOH)') }}</h3>
                         <div class="flex items-baseline text-white mb-1 sm:mb-2">
-                            <span class="rolling-counter text-2xl sm:text-4xl lg:text-2xl xl:text-4xl font-black" data-target="{{ $about->dooh_target ?? 18 }}">0</span>
+                            <span class="rolling-counter text-2xl sm:text-4xl lg:text-2xl xl:text-4xl font-black" data-target="{{ \App\Models\Lokasi::count() }}">0</span>
                             <span class="text-[#D4A574] text-lg sm:text-xl lg:text-lg xl:text-xl font-bold ml-1">+</span>
                         </div>
                         <p class="text-gray-400 text-[10px] sm:text-sm lg:text-[10px] xl:text-sm leading-tight sm:leading-normal lg:leading-tight xl:leading-normal line-clamp-3 sm:line-clamp-none lg:line-clamp-3 xl:line-clamp-none">{{ $about && $about->dooh_description ? ($about->dooh_description[app()->getLocale()] ?? $about->dooh_description['id'] ?? '') : __('Titik lokasi strategis tersebar di berbagai pusat keramaian.') }}</p>
@@ -56,7 +56,7 @@
                         </div>
                         <h3 class="text-sm sm:text-xl lg:text-base xl:text-xl font-bold text-white mb-1 sm:mb-2 leading-tight">{{ __('Billboard (OOH)') }}</h3>
                         <div class="flex items-baseline text-white mb-1 sm:mb-2">
-                            <span class="rolling-counter text-2xl sm:text-4xl lg:text-2xl xl:text-4xl font-black" data-target="{{ $about->ooh_target ?? 271 }}">0</span>
+                            <span class="rolling-counter text-2xl sm:text-4xl lg:text-2xl xl:text-4xl font-black" data-target="{{ \App\Models\Lokasiooh::count() }}">0</span>
                             <span class="text-[#D4A574] text-lg sm:text-xl lg:text-lg xl:text-xl font-bold ml-1">+</span>
                         </div>
                         <p class="text-gray-400 text-[10px] sm:text-sm lg:text-[10px] xl:text-sm leading-tight sm:leading-normal lg:leading-tight xl:leading-normal line-clamp-3 sm:line-clamp-none lg:line-clamp-3 xl:line-clamp-none">{{ $about && $about->ooh_description ? ($about->ooh_description[app()->getLocale()] ?? $about->ooh_description['id'] ?? '') : __('Menjangkau audiens lebih luas dengan visibilitas maksimal.') }}</p>
