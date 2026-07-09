@@ -19,11 +19,17 @@ class MapController extends Controller
         $oohLocations = LocationOoh::all();
         $doohLocations = LocationDooh::all();
 
+        $normalizeProv = function($prov) {
+            if (empty($prov)) return 'Sumatera Utara';
+            return str_replace('Sumatra', 'Sumatera', $prov);
+        };
+
         // Group by wilayah/region (provinsi)
-        $oohGrouped = $oohLocations->groupBy('provinsi');
-        $doohGrouped = $doohLocations->groupBy(function ($item) {
-            // LocationDooh mungkin tidak punya kolom 'provinsi', gunakan fallback
-            return $item->provinsi ?? 'Sumatera Utara';
+        $oohGrouped = $oohLocations->groupBy(function($item) use ($normalizeProv) {
+            return $normalizeProv($item->provinsi);
+        });
+        $doohGrouped = $doohLocations->groupBy(function ($item) use ($normalizeProv) {
+            return $normalizeProv($item->provinsi);
         });
 
         // Kumpulkan semua unique provinces

@@ -54,9 +54,17 @@
                     </defs>
                 </svg>
             </div>
-            <p class="reveal-target-map smooth-element-map delay-map-3 text-lg text-gray-300 font-light">
-                {{ __('Click on a province to view OOH/DOOH data (sample).') }}
-            </p>
+            <div class="reveal-target-map smooth-element-map delay-map-3 flex items-center justify-center mt-2">
+                <div class="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#2C1A0E] via-[#5C3317] to-[#2C1A0E] border border-[#D4A574]/50 rounded-full shadow-[0_0_15px_rgba(212,165,116,0.3)]">
+                    <div class="relative flex h-5 w-5 justify-center items-center">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F0C97A] opacity-75"></span>
+                        <i class="fas fa-hand-pointer relative inline-flex text-[#F0C97A] text-lg"></i>
+                    </div>
+                    <p class="text-base md:text-lg text-[#f2ebe2] font-semibold tracking-wide">
+                        {{ __('Click on a province to view OOH/DOOH data.') }}
+                    </p>
+                </div>
+            </div>
         </div>
 
         <div class="flex flex-col lg:flex-row gap-6 items-stretch justify-center">

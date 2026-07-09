@@ -38,15 +38,28 @@ class HomeController extends Controller
             ];
         }
         $search = $request->query('search');
+        $province = $request->query('provinsi');
         
         $userAgent = $request->userAgent() ?? '';
         $isMobile = preg_match("/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i", $userAgent);
         $limit = 12;
         
         $items = collect([]);
+        $allProvinces = collect();
 
         if ($id == 1) { // DOOH
+            $allProvinces = \App\Models\Lokasi::pluck('provinsi')->filter()->map(function($p) { return str_replace('Sumatra', 'Sumatera', $p); })->unique()->sort()->values();
+            
             $query = \App\Models\Lokasi::query();
+            
+            if ($province) {
+                $dbProvinceSearch = str_replace('Sumatera', 'Sumatra', $province);
+                $query->where(function($q) use ($province, $dbProvinceSearch) {
+                    $q->where('provinsi', 'LIKE', "%{$province}%")
+                      ->orWhere('provinsi', 'LIKE', "%{$dbProvinceSearch}%");
+                });
+            }
+            
             if ($search) {
                 $query->where(function($q) use ($search) {
                     $q->where('nama', 'LIKE', "%{$search}%")
@@ -57,7 +70,7 @@ class HomeController extends Controller
             }
             $items = $query->paginate($limit);
             
-            if ($items->isEmpty() && !$search) {
+            if ($items->isEmpty() && !$search && !$province) {
                 $items = collect([
                     (object)[
                         'id' => 1,
@@ -90,7 +103,18 @@ class HomeController extends Controller
                 });
             }
         } elseif ($id == 2) { // OOH
+            $allProvinces = \App\Models\Lokasiooh::pluck('provinsi')->filter()->map(function($p) { return str_replace('Sumatra', 'Sumatera', $p); })->unique()->sort()->values();
+            
             $query = \App\Models\Lokasiooh::query();
+            
+            if ($province) {
+                $dbProvinceSearch = str_replace('Sumatera', 'Sumatra', $province);
+                $query->where(function($q) use ($province, $dbProvinceSearch) {
+                    $q->where('provinsi', 'LIKE', "%{$province}%")
+                      ->orWhere('provinsi', 'LIKE', "%{$dbProvinceSearch}%");
+                });
+            }
+            
             if ($search) {
                 $query->where(function($q) use ($search) {
                     $q->where('nama', 'LIKE', "%{$search}%")
@@ -101,7 +125,7 @@ class HomeController extends Controller
             }
             $items = $query->paginate($limit);
             
-            if ($items->isEmpty() && !$search) {
+            if ($items->isEmpty() && !$search && !$province) {
                 $items = collect([
                     (object)[
                         'id' => 1,
@@ -130,7 +154,7 @@ class HomeController extends Controller
             }
         }
 
-        return view('services.show', compact('service', 'items', 'search'));
+        return view('services.show', compact('service', 'items', 'search', 'province', 'allProvinces'));
     }
 
     public function showService(Request $request, $id)

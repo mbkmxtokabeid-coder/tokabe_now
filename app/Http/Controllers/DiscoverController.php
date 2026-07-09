@@ -79,6 +79,19 @@ class DiscoverController extends Controller
             $totalPagesOoh = ceil($totalOoh / $perPage);
         }
 
+        // Fetch all unique provinces for the filter dropdown
+        $provincesOoh = LocationOoh::pluck('provinsi')->unique()->toArray();
+        $provincesDooh = Lokasi::pluck('provinsi')->unique()->toArray();
+        
+        $allProvinces = collect(array_merge($provincesOoh, $provincesDooh))
+            ->filter() // Remove null/empty
+            ->map(function($prov) { 
+                return str_replace('Sumatra', 'Sumatera', $prov); 
+            })
+            ->unique()
+            ->sort()
+            ->values();
+
         return view('discover', compact(
             'region', 
             'lokasiOoh', 
@@ -88,7 +101,8 @@ class DiscoverController extends Controller
             'notificationMessage',
             'page',
             'totalPagesDooh',
-            'totalPagesOoh'
+            'totalPagesOoh',
+            'allProvinces'
         ));
     }
 }

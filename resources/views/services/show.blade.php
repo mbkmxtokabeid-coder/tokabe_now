@@ -46,18 +46,56 @@
             </p>
 
             <!-- Search Bar -->
-            <form action="{{ in_array($service->id, [1, 2]) ? route('periklanan.show', $service->id) : route('services.show', $service->id) }}" method="GET" class="max-w-2xl mx-auto relative group">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg class="h-6 w-6 text-gray-400 group-focus-within:text-[#D4A569] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+            <form action="{{ in_array($service->id, [1, 2]) ? route('periklanan.show', $service->id) : route('services.show', $service->id) }}" method="GET" class="max-w-4xl mx-auto relative group z-[40]">
+                <div class="flex flex-col md:flex-row gap-3">
+                    <div class="relative flex-1">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-6 w-6 text-gray-400 group-focus-within:text-[#D4A569] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}" 
+                            class="block w-full pl-12 pr-32 py-4 rounded-full border-2 border-transparent bg-white shadow-xl focus:border-[#D4A569] focus:ring-0 text-gray-900 text-lg transition-all" 
+                            placeholder="{{ __('Cari apa saja...') }}">
+                        <button type="submit" class="absolute inset-y-2 right-2 px-8 bg-gradient-to-r from-[#D4A569] via-[#F0C97A] to-[#D4A569] hover:from-[#F0C97A] hover:to-[#D4A569] text-[#2C1A0E] font-semibold rounded-full shadow-md transform hover:scale-105 transition-all">
+                            {{ __('Cari') }}
+                        </button>
+                    </div>
+
+                    @if(in_array($service->id, [1, 2]) && isset($allProvinces) && count($allProvinces) > 0)
+                        <div x-data="{ open: false, selected: '{{ request('provinsi', '') }}', selectedLabel: '{{ request('provinsi', __('Semua Provinsi')) }}' }" class="relative w-full md:w-1/3">
+                            <input type="hidden" name="provinsi" :value="selected">
+                            <button @click="open = !open" @click.outside="open = false" type="button" 
+                                class="w-full text-left flex items-center justify-between py-4 px-6 rounded-full border-2 bg-white shadow-xl text-gray-900 text-lg transition-all focus:outline-none"
+                                :class="open ? 'border-[#D4A569] shadow-[0_0_15px_rgba(212,165,105,0.3)]' : 'border-transparent hover:border-gray-200'">
+                                <span x-text="selected === '' ? '{{ __('Semua Provinsi') }}' : selectedLabel" class="block truncate"></span>
+                                <svg class="h-5 w-5 text-gray-500 transform transition-transform duration-300" :class="{'rotate-180 text-[#D4A569]': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <div x-show="open" 
+                                class="absolute top-full left-0 z-[100] mt-3 w-full rounded-2xl bg-white shadow-[0_15px_40px_-10px_rgba(0,0,0,0.3)] border border-gray-100 overflow-hidden">
+                                <ul class="max-h-64 overflow-y-auto py-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-50 [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
+                                    <li @click="selected = ''; selectedLabel = '{{ __('Semua Provinsi') }}'; open = false" 
+                                        class="cursor-pointer px-6 py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between"
+                                        :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === ''}">
+                                        <span>{{ __('Semua Provinsi') }}</span>
+                                        <svg x-show="selected === ''" class="h-5 w-5 text-[#C8902A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                    </li>
+                                    @foreach($allProvinces as $prov)
+                                        <li @click="selected = '{{ $prov }}'; selectedLabel = '{{ $prov }}'; open = false" 
+                                            class="cursor-pointer px-6 py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between"
+                                            :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === '{{ $prov }}'}">
+                                            <span>{{ $prov }}</span>
+                                            <svg x-show="selected === '{{ $prov }}'" class="h-5 w-5 text-[#C8902A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    @endif
                 </div>
-                <input type="text" name="search" value="{{ request('search') }}" 
-                    class="block w-full pl-12 pr-32 py-4 rounded-full border-2 border-transparent bg-white shadow-xl focus:border-[#D4A569] focus:ring-0 text-gray-900 text-lg transition-all" 
-                    placeholder="{{ __('Search anything...') }}">
-                <button type="submit" class="absolute inset-y-2 right-2 px-8 bg-gradient-to-r from-[#D4A569] via-[#F0C97A] to-[#D4A569] hover:from-[#F0C97A] hover:to-[#D4A569] text-[#2C1A0E] font-semibold rounded-full shadow-md transform hover:scale-105 transition-all">
-                    {{ __('Search') }}
-                </button>
             </form>
         </div>
     </div>
