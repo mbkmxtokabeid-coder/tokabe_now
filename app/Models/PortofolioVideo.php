@@ -13,7 +13,8 @@ class PortofolioVideo extends Model
 
     protected $fillable = [
         'portofolio_id',
-        'video_path' // Sesuaikan jika nama kolom di database kamu berbeda (misal: 'video_path')
+        'video_path',
+        'thumbnail'
     ];
 
     public function portofolio()

@@ -146,13 +146,53 @@
                 @foreach($gallery as $image)
                     <div class="relative h-32 md:h-48 rounded-xl overflow-hidden cursor-pointer shadow-sm hover:shadow-lg transition-all duration-300 group" 
                          onclick="openLightbox(this)">
-                        <img src="{{ asset('storage/' . $image->image) }}" alt="{{ \App\Helpers\SeoHelper::getImageAlt('event', $judulText . ' Gallery ' . $loop->iteration) }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        <img src="{{ asset('storage/' . $image->image) }}" alt="{{ \App\Helpers\SeoHelper::getImageAlt('event', $judulText . ' Gallery ' . $loop->iteration) }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" loading="lazy">
                         <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                         <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <div class="bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm pointer-events-none">
                                 <i class="fas fa-search-plus"></i>
                             </div>
                         </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        <!-- Video Gallery -->
+        @php
+            $youtubeVideos = isset($event->videos) ? $event->videos->filter(function($vid) {
+                return preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $vid->video_path);
+            }) : collect();
+        @endphp
+        
+        @if($youtubeVideos->count() > 0)
+        <div class="mb-16" data-aos="fade-up">
+            <h2 class="text-2xl font-bold text-[#F5EFE7] mb-8 border-b-2 border-[#D4A574] pb-2 inline-block">{{ __('Project Videos') }}</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($youtubeVideos as $video)
+                    <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 bg-black">
+                        @php
+                            $url = $video->video_path;
+                            preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $url, $match);
+                            $embedUrl = 'https://www.youtube.com/embed/' . $match[1];
+                        @endphp
+                        
+                        @if($video->thumbnail)
+                            <div class="relative w-full h-full cursor-pointer group" onclick="openVideoLightbox('youtube', '{{ $embedUrl }}')">
+                                <img src="{{ asset('storage/' . $video->thumbnail) }}" alt="Video Thumbnail" class="w-full h-full object-cover" loading="lazy">
+                                <div class="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all z-10">
+                                    <i class="fab fa-youtube text-6xl text-red-600 drop-shadow-md transform group-hover:scale-110 transition-transform"></i>
+                                </div>
+                            </div>
+                        @else
+                            <div class="relative w-full h-full cursor-pointer group" onclick="openVideoLightbox('youtube', '{{ $embedUrl }}')">
+                                <img src="https://img.youtube.com/vi/{{ $match[1] }}/hqdefault.jpg" alt="Video Thumbnail" class="w-full h-full object-cover" loading="lazy">
+                                <div class="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all z-10">
+                                    <i class="fab fa-youtube text-6xl text-red-600 drop-shadow-md transform group-hover:scale-110 transition-transform"></i>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -178,6 +218,19 @@
 
     <!-- Image Container -->
     <img id="lightbox-image" src="" class="max-w-full max-h-[90vh] rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] object-contain transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+</div>
+
+<!-- Video Lightbox Modal (Vanilla JS) -->
+<div id="video-lightbox-modal" class="fixed inset-0 z-[100] items-center justify-center bg-black/95 p-4 backdrop-blur-md hidden opacity-0 transition-opacity duration-300" onclick="closeVideoLightbox()">
+    <!-- Close button -->
+    <button onclick="closeVideoLightbox()" class="absolute top-6 right-6 text-white hover:text-[#D4A574] transition-colors bg-white/10 hover:bg-white/20 rounded-full w-12 h-12 flex items-center justify-center backdrop-blur-sm z-50">
+        <i class="fas fa-times text-xl"></i>
+    </button>
+
+    <!-- Video Container -->
+    <div id="video-lightbox-container" class="w-full max-w-5xl aspect-video rounded-xl border-4 border-[#D4A574] shadow-[0_0_50px_rgba(212,165,116,0.3)] overflow-hidden transform scale-75 transition-all duration-300 ease-out" onclick="event.stopPropagation()">
+        <!-- Content injected via JS -->
+    </div>
 </div>
 
 <script>
@@ -229,9 +282,51 @@
         }, 300);
     }
     
+    function openVideoLightbox(type, source) {
+        const modal = document.getElementById('video-lightbox-modal');
+        const container = document.getElementById('video-lightbox-container');
+        
+        if (type === 'youtube') {
+            container.innerHTML = `<iframe class="w-full h-full" src="${source}?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        } else if (type === 'mp4') {
+            container.innerHTML = `<video src="${source}" class="w-full h-full object-contain bg-black" controls autoplay controlsList="nodownload"></video>`;
+        }
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        void modal.offsetWidth;
+        
+        modal.classList.remove('opacity-0');
+        modal.classList.add('opacity-100');
+        container.classList.remove('scale-75');
+        container.classList.add('scale-100');
+        
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeVideoLightbox() {
+        const modal = document.getElementById('video-lightbox-modal');
+        const container = document.getElementById('video-lightbox-container');
+        
+        modal.classList.remove('opacity-100');
+        modal.classList.add('opacity-0');
+        container.classList.remove('scale-100');
+        container.classList.add('scale-75');
+        
+        setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            container.innerHTML = ''; // Stop video playback
+            
+            document.body.style.overflow = '';
+        }, 300);
+    }
+    
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeLightbox();
+            closeVideoLightbox();
         }
     });
 </script>

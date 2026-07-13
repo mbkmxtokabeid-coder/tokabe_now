@@ -78,7 +78,7 @@
                                         </div>
                                         <div class="card-body">
                                             <div class="dt-responsive table-responsive">
-                                                <table id="simpletable" class="table table-striped table-bordered nowrap">
+                                                <table id="simpletable" class="table table-striped table-bordered w-100">
                                                     <thead>
                                                         <tr>
                                                             <th>ID</th>
@@ -92,15 +92,22 @@
                                                        @foreach ($services as $item )
                                                             <tr>
                                                                 <td>{{$loop->iteration }}</td>
-                                                                <td>{{ is_array($item->judul) ? ($item->judul['id'] ?? '') : $item->judul }}</td>
-                                                                <td style="white-space: normal; word-wrap: break-word; max-width: 300px;">{{ is_array($item->deskripsi) ? ($item->deskripsi['id'] ?? '') : $item->deskripsi }}</td>
-                                                                <td>@if($item->gambar)
-                                                                        <img src="{{ asset('storage/image_service/' . $item->gambar) }}" alt="{{ is_array($item->judul) ? ($item->judul['id'] ?? '') : $item->judul }}" style="max-width: 150px; max-height: 150px;">
+                                                                <td style="white-space: normal !important; word-wrap: break-word; min-width: 150px; max-width: 200px;">
+                                                                    {{ is_array($item->judul) ? ($item->judul['id'] ?? '') : $item->judul }}
+                                                                </td>
+                                                                <td style="white-space: normal !important; word-wrap: break-word; min-width: 200px; max-width: 300px;">
+                                                                    @php
+                                                                        $descText = is_array($item->deskripsi) ? ($item->deskripsi['id'] ?? '') : $item->deskripsi;
+                                                                    @endphp
+                                                                    {!! \Illuminate\Support\Str::limit(strip_tags($descText), 150, '...') !!}
+                                                                </td>
+                                                                <td style="min-width: 80px;">@if($item->gambar)
+                                                                        <img src="{{ asset('storage/image_service/' . $item->gambar) }}" alt="{{ is_array($item->judul) ? ($item->judul['id'] ?? '') : $item->judul }}" class="rounded border" style="width: 120px; height: 80px; object-fit: cover;">
                                                                     @else
-                                                                        <span>No Image</span>
+                                                                        <span class="text-muted">No Image</span>
                                                                     @endif</td>
                                                                
-                                                                <td>
+                                                                <td style="white-space: nowrap; width: 1%; text-align: center;">
                                                                     <a class="btn drp-icon btn-outline-primary"
                                                                         href="/admin/service/edit/{{ $item->id }}"
                                                                         type="button"><i class="feather icon-edit"></i></a>
@@ -115,7 +122,7 @@
                                                                     <div class="modal fade"
                                                                         id="confirmDeleteModal-{{ $item->id }}"
                                                                         tabindex="-1" aria-labelledby="exampleModalLabel"
-                                                                        aria-hidden="true">
+                                                                        aria-hidden="true" style="text-align: left; white-space: normal;">
                                                                         <div class="modal-dialog">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">

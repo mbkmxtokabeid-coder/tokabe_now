@@ -62,36 +62,76 @@
                         </button>
                     </div>
 
-                    @if(in_array($service->id, [1, 2]) && isset($allProvinces) && count($allProvinces) > 0)
-                        <div x-data="{ open: false, selected: '{{ request('provinsi', '') }}', selectedLabel: '{{ request('provinsi', __('Semua Provinsi')) }}' }" class="relative w-full md:w-1/3">
-                            <input type="hidden" name="provinsi" :value="selected">
-                            <button @click="open = !open" @click.outside="open = false" type="button" 
-                                class="w-full text-left flex items-center justify-between py-4 px-6 rounded-full border-2 bg-white shadow-xl text-gray-900 text-lg transition-all focus:outline-none"
-                                :class="open ? 'border-[#D4A569] shadow-[0_0_15px_rgba(212,165,105,0.3)]' : 'border-transparent hover:border-gray-200'">
-                                <span x-text="selected === '' ? '{{ __('Semua Provinsi') }}' : selectedLabel" class="block truncate"></span>
-                                <svg class="h-5 w-5 text-gray-500 transform transition-transform duration-300" :class="{'rotate-180 text-[#D4A569]': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
+                    @if(in_array($service->id, [1, 2]))
+                        <div class="flex flex-row gap-2 sm:gap-3 w-full md:w-auto">
+                            @if(isset($allProvinces) && count($allProvinces) > 0)
+                                <div x-data="{ open: false, selected: '{{ request('provinsi', '') }}', selectedLabel: '{{ request('provinsi', __('Semua Provinsi')) }}' }" class="relative flex-1 min-w-0 md:w-56">
+                                    <input type="hidden" name="provinsi" :value="selected">
+                                    <button @click="open = !open" @click.outside="open = false" type="button" 
+                                        class="w-full text-left flex items-center justify-between py-3 sm:py-4 px-4 sm:px-6 rounded-full border-2 bg-white shadow-xl text-gray-900 text-xs sm:text-sm transition-all focus:outline-none"
+                                        :class="open ? 'border-[#D4A569] shadow-[0_0_15px_rgba(212,165,105,0.3)]' : 'border-transparent hover:border-gray-200'">
+                                        <span x-text="selected === '' ? '{{ __('Semua Provinsi') }}' : selectedLabel" class="block truncate min-w-0 pr-1"></span>
+                                        <svg class="h-4 w-4 sm:h-5 sm:w-5 text-gray-500 transform transition-transform duration-300 flex-shrink-0" :class="{'rotate-180 text-[#D4A569]': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
 
-                            <div x-show="open" 
-                                class="absolute top-full left-0 z-[100] mt-3 w-full rounded-2xl bg-white shadow-[0_15px_40px_-10px_rgba(0,0,0,0.3)] border border-gray-100 overflow-hidden">
-                                <ul class="max-h-64 overflow-y-auto py-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-50 [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
-                                    <li @click="selected = ''; selectedLabel = '{{ __('Semua Provinsi') }}'; open = false" 
-                                        class="cursor-pointer px-6 py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between"
-                                        :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === ''}">
-                                        <span>{{ __('Semua Provinsi') }}</span>
-                                        <svg x-show="selected === ''" class="h-5 w-5 text-[#C8902A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                                    </li>
-                                    @foreach($allProvinces as $prov)
-                                        <li @click="selected = '{{ $prov }}'; selectedLabel = '{{ $prov }}'; open = false" 
-                                            class="cursor-pointer px-6 py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between"
-                                            :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === '{{ $prov }}'}">
-                                            <span>{{ $prov }}</span>
-                                            <svg x-show="selected === '{{ $prov }}'" class="h-5 w-5 text-[#C8902A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                    <div x-show="open" 
+                                        class="absolute top-full left-0 z-[100] mt-2 w-full rounded-2xl bg-white shadow-[0_15px_40px_-10px_rgba(0,0,0,0.3)] border border-gray-100 overflow-hidden">
+                                        <ul class="max-h-64 overflow-y-auto py-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-50 [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
+                                            <li @click="selected = ''; selectedLabel = '{{ __('Semua Provinsi') }}'; open = false; setTimeout(() => $el.closest('form').submit(), 50)" 
+                                                class="cursor-pointer px-4 sm:px-6 py-2 sm:py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between text-xs sm:text-sm"
+                                                :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === ''}">
+                                                <span class="truncate pr-2">{{ __('Semua Provinsi') }}</span>
+                                                <svg x-show="selected === ''" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                            </li>
+                                            @foreach($allProvinces as $prov)
+                                                <li @click="selected = '{{ $prov }}'; selectedLabel = '{{ $prov }}'; open = false; setTimeout(() => $el.closest('form').submit(), 50)" 
+                                                    class="cursor-pointer px-4 sm:px-6 py-2 sm:py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between text-xs sm:text-sm"
+                                                    :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === '{{ $prov }}'}">
+                                                    <span class="truncate pr-2">{{ $prov }}</span>
+                                                    <svg x-show="selected === '{{ $prov }}'" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div x-data="{ open: false, selected: '{{ request('availability', '') }}', selectedLabel: '{{ request('availability') ?: __('Semua Status') }}' }" class="relative flex-1 min-w-0 md:w-56">
+                                <input type="hidden" name="availability" :value="selected">
+                                <button @click="open = !open" @click.outside="open = false" type="button" 
+                                    class="w-full text-left flex items-center justify-between py-3 sm:py-4 px-4 sm:px-6 rounded-full border-2 bg-white shadow-xl text-gray-900 text-xs sm:text-sm transition-all focus:outline-none"
+                                    :class="open ? 'border-[#D4A569] shadow-[0_0_15px_rgba(212,165,105,0.3)]' : 'border-transparent hover:border-gray-200'">
+                                    <span x-text="selected === '' ? '{{ __('Semua Status') }}' : selectedLabel" class="block truncate min-w-0 pr-1"></span>
+                                    <svg class="h-4 w-4 sm:h-5 sm:w-5 text-gray-500 transform transition-transform duration-300 flex-shrink-0" :class="{'rotate-180 text-[#D4A569]': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+
+                                <div x-show="open" 
+                                    class="absolute top-full left-0 z-[100] mt-2 w-full rounded-2xl bg-white shadow-[0_15px_40px_-10px_rgba(0,0,0,0.3)] border border-gray-100 overflow-hidden">
+                                    <ul class="py-2">
+                                        <li @click="selected = ''; selectedLabel = '{{ __('Semua Status') }}'; open = false; setTimeout(() => $el.closest('form').submit(), 50)" 
+                                            class="cursor-pointer px-4 sm:px-6 py-2 sm:py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between text-xs sm:text-sm"
+                                            :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === ''}">
+                                            <span class="truncate pr-2">{{ __('Semua Status') }}</span>
+                                            <svg x-show="selected === ''" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                         </li>
-                                    @endforeach
-                                </ul>
+                                        <li @click="selected = 'Available'; selectedLabel = 'Available'; open = false; setTimeout(() => $el.closest('form').submit(), 50)" 
+                                            class="cursor-pointer px-4 sm:px-6 py-2 sm:py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between text-xs sm:text-sm"
+                                            :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === 'Available'}">
+                                            <span class="truncate pr-2">Available</span>
+                                            <svg x-show="selected === 'Available'" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                        </li>
+                                        <li @click="selected = 'Not Available'; selectedLabel = 'Not Available'; open = false; setTimeout(() => $el.closest('form').submit(), 50)" 
+                                            class="cursor-pointer px-4 sm:px-6 py-2 sm:py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between text-xs sm:text-sm"
+                                            :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === 'Not Available'}">
+                                            <span class="truncate pr-2">Not Available</span>
+                                            <svg x-show="selected === 'Not Available'" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     @endif

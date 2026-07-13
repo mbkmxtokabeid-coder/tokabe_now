@@ -44,6 +44,10 @@ class PortofolioController extends Controller
             'images.*'    => 'file|image|mimes:jpeg,png,jpg,webp|max:10240', 
             'videos'      => 'nullable|array',
             'videos.*'    => 'mimetypes:video/mp4|max:102400', 
+            'youtube_urls'=> 'nullable|array',
+            'youtube_urls.*'=> 'nullable|url',
+            'youtube_thumbnails' => 'nullable|array',
+            'youtube_thumbnails.*' => 'nullable|file|image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
 
         $portofolio = Portofolio::create([
@@ -62,8 +66,8 @@ class PortofolioController extends Controller
                 
                 // Proses gambar menggunakan Intervention Image v3
                 $img = $manager->read($image->getRealPath());
-                $img->scaleDown(width: 1920); // Resize if too large
-                $encoded = $img->toWebp(80);
+                $img->scaleDown(width: 800); // Resize if too large (Optimasi LCP)
+                $encoded = $img->toWebp(75);
                 
                 $path = 'portofolio/' . $filename;
                 Storage::disk('public')->put($path, (string) $encoded);
@@ -84,6 +88,32 @@ class PortofolioController extends Controller
                     'portofolio_id' => $portofolio->id,
                     'video_path'    => $videoPath,
                 ]);
+            }
+        }
+
+        if ($request->has('youtube_urls')) {
+            $manager = new ImageManager(new Driver());
+            foreach ($request->youtube_urls as $index => $url) {
+                if (!empty($url)) {
+                    $thumbPath = null;
+                    if ($request->hasFile("youtube_thumbnails.$index")) {
+                        $thumbImage = $request->file("youtube_thumbnails.$index");
+                        $filename = uniqid() . '_thumb.webp';
+                        
+                        $img = $manager->read($thumbImage->getRealPath());
+                        $img->scaleDown(width: 1280); 
+                        $encoded = $img->toWebp(80);
+                        
+                        $thumbPath = 'portofolio/videos/' . $filename;
+                        Storage::disk('public')->put($thumbPath, (string) $encoded);
+                    }
+
+                    PortofolioVideo::create([
+                        'portofolio_id' => $portofolio->id,
+                        'video_path'    => $url,
+                        'thumbnail'     => $thumbPath,
+                    ]);
+                }
             }
         }
 
@@ -112,6 +142,10 @@ class PortofolioController extends Controller
             'images.*'       => 'file|image|mimes:jpeg,png,jpg,webp|max:10240',
             'videos'         => 'nullable|array',
             'videos.*'       => 'mimetypes:video/mp4|max:102400',
+            'youtube_urls'   => 'nullable|array',
+            'youtube_urls.*' => 'nullable|url',
+            'youtube_thumbnails' => 'nullable|array',
+            'youtube_thumbnails.*' => 'nullable|file|image|mimes:jpeg,png,jpg,webp|max:10240',
             'delete_images'  => 'nullable|array',
             'delete_videos'  => 'nullable|array',
         ]);
@@ -143,7 +177,12 @@ class PortofolioController extends Controller
             foreach ($request->delete_videos as $vidId) {
                 $vid = PortofolioVideo::where('id', $vidId)->where('portofolio_id', $id)->first();
                 if ($vid) {
-                    Storage::disk('public')->delete($vid->video_path);
+                    if (!str_contains($vid->video_path, 'youtube.com') && !str_contains($vid->video_path, 'youtu.be')) {
+                        Storage::disk('public')->delete($vid->video_path);
+                    }
+                    if ($vid->thumbnail) {
+                        Storage::disk('public')->delete($vid->thumbnail);
+                    }
                     $vid->delete();
                 }
             }
@@ -157,8 +196,8 @@ class PortofolioController extends Controller
                 
                 // Proses gambar menggunakan Intervention Image v3
                 $img = $manager->read($image->getRealPath());
-                $img->scaleDown(width: 1920); // Resize if too large
-                $encoded = $img->toWebp(80);
+                $img->scaleDown(width: 800); // Resize if too large (Optimasi LCP)
+                $encoded = $img->toWebp(75);
                 
                 $path = 'portofolio/' . $filename;
                 Storage::disk('public')->put($path, (string) $encoded);
@@ -182,6 +221,32 @@ class PortofolioController extends Controller
             }
         }
 
+        if ($request->has('youtube_urls')) {
+            $manager = new ImageManager(new Driver());
+            foreach ($request->youtube_urls as $index => $url) {
+                if (!empty($url)) {
+                    $thumbPath = null;
+                    if ($request->hasFile("youtube_thumbnails.$index")) {
+                        $thumbImage = $request->file("youtube_thumbnails.$index");
+                        $filename = uniqid() . '_thumb.webp';
+                        
+                        $img = $manager->read($thumbImage->getRealPath());
+                        $img->scaleDown(width: 1280); 
+                        $encoded = $img->toWebp(80);
+                        
+                        $thumbPath = 'portofolio/videos/' . $filename;
+                        Storage::disk('public')->put($thumbPath, (string) $encoded);
+                    }
+
+                    PortofolioVideo::create([
+                        'portofolio_id' => $portofolio->id,
+                        'video_path'    => $url,
+                        'thumbnail'     => $thumbPath,
+                    ]);
+                }
+            }
+        }
+
         return redirect()->route('portofolio.index')->with('success', 'Portofolio berhasil diperbarui.');
     }
 
@@ -195,7 +260,12 @@ class PortofolioController extends Controller
         }
 
         foreach ($portofolio->videos as $vid) {
-            Storage::disk('public')->delete($vid->video_path);
+            if (!str_contains($vid->video_path, 'youtube.com') && !str_contains($vid->video_path, 'youtu.be')) {
+                Storage::disk('public')->delete($vid->video_path);
+            }
+            if ($vid->thumbnail) {
+                Storage::disk('public')->delete($vid->thumbnail);
+            }
             $vid->delete();
         }
 

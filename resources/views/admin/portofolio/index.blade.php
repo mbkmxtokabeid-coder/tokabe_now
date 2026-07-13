@@ -49,11 +49,29 @@
                                             </div>
 
                                             <div class="card-body">
+                                                <div class="row mb-3">
+                                                    <div class="col-md-4">
+                                                        <label for="categoryFilter" class="font-weight-bold">Filter Kategori:</label>
+                                                        <select id="categoryFilter" class="form-control">
+                                                            <option value="">Semua Kategori</option>
+                                                            @php
+                                                                $kategoris = \App\Models\PortofolioCategory::all();
+                                                            @endphp
+                                                            @foreach($kategoris as $kat)
+                                                                @php
+                                                                    $katName = json_decode($kat->nama_kategori, true);
+                                                                    $katText = is_array($katName) ? ($katName['id'] ?? $katName['en'] ?? collect($katName)->first() ?? '') : $kat->nama_kategori;
+                                                                @endphp
+                                                                <option value="{{ $katText }}">{{ $katText }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <div class="dt-responsive table-responsive">
 
 
 
-                                                    <table id="simpletable" class="table table-striped table-bordered nowrap">
+                                                    <table id="simpletable" class="table table-striped table-bordered w-100">
                                                         <thead>
                                                             <tr>
                                                                 <th>ID</th>
@@ -64,7 +82,7 @@
                                                                 <th>Lokasi</th>
                                                                 <th>Deskripsi</th>
                                                                 <th>Images</th>
-                                                                <th>Videos</th> {{-- Kolom Baru untuk Video --}}
+                                                                <th>Videos</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
@@ -74,7 +92,7 @@
                                                                 <tr>
                                                                     <td>{{ $loop->iteration }}</td>
 
-                                                                    <td style="white-space: normal; word-break: break-word; max-width: 200px;">
+                                                                    <td style="white-space: normal !important; word-wrap: break-word; min-width: 150px; max-width: 200px;">
                                                                         @php
                                                                             $judulDecoded = json_decode($row->judul, true);
                                                                             $judulText = is_array($judulDecoded) ? ($judulDecoded['id'] ?? $row->judul) : $row->judul;
@@ -82,7 +100,7 @@
                                                                         {!! \Illuminate\Support\Str::limit($judulText, 30, '...') !!}
                                                                     </td>
 
-                                                                    <td style="white-space: normal; word-break: break-word; max-width: 200px;">
+                                                                    <td style="white-space: normal !important; word-wrap: break-word; min-width: 100px; max-width: 150px;">
                                                                         @php
                                                                             $katRaw = $row->category->nama_kategori ?? '-';
                                                                             $katDecoded = json_decode($katRaw, true);
@@ -91,19 +109,19 @@
                                                                         {{ $katText }}
                                                                     </td>
 
-                                                                    <td>
+                                                                    <td style="white-space: normal !important; min-width: 100px;">
                                                                         {{ $row->klien ?? '-' }}
                                                                     </td>
                                                                     
-                                                                    <td>
+                                                                    <td style="white-space: nowrap !important;">
                                                                         {{ $row->tanggal ? \Carbon\Carbon::parse($row->tanggal)->format('d M Y') : '-' }}
                                                                     </td>
                                                                     
-                                                                    <td style="white-space: normal; word-break: break-word; max-width: 300px;">
+                                                                    <td style="white-space: normal !important; word-wrap: break-word; min-width: 100px; max-width: 150px;">
                                                                         {{ $row->lokasi ?? '-' }}
                                                                     </td>
 
-                                                                    <td style="white-space: normal; word-break: break-word; max-width: 250px;">
+                                                                    <td style="white-space: normal !important; word-wrap: break-word; min-width: 200px; max-width: 250px;">
                                                                         @php
                                                                             $descDecoded = json_decode($row->deskripsi, true);
                                                                             $descText = is_array($descDecoded) ? ($descDecoded['id'] ?? $row->deskripsi) : $row->deskripsi;
@@ -112,19 +130,19 @@
                                                                     </td>
 
                                                                     {{-- Kolom Menampilkan Images --}}
-                                                                    <td>
+                                                                    <td style="min-width: 80px;">
                                                                         @if ($row->images && $row->images->count() > 0)
-                                                                            <div class="d-flex flex-wrap gap-1">
-                                                                                @foreach ($row->images->take(2) as $img)
+                                                                            <div class="d-flex align-items-center gap-1">
+                                                                                @foreach ($row->images->take(1) as $img)
                                                                                     <img src="{{ asset('storage/'.$img->image) }}"
                                                                                          width="60"
                                                                                          height="60"
                                                                                          class="rounded border"
                                                                                          style="object-fit:cover;">
                                                                                 @endforeach
-                                                                                @if($row->images->count() > 2)
-                                                                                    <div class="d-flex align-items-center justify-content-center bg-light rounded border text-secondary" style="width: 60px; height: 60px; font-size: 14px; font-weight: 500;">
-                                                                                        +{{ $row->images->count() - 2 }}
+                                                                                @if($row->images->count() > 1)
+                                                                                    <div class="d-flex align-items-center justify-content-center bg-light rounded border text-secondary" style="width: 40px; height: 60px; font-size: 14px; font-weight: 500;">
+                                                                                        +{{ $row->images->count() - 1 }}
                                                                                     </div>
                                                                                 @endif
                                                                             </div>
@@ -134,21 +152,24 @@
                                                                     </td>
 
                                                                     {{-- Kolom Menampilkan Videos (BARU) --}}
-                                                                    <td>
+                                                                    <td style="min-width: 80px;">
                                                                         @if ($row->videos && $row->videos->count() > 0)
-                                                                            <div class="d-flex flex-wrap gap-1">
+                                                                            <div class="d-flex align-items-center gap-1">
                                                                                 @foreach ($row->videos->take(1) as $vid)
-                                                                                    {{-- Menggunakan $vid->video_path sesuai setting DB sebelumnya --}}
-                                                                                    <video src="{{ asset('storage/'.($vid->video_path ?? $vid->video)) }}"
-                                                                                           width="100"
-                                                                                           height="60"
-                                                                                           class="rounded bg-dark"
-                                                                                           style="object-fit:cover;"
-                                                                                           controls>
-                                                                                    </video>
+                                                                                    @if(str_contains($vid->video_path, 'youtube.com') || str_contains($vid->video_path, 'youtu.be'))
+                                                                                        @if($vid->thumbnail)
+                                                                                            <img src="{{ asset('storage/'.$vid->thumbnail) }}" width="80" height="60" class="rounded border" style="object-fit:cover;">
+                                                                                        @else
+                                                                                            <div class="d-flex align-items-center justify-content-center bg-light rounded border" style="width: 80px; height: 60px;">
+                                                                                                <i class="fab fa-youtube text-danger fa-2x"></i>
+                                                                                            </div>
+                                                                                        @endif
+                                                                                    @else
+                                                                                        <video src="{{ asset('storage/'.($vid->video_path ?? $vid->video)) }}" width="80" height="60" class="rounded bg-dark" style="object-fit:cover;"></video>
+                                                                                    @endif
                                                                                 @endforeach
                                                                                 @if($row->videos->count() > 1)
-                                                                                    <div class="d-flex align-items-center justify-content-center bg-light rounded border text-secondary" style="width: 60px; height: 60px; font-size: 14px; font-weight: 500;">
+                                                                                    <div class="d-flex align-items-center justify-content-center bg-light rounded border text-secondary" style="width: 40px; height: 60px; font-size: 14px; font-weight: 500;">
                                                                                         +{{ $row->videos->count() - 1 }}
                                                                                     </div>
                                                                                 @endif
@@ -159,7 +180,7 @@
                                                                     </td>
 
                                                                     {{-- Kolom Actions --}}
-                                                                    <td>
+                                                                    <td style="white-space: nowrap; width: 1%; text-align: center;">
                                                                         <!-- EDIT -->
                                                                         <a class="btn btn-outline-primary btn-sm"
                                                                             href="{{ route('portofolio.edit', $row->id) }}">
@@ -229,4 +250,18 @@
         </div>
     </section>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a slight delay to ensure DataTables is fully initialized by the template
+            setTimeout(function() {
+                var table = $('#simpletable').DataTable();
+                
+                $('#categoryFilter').on('change', function() {
+                    var category = $(this).val();
+                    // Column 2 is Kategori (0: ID, 1: Judul, 2: Kategori)
+                    table.column(2).search(category ? '^' + $.fn.dataTable.util.escapeRegex(category) + '$' : '', true, false).draw();
+                });
+            }, 500);
+        });
+    </script>
 @endsection

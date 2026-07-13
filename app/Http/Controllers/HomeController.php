@@ -39,7 +39,7 @@ class HomeController extends Controller
         }
         $search = $request->query('search');
         $province = $request->query('provinsi');
-        
+        $availability = $request->query('availability');
         $userAgent = $request->userAgent() ?? '';
         $isMobile = preg_match("/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i", $userAgent);
         $limit = 12;
@@ -67,6 +67,18 @@ class HomeController extends Controller
                       ->orWhere('deskripsi_lokasi', 'LIKE', "%{$search}%")
                       ->orWhere('tagline', 'LIKE', "%{$search}%");
                 });
+            }
+
+            if ($availability) {
+                if ($availability === 'Available') {
+                    $query->where(function($q) {
+                        $q->whereNull('availability')
+                          ->orWhere('availability', '')
+                          ->orWhere('availability', 'Available');
+                    });
+                } else if ($availability === 'Not Available') {
+                    $query->where('availability', 'Not Available');
+                }
             }
             $items = $query->paginate($limit);
             
@@ -123,6 +135,18 @@ class HomeController extends Controller
                       ->orWhere('deskripsi_lokasi', 'LIKE', "%{$search}%");
                 });
             }
+
+            if ($availability) {
+                if ($availability === 'Available') {
+                    $query->where(function($q) {
+                        $q->whereNull('availability')
+                          ->orWhere('availability', '')
+                          ->orWhere('availability', 'Available');
+                    });
+                } else if ($availability === 'Not Available') {
+                    $query->where('availability', 'Not Available');
+                }
+            }
             $items = $query->paginate($limit);
             
             if ($items->isEmpty() && !$search && !$province) {
@@ -154,7 +178,7 @@ class HomeController extends Controller
             }
         }
 
-        return view('services.show', compact('service', 'items', 'search', 'province', 'allProvinces'));
+        return view('services.show', compact('service', 'items', 'search', 'province', 'allProvinces', 'availability'));
     }
 
     public function showService(Request $request, $id)
@@ -416,7 +440,7 @@ class HomeController extends Controller
 
     public function portofolioDetail($id)
     {
-        $event = \App\Models\Portofolio::with(['images', 'category'])->findOrFail($id);
+        $event = \App\Models\Portofolio::with(['images', 'category', 'videos'])->findOrFail($id);
         $gallery = $event->images;
         $mainImage = $event->images->first();
         return view('pages.portofolio.detail', compact('event', 'gallery', 'mainImage'));

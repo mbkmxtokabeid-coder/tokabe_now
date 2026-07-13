@@ -136,14 +136,29 @@
 
                                     {{-- VIDEO DINAMIS --}}
                                     <div class="form-group mb-4 mt-4">
-                                        <label>Upload Video (Opsional)</label>
+                                        <label>YouTube Links (Opsional)</label>
                                         <small class="text-muted d-block mb-3">
-                                            Format yang didukung: MP4. Klik kotak tambah di bawah ini untuk mengupload video.
+                                            Masukkan URL YouTube dan unggah custom thumbnail untuk setiap video.
                                         </small>
 
-                                        {{-- Wrapper untuk menampung input-input video (Horizontal Layout) --}}
-                                        <div id="video-inputs-wrapper" class="d-flex flex-wrap gap-3 mt-2">
-                                            <!-- Kotak input video akan di-generate via Javascript di sini -->
+                                        {{-- YOUTUBE LINKS --}}
+                                        <div class="mt-3 border p-3 rounded bg-light">
+                                            <label class="font-weight-bold mb-2">YouTube Links</label>
+                                            <div id="youtube-links-wrapper">
+                                                <div class="input-group mb-2 youtube-input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fab fa-youtube text-danger"></i></span>
+                                                    </div>
+                                                    <input type="url" name="youtube_urls[]" class="form-control" placeholder="Masukkan Link YouTube (Contoh: https://www.youtube.com/watch?v=...)">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Thumbnail</span>
+                                                    </div>
+                                                    <input type="file" name="youtube_thumbnails[]" class="form-control p-1" accept="image/*">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-success add-youtube-btn" type="button">+</button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -257,88 +272,32 @@ imageWrapper.addEventListener('click', function(e) {
     }
 });
 
+
+
 // ==========================================
-// --- SCRIPT DYNAMIC VIDEO INPUT & PREVIEW
+// --- SCRIPT DYNAMIC YOUTUBE INPUT ---
 // ==========================================
-const videoWrapper = document.getElementById('video-inputs-wrapper');
-
-function createEmptyVideoBox() {
-    const box = document.createElement('div');
-    // Styling kotak: ukuran tetap, abu-abu, flexbox tengah
-    box.className = 'video-upload-box position-relative d-flex justify-content-center align-items-center border rounded bg-light mr-3 mb-3';
-    box.style.width = '150px';
-    box.style.height = '150px';
-    box.style.overflow = 'hidden';
-    
-    box.innerHTML = `
-        <div class="plus-icon-container text-muted d-flex flex-column align-items-center" style="pointer-events: none;">
-            <span style="font-size: 2.5rem; line-height: 1;">+</span>
-            <span style="font-size: 0.8rem;">Video</span>
-        </div>
-        
-        <!-- Input file tembus pandang (opacity 0) menutupi kotak -->
-        <input type="file" name="videos[]" class="video-input position-absolute w-100 h-100" accept="video/mp4" style="opacity: 0; cursor: pointer; top: 0; left: 0; z-index: 2;">
-        
-        <!-- Wadah Preview per Video (Tersembunyi Awalnya) -->
-        <div class="preview-container position-absolute w-100 h-100 d-none" style="top: 0; left: 0; z-index: 3;">
-            <video class="w-100 h-100" style="object-fit: cover; background-color: #000;" controls></video>
-            
-            <!-- Tombol Silang (X) Melayang -->
-            <button type="button" class="btn btn-danger position-absolute remove-video-btn" style="top: 5px; right: 5px; padding: 2px 7px; z-index: 10; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: bold; line-height: 1;">&times;</button>
-        </div>
-    `;
-    
-    videoWrapper.appendChild(box);
-}
-
-// Inisialisasi: Buat 1 kotak kosong video pertama kali
-createEmptyVideoBox();
-
-// Event Delegation Video (Ganti File)
-videoWrapper.addEventListener('change', function(e) {
-    if (e.target.classList.contains('video-input')) {
-        const file = e.target.files[0];
-        const box = e.target.closest('.video-upload-box');
-        
-        if (file && file.type === 'video/mp4') {
-            const videoURL = URL.createObjectURL(file);
-            
-            const previewContainer = box.querySelector('.preview-container');
-            const videoElement = box.querySelector('video');
-            
-            videoElement.src = videoURL;
-            previewContainer.classList.remove('d-none');
-            
-            e.target.style.pointerEvents = 'none';
-
-            const allBoxes = videoWrapper.querySelectorAll('.video-upload-box');
-            const lastBox = allBoxes[allBoxes.length - 1];
-            if (box === lastBox) {
-                createEmptyVideoBox();
-            }
-        } else if (file) {
-            alert('Format file tidak didukung. Harap upload video berformat MP4.');
-            e.target.value = ''; 
-        }
-    }
-});
-
-// Event Delegation Video (Hapus Kotak)
-videoWrapper.addEventListener('click', function(e) {
-    if (e.target.classList.contains('remove-video-btn')) {
-        const box = e.target.closest('.video-upload-box');
-        box.remove(); 
-        
-        const allBoxes = videoWrapper.querySelectorAll('.video-upload-box');
-        if (allBoxes.length === 0) {
-            createEmptyVideoBox();
-        } else {
-            const lastBox = allBoxes[allBoxes.length - 1];
-            const lastInput = lastBox.querySelector('.video-input');
-            if (lastInput.files && lastInput.files.length > 0) {
-                createEmptyVideoBox();
-            }
-        }
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('add-youtube-btn')) {
+        const wrapper = document.getElementById('youtube-links-wrapper');
+        const newGroup = document.createElement('div');
+        newGroup.className = 'input-group mb-2 youtube-input-group';
+        newGroup.innerHTML = `
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fab fa-youtube text-danger"></i></span>
+            </div>
+            <input type="url" name="youtube_urls[]" class="form-control" placeholder="Masukkan Link YouTube (Contoh: https://www.youtube.com/watch?v=...)">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Thumbnail</span>
+            </div>
+            <input type="file" name="youtube_thumbnails[]" class="form-control p-1" accept="image/*">
+            <div class="input-group-append">
+                <button class="btn btn-danger remove-youtube-btn" type="button">-</button>
+            </div>
+        `;
+        wrapper.appendChild(newGroup);
+    } else if (e.target.classList.contains('remove-youtube-btn')) {
+        e.target.closest('.youtube-input-group').remove();
     }
 });
 </script>

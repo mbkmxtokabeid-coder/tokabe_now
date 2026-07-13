@@ -144,23 +144,58 @@
 
                                     {{-- VIDEOS DINAMIS --}}
                                     <div class="form-group mb-4 mt-4">
-                                        <label class="font-weight-bold">Portofolio Videos (MP4)</label>
-                                        <small class="text-muted d-block mb-3">Klik ikon "X" untuk menghapus video lama, atau klik kotak "+" di paling kanan untuk menambah video baru.</small>
+                                        <label class="font-weight-bold">YouTube Links (Opsional)</label>
+                                        <small class="text-muted d-block mb-3">Klik ikon "X" pada kotak video untuk menghapus video lama. Untuk menambah video baru, gunakan kolom URL YouTube di bagian bawah.</small>
 
-                                        <div id="video-inputs-wrapper" class="d-flex flex-wrap gap-3">
+                                        @if($portofolio->videos->count() > 0)
+                                        <div id="video-inputs-wrapper" class="d-flex flex-wrap gap-3 mb-3">
                                             {{-- Menampilkan Video yang Sudah Ada --}}
                                             @foreach($portofolio->videos as $vid)
-                                                <div class="video-upload-box position-relative d-flex justify-content-center align-items-center border rounded bg-dark mr-3 mb-3" style="width: 150px; height: 150px; overflow: hidden;">
-                                                    <video src="{{ asset('storage/' . ($vid->video_path ?? $vid->video)) }}" class="w-100 h-100" style="object-fit: cover;"></video>
+                                                <div class="video-upload-box position-relative border rounded mr-3 mb-3" style="width: 200px; height: 150px; overflow: hidden; background-color: #000;">
+                                                    @if(str_contains($vid->video_path, 'youtube.com') || str_contains($vid->video_path, 'youtu.be'))
+                                                        @if($vid->thumbnail)
+                                                            <img src="{{ asset('storage/' . $vid->thumbnail) }}" class="w-100 h-100" style="object-fit: cover;">
+                                                            <div class="absolute inset-0 d-flex justify-content-center align-items-center" style="position: absolute; top:0; left:0; right:0; bottom:0;">
+                                                                <i class="fab fa-youtube fa-2x text-danger" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5);"></i>
+                                                            </div>
+                                                        @else
+                                                            <div class="text-white text-center w-100 p-2 d-flex flex-column justify-content-center align-items-center h-100">
+                                                                <i class="fab fa-youtube fa-3x text-danger mb-2"></i>
+                                                                <div class="small text-truncate w-100 px-1" title="{{ $vid->video_path }}">{{ $vid->video_path }}</div>
+                                                            </div>
+                                                        @endif
+                                                    @else
+                                                        <video src="{{ asset('storage/' . ($vid->video_path ?? $vid->video)) }}" class="w-100 h-100" style="object-fit: cover;"></video>
+                                                    @endif
                                                     <button type="button" class="btn btn-danger btn-sm position-absolute delete-old-media" 
                                                             data-id="{{ $vid->id }}" data-type="video"
                                                             style="top: 5px; right: 5px; border-radius: 50%; padding: 2px 7px; z-index:10;">&times;</button>
                                                 </div>
                                             @endforeach
-                                            <!-- Kotak "+" akan muncul di sini via JS -->
                                         </div>
+                                        @endif
                                         {{-- Wadah untuk menampung ID video yang akan dihapus --}}
                                         <div id="delete-videos-container"></div>
+                                        
+                                        {{-- YOUTUBE LINKS --}}
+                                        <div class="mt-3 border p-3 rounded bg-light">
+                                            <label class="font-weight-bold mb-2">YouTube Links (Opsional)</label>
+                                            <div id="youtube-links-wrapper">
+                                                <div class="input-group mb-2 youtube-input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fab fa-youtube text-danger"></i></span>
+                                                    </div>
+                                                    <input type="url" name="youtube_urls[]" class="form-control" placeholder="Masukkan Link YouTube (Contoh: https://www.youtube.com/watch?v=...)">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Thumbnail</span>
+                                                    </div>
+                                                    <input type="file" name="youtube_thumbnails[]" class="form-control p-1" accept="image/*">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-success add-youtube-btn" type="button">+</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     {{-- ACTION --}}
@@ -263,59 +298,29 @@ imageWrapper.addEventListener('click', function(e) {
 });
 
 // ==========================================
-// --- SCRIPT DYNAMIC VIDEO INPUT (SAMAKAN DENGAN CREATE)
+// --- SCRIPT DYNAMIC YOUTUBE INPUT ---
 // ==========================================
-const videoWrapper = document.getElementById('video-inputs-wrapper');
-
-function createEmptyVideoBox() {
-    const box = document.createElement('div');
-    box.className = 'video-upload-box position-relative d-flex justify-content-center align-items-center border rounded bg-light mr-3 mb-3';
-    box.style.width = '150px';
-    box.style.height = '150px';
-    box.style.overflow = 'hidden';
-    
-    box.innerHTML = `
-        <div class="plus-icon-container text-muted d-flex flex-column align-items-center" style="pointer-events: none;">
-            <span style="font-size: 2.5rem; line-height: 1;">+</span>
-            <span style="font-size: 0.8rem;">Video</span>
-        </div>
-        <input type="file" name="videos[]" class="video-input position-absolute w-100 h-100" accept="video/mp4" style="opacity: 0; cursor: pointer; top: 0; left: 0; z-index: 2;">
-        <div class="preview-container position-absolute w-100 h-100 d-none" style="top: 0; left: 0; z-index: 3;">
-            <video class="w-100 h-100" style="object-fit: cover; background-color: #000;" controls></video>
-            <button type="button" class="btn btn-danger position-absolute remove-video-btn" style="top: 5px; right: 5px; padding: 2px 7px; z-index: 10; border-radius: 50%;">&times;</button>
-        </div>
-    `;
-    videoWrapper.appendChild(box);
-}
-
-createEmptyVideoBox();
-
-videoWrapper.addEventListener('change', function(e) {
-    if (e.target.classList.contains('video-input')) {
-        const file = e.target.files[0];
-        const box = e.target.closest('.video-upload-box');
-        if (file && file.type === 'video/mp4') {
-            const videoURL = URL.createObjectURL(file);
-            const previewContainer = box.querySelector('.preview-container');
-            const videoElement = box.querySelector('video');
-            videoElement.src = videoURL;
-            previewContainer.classList.remove('d-none');
-            e.target.style.pointerEvents = 'none';
-
-            const allBoxes = videoWrapper.querySelectorAll('.video-upload-box');
-            const lastBox = allBoxes[allBoxes.length - 1];
-            if (box === lastBox) createEmptyVideoBox();
-        }
-    }
-});
-
-videoWrapper.addEventListener('click', function(e) {
-    if (e.target.classList.contains('remove-video-btn')) {
-        e.target.closest('.video-upload-box').remove();
-        const allBoxes = videoWrapper.querySelectorAll('.video-upload-box');
-        if (allBoxes.length === 0 || Array.from(allBoxes).every(b => b.querySelector('.video-input').files.length > 0)) {
-            createEmptyVideoBox();
-        }
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('add-youtube-btn')) {
+        const wrapper = document.getElementById('youtube-links-wrapper');
+        const newGroup = document.createElement('div');
+        newGroup.className = 'input-group mb-2 youtube-input-group';
+        newGroup.innerHTML = `
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fab fa-youtube text-danger"></i></span>
+            </div>
+            <input type="url" name="youtube_urls[]" class="form-control" placeholder="Masukkan Link YouTube (Contoh: https://www.youtube.com/watch?v=...)">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Thumbnail</span>
+            </div>
+            <input type="file" name="youtube_thumbnails[]" class="form-control p-1" accept="image/*">
+            <div class="input-group-append">
+                <button class="btn btn-danger remove-youtube-btn" type="button">-</button>
+            </div>
+        `;
+        wrapper.appendChild(newGroup);
+    } else if (e.target.classList.contains('remove-youtube-btn')) {
+        e.target.closest('.youtube-input-group').remove();
     }
 });
 </script>
