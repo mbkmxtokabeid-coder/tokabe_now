@@ -45,4 +45,14 @@ class Portofolio extends Model
     {
         return $this->hasMany(PortofolioVideo::class);
     }
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+    }
 }

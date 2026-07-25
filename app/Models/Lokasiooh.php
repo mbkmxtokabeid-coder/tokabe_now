@@ -23,4 +23,14 @@ class Lokasiooh extends Model
     public function getNamaAttribute(): mixed            { return $this->decodeField('nama'); }
     public function getDeskripsiLokasiAttribute(): mixed { return $this->decodeField('deskripsi_lokasi'); }
     public function getTaglineAttribute(): mixed         { return $this->decodeField('tagline'); }
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+    }
 }

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -44,32 +44,45 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 
                 <!-- Filter UI -->
-                <div x-data="{ open: false }" class="relative mb-10" data-aos="fade-up" data-aos-delay="100">
+                <div x-data="{ activeCategory: 'all', open: false }" class="relative mb-10" data-aos="fade-up" data-aos-delay="100">
                     
                     <!-- Desktop Filter (Only on Extra Large Screens) -->
                     <div class="hidden xl:flex flex-wrap items-center justify-center gap-4">
-                        <button class="px-6 py-2.5 rounded-full bg-[#D4A574] text-[#1A0F07] font-bold text-sm hover:scale-105 transition-all shadow-[0_0_15px_rgba(212,165,116,0.3)]">
+                        <button 
+                            @click="activeCategory = 'all'" 
+                            :class="activeCategory === 'all' 
+                                ? 'bg-[#D4A574] text-[#1A0F07] shadow-[0_0_15px_rgba(212,165,116,0.3)] font-bold' 
+                                : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 backdrop-blur-sm font-medium'" 
+                            class="px-6 py-2.5 rounded-full text-sm hover:scale-105 transition-all">
                             {{ __('Semua') }}
                         </button>
-                        <button class="px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
-                            {{ __('DOOH / Videotron') }}
-                        </button>
-                        <button class="px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
-                            {{ __('OOH / Billboard') }}
-                        </button>
-                        <button class="px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
-                            {{ __('Event & Brand Activity') }}
-                        </button>
-                        <button class="px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
-                            {{ __('Videography & Photography') }}
-                        </button>
-                        <button class="px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
-                            {{ __('Ruang Digital') }}
-                        </button>
+                        @foreach($categories as $cat)
+                            @php
+                                $catNameData = $cat->nama_kategori ?: ($cat->getRawOriginal ? $cat->getRawOriginal('nama_kategori') : '');
+                                if (is_string($catNameData) && str_starts_with($catNameData, '{')) {
+                                    $catNameArray = json_decode($catNameData, true);
+                                } else {
+                                    $catNameArray = $catNameData;
+                                }
+                                if (is_array($catNameArray)) {
+                                    $catTitle = $catNameArray[app()->getLocale()] ?? $catNameArray['id'] ?? $catNameArray['en'] ?? collect($catNameArray)->first() ?? '';
+                                } else {
+                                    $catTitle = $catNameArray;
+                                }
+                            @endphp
+                            <button 
+                                @click="activeCategory = {{ $cat->id }}" 
+                                :class="activeCategory == {{ $cat->id }} 
+                                    ? 'bg-[#D4A574] text-[#1A0F07] shadow-[0_0_15px_rgba(212,165,116,0.3)] font-bold' 
+                                    : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 backdrop-blur-sm font-medium'" 
+                                class="px-6 py-2.5 rounded-full text-sm hover:scale-105 transition-all">
+                                {{ $catTitle }}
+                            </button>
+                        @endforeach
                     </div>
 
                     <!-- Mobile & Tablet & Laptop Filter (Hidden on XL Desktop) -->
-                    <div class="xl:hidden relative z-30 h-12 w-full px-2 mb-6" x-data="{ open: false }">
+                    <div class="xl:hidden relative z-30 h-12 w-full px-2 mb-6">
                         <!-- Active Filter Text (Mobile) / Scrollable Menu (Tablet/Laptop) -->
                         <div class="absolute top-0 left-0 h-12 flex items-center z-40 transition-all duration-300 pl-2 w-[calc(100%-56px)]" :class="open ? 'opacity-0 pointer-events-none' : 'opacity-100'">
                             <!-- Mobile Text -->
@@ -77,24 +90,37 @@
                             
                             <!-- Tablet/Laptop Scrollable Buttons -->
                             <div class="hidden md:flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full gap-3 pr-4 items-center">
-                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#D4A574] text-[#1A0F07] font-bold text-sm hover:scale-105 transition-all shadow-[0_0_15px_rgba(212,165,116,0.3)]">
+                                <button 
+                                    @click="activeCategory = 'all'" 
+                                    :class="activeCategory === 'all' 
+                                        ? 'bg-[#D4A574] text-[#1A0F07] shadow-[0_0_15px_rgba(212,165,116,0.3)] font-bold' 
+                                        : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 backdrop-blur-sm font-medium'" 
+                                    class="flex-shrink-0 px-6 py-2.5 rounded-full text-sm hover:scale-105 transition-all">
                                     {{ __('Semua') }}
                                 </button>
-                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
-                                    {{ __('DOOH / Videotron') }}
-                                </button>
-                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
-                                    {{ __('OOH / Billboard') }}
-                                </button>
-                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
-                                    {{ __('Event & Brand Activity') }}
-                                </button>
-                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
-                                    {{ __('Videography & Photography') }}
-                                </button>
-                                <button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 transition-all backdrop-blur-sm">
-                                    {{ __('Ruang Digital') }}
-                                </button>
+                                @foreach($categories as $cat)
+                                    @php
+                                        $catNameData = $cat->nama_kategori ?: ($cat->getRawOriginal ? $cat->getRawOriginal('nama_kategori') : '');
+                                        if (is_string($catNameData) && str_starts_with($catNameData, '{')) {
+                                            $catNameArray = json_decode($catNameData, true);
+                                        } else {
+                                            $catNameArray = $catNameData;
+                                        }
+                                        if (is_array($catNameArray)) {
+                                            $catTitle = $catNameArray[app()->getLocale()] ?? $catNameArray['id'] ?? $catNameArray['en'] ?? collect($catNameArray)->first() ?? '';
+                                        } else {
+                                            $catTitle = $catNameArray;
+                                        }
+                                    @endphp
+                                    <button 
+                                        @click="activeCategory = {{ $cat->id }}" 
+                                        :class="activeCategory == {{ $cat->id }} 
+                                            ? 'bg-[#D4A574] text-[#1A0F07] shadow-[0_0_15px_rgba(212,165,116,0.3)] font-bold' 
+                                            : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 backdrop-blur-sm font-medium'" 
+                                        class="flex-shrink-0 px-6 py-2.5 rounded-full text-sm hover:scale-105 transition-all">
+                                        {{ $catTitle }}
+                                    </button>
+                                @endforeach
                             </div>
                         </div>
 
@@ -132,32 +158,41 @@
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
-                                <div class="flex flex-col gap-2.5 w-full">
-                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#D4A574] text-[#1A0F07] font-bold text-sm shadow-md">
+                                <div class="flex flex-col gap-2.5 w-full overflow-y-auto pr-1">
+                                    <button 
+                                        @click="activeCategory = 'all'; open = false" 
+                                        :class="activeCategory === 'all' ? 'bg-[#D4A574] text-[#1A0F07] font-bold shadow-md' : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white'" 
+                                        class="w-full text-left px-4 py-3 rounded-xl text-sm transition-all">
                                         {{ __('Semua') }}
                                     </button>
-                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white transition-all">
-                                        {{ __('DOOH / Videotron') }}
-                                    </button>
-                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white transition-all">
-                                        {{ __('OOH / Billboard') }}
-                                    </button>
-                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white transition-all">
-                                        {{ __('Event & Brand Activity') }}
-                                    </button>
-                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white transition-all">
-                                        {{ __('Videography & Photography') }}
-                                    </button>
-                                    <button class="w-full text-left px-4 py-3 rounded-xl bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] font-medium text-sm hover:bg-[#5C3317]/60 hover:text-white transition-all">
-                                        {{ __('Ruang Digital') }}
-                                    </button>
+                                    @foreach($categories as $cat)
+                                        @php
+                                            $catNameData = $cat->nama_kategori ?: ($cat->getRawOriginal ? $cat->getRawOriginal('nama_kategori') : '');
+                                            if (is_string($catNameData) && str_starts_with($catNameData, '{')) {
+                                                $catNameArray = json_decode($catNameData, true);
+                                            } else {
+                                                $catNameArray = $catNameData;
+                                            }
+                                            if (is_array($catNameArray)) {
+                                                $catTitle = $catNameArray[app()->getLocale()] ?? $catNameArray['id'] ?? $catNameArray['en'] ?? collect($catNameArray)->first() ?? '';
+                                            } else {
+                                                $catTitle = $catNameArray;
+                                            }
+                                        @endphp
+                                        <button 
+                                            @click="activeCategory = {{ $cat->id }}; open = false" 
+                                            :class="activeCategory == {{ $cat->id }} ? 'bg-[#D4A574] text-[#1A0F07] font-bold shadow-md' : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white'" 
+                                            class="w-full text-left px-4 py-3 rounded-xl text-sm transition-all">
+                                            {{ $catTitle }}
+                                        </button>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-0">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-0" x-data>
             @forelse($categories as $index => $item)
                 @php
                     $namaKatData = $item->nama_kategori ?: ($item->getRawOriginal ? $item->getRawOriginal('nama_kategori') : '');
@@ -172,7 +207,7 @@
                         $namaKategori = $namaKatArray;
                     }
                 @endphp
-                <a href="{{ route('portofolio.list', $item->id) }}" class="group block relative w-full aspect-[4/5] rounded-[1.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500" data-aos="fade-up" data-aos-delay="{{ ($index % 5) * 100 }}">
+                <a x-show="activeCategory === 'all' || activeCategory == {{ $item->id }}" href="{{ route('portofolio.list', $item->id) }}" class="group block relative w-full aspect-[4/5] rounded-[1.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500" data-aos="fade-up" data-aos-delay="{{ ($index % 5) * 100 }}">
                     
                     <!-- Background Image -->
                     <img src="{{ $item->image ? asset('storage/' . $item->image) : asset('images/default-category.jpg') }}" 

@@ -43,4 +43,14 @@ class LocationOoh extends Model
     {
         $this->attributes['deskripsi_lokasi'] = is_array($value) ? json_encode($value) : $value;
     }
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+    }
 }

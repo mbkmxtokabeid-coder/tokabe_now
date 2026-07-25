@@ -23,4 +23,14 @@ class About extends Model
         'dooh_description' => 'array',
         'ooh_description' => 'array',
     ];
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+    }
 }

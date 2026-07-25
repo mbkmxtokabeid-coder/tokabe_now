@@ -27,4 +27,14 @@ class PortofolioCategory extends Model
         // Parameter 3: 'id' adalah primary key di tabel portofolio_categories
         return $this->hasMany(Portofolio::class, 'kategori', 'id');
     }
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+    }
 }

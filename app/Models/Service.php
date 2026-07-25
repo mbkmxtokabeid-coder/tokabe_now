@@ -15,6 +15,16 @@ class Service extends Model
         'deskripsi' => 'array',
     ];
 
+    protected static function booted()
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+    }
+
     public function serviceCategories()
     {
         return $this->hasMany(ServiceCategory::class);

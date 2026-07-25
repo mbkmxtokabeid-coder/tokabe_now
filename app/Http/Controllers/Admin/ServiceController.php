@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Service;
 use App\Models\Heroe;
 use Intervention\Image\ImageManager;
@@ -89,6 +90,7 @@ class ServiceController extends Controller
         }
 
         $service->save();
+        Cache::forget('homepage_data');
         return redirect('/admin/service-list')->with('success', 'Kamu berhasil menambahkan service baru!');
     }
 
@@ -155,6 +157,7 @@ class ServiceController extends Controller
         }
 
         $service->save();
+        Cache::forget('homepage_data');
         return redirect('/admin/service-list')->with('update', 'Kamu berhasil meng-update service!');
     }
 
@@ -169,6 +172,7 @@ class ServiceController extends Controller
 
             // Hapus data dari database
             $service->delete();
+            Cache::forget('homepage_data');
 
             return redirect('/admin/service-list')->with('success', 'You have successfully deleted service data');
         }
