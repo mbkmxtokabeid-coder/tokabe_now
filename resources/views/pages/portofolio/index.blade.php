@@ -39,12 +39,11 @@
             </div>
         </div>
 
-        <!-- Categories Grid Minimalis (Style Shopee) -->
         <div class="py-12 sm:py-16">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ activeCategory: 'all', open: false }">
                 
                 <!-- Filter UI -->
-                <div x-data="{ activeCategory: 'all', open: false }" class="relative mb-10" data-aos="fade-up" data-aos-delay="100">
+                <div class="relative mb-10" data-aos="fade-up" data-aos-delay="100">
                     
                     <!-- Desktop Filter (Only on Extra Large Screens) -->
                     <div class="hidden xl:flex flex-wrap items-center justify-center gap-4">
@@ -192,7 +191,7 @@
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-0" x-data>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-0">
             @forelse($categories as $index => $item)
                 @php
                     $namaKatData = $item->nama_kategori ?: ($item->getRawOriginal ? $item->getRawOriginal('nama_kategori') : '');

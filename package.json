@@ -3,6 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "serve": "php -S 127.0.0.1:8000 -t public",
         "build": "vite build",
         "dev": "vite"
     },

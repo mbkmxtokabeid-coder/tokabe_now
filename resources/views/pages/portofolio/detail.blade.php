@@ -42,10 +42,10 @@
     <meta name="keywords" content="Portofolio Tokabe, {{ $judulText }}, {{ $namaKat }}">
     <meta property="og:title" content="{{ $judulText }} | Tokabe.id">
     <meta property="og:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($descText ?? ''), 150) }}">
-    @if(isset($event->gambar))
-    <meta property="og:image" content="{{ asset('storage/image_portofolio/' . $event->gambar) }}">
-    @elseif(isset($mainImage))
-    <meta property="og:image" content="{{ asset('storage/' . $mainImage->image) }}">
+    @if(isset($event->gambar) && $event->gambar)
+    <meta property="og:image" content="{{ str_starts_with($event->gambar, 'http') ? $event->gambar : asset('storage/' . ltrim($event->gambar, '/')) }}">
+    @elseif(isset($mainImage) && $mainImage)
+    <meta property="og:image" content="{{ asset('storage/' . ltrim($mainImage->image, '/')) }}">
     @else
     <meta property="og:image" content="{{ asset('images/LogoTKB.jpg') }}">
     @endif
@@ -68,7 +68,7 @@
         <!-- Main Image Header -->
         <div class="relative w-full h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-2xl mb-12 group" data-aos="zoom-in" data-aos-duration="1000">
             @if($event->gambar)
-                <img id="main-gallery-image" src="{{ asset('storage/image_portofolio/' . $event->gambar) }}" 
+                <img id="main-gallery-image" src="{{ str_starts_with($event->gambar, 'http') ? $event->gambar : asset('storage/' . ltrim($event->gambar, '/')) }}" 
                      alt="{{ \App\Helpers\SeoHelper::getImageAlt('event', $judulText) }}" 
                      class="w-full h-full object-cover transition-transform duration-700 ease-in-out">
             @elseif($mainImage)
