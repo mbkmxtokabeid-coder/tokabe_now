@@ -68,15 +68,15 @@ class LokasioohController extends Controller
 
         $lokasiooh = new Lokasiooh();
         
-        // Simpan data multi-bahasa sebagai array
-        $lokasiooh->nama = [
+        // Simpan data multi-bahasa sebagai JSON string
+        $lokasiooh->nama = json_encode([
             'id' => $request->nama_id,
             'en' => $request->nama_en
-        ];
-        $lokasiooh->deskripsi_lokasi = [
+        ], JSON_UNESCAPED_UNICODE);
+        $lokasiooh->deskripsi_lokasi = json_encode([
             'id' => $request->deskripsi_lokasi_id,
             'en' => $request->deskripsi_lokasi_en
-        ];
+        ], JSON_UNESCAPED_UNICODE);
 
         $lokasiooh->koordinat = $request->koordinat;
         $lokasiooh->wilayah = $request->wilayah;
@@ -142,14 +142,14 @@ class LokasioohController extends Controller
         }
 
         // Update data multi-bahasa
-        $lokasiooh->nama = [
+        $lokasiooh->nama = json_encode([
             'id' => $request->nama_id,
             'en' => $request->nama_en
-        ];
-        $lokasiooh->deskripsi_lokasi = [
+        ], JSON_UNESCAPED_UNICODE);
+        $lokasiooh->deskripsi_lokasi = json_encode([
             'id' => $request->deskripsi_lokasi_id,
             'en' => $request->deskripsi_lokasi_en
-        ];
+        ], JSON_UNESCAPED_UNICODE);
 
         $lokasiooh->koordinat = $request->koordinat;
         $lokasiooh->wilayah = $request->wilayah;

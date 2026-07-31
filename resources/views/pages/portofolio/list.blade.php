@@ -154,9 +154,21 @@
                     <!-- Right: Hero Image -->
                     <div class="relative hidden lg:block" data-aos="fade-left" data-aos-duration="1200">
                         @php
+<<<<<<< HEAD
                             $heroImage = $category->image 
                                 ? (\Illuminate\Support\Str::startsWith($category->image, 'http') ? $category->image : asset('storage/' . $category->image)) 
                                 : ($portfolios->first() ? ($portfolios->first()->gambar ? asset('storage/image_portofolio/' . $portfolios->first()->gambar) : ($portfolios->first()->firstImage ? asset('storage/' . $portfolios->first()->firstImage->image) : null)) : null);
+=======
+                            $firstItem = $portfolios->first();
+                            $heroImage = null;
+                            if ($firstItem) {
+                                if ($firstItem->gambar) {
+                                    $heroImage = str_starts_with($firstItem->gambar, 'http') ? $firstItem->gambar : asset('storage/' . ltrim($firstItem->gambar, '/'));
+                                } elseif ($firstItem->firstImage) {
+                                    $heroImage = asset('storage/' . ltrim($firstItem->firstImage->image, '/'));
+                                }
+                            }
+>>>>>>> f93d13293ba78146c5d34202cc6c798e3424e18f
                         @endphp
                         
                         @if($heroImage)
@@ -192,7 +204,12 @@
                         $judulArray = (is_string($judulData) && str_starts_with($judulData, '{')) ? json_decode($judulData, true) : $judulData;
                         $judulText = is_array($judulArray) ? ($judulArray[app()->getLocale()] ?? $judulArray['id'] ?? collect($judulArray)->first() ?? '') : $judulArray;
                         
-                        $imgSrc = $item->gambar ? asset('storage/image_portofolio/' . $item->gambar) : ($item->firstImage ? asset('storage/' . $item->firstImage->image) : null);
+                        $imgSrc = null;
+                        if ($item->gambar) {
+                            $imgSrc = str_starts_with($item->gambar, 'http') ? $item->gambar : asset('storage/' . ltrim($item->gambar, '/'));
+                        } elseif ($item->firstImage) {
+                            $imgSrc = asset('storage/' . ltrim($item->firstImage->image, '/'));
+                        }
                         $date = $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d M Y') : $item->created_at->format('d M Y');
                     @endphp
                     

@@ -31,5 +31,12 @@ class AppServiceProvider extends ServiceProvider
         } catch (\Exception $e) {
             // Ignore for initial migrations
         }
+
+        if (class_exists(\Illuminate\Foundation\Console\ServeCommand::class)) {
+            \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables = array_merge(
+                \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables,
+                ['SystemDrive', 'WINDIR', 'LOCALAPPDATA', 'APPDATA', 'COMSPEC', 'TEMP', 'TMP', 'SystemRoot']
+            );
+        }
     }
 }

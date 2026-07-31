@@ -77,15 +77,15 @@ class LokasiController extends Controller
         }
 
         $lokasi = new Lokasi();
-        $lokasi->nama = [
+        $lokasi->nama = json_encode([
             'id' => $request->nama_id,
             'en' => $request->nama_en,
-        ];
+        ]);
         $lokasi->tagline = $request->tagline;
-        $lokasi->deskripsi_lokasi = [
+        $lokasi->deskripsi_lokasi = json_encode([
             'id' => $request->deskripsi_lokasi_id,
             'en' => $request->deskripsi_lokasi_en,
-        ];
+        ]);
         $lokasi->koordinat = $request->koordinat;
         $lokasi->provinsi = $request->provinsi;
         $lokasi->media = $request->media;
@@ -159,10 +159,10 @@ class LokasiController extends Controller
             }
         }
 
-        $lokasi->nama = [
+        $lokasi->nama = json_encode([
             'id' => $request->nama_id,
             'en' => $request->nama_en,
-        ];
+        ]);
         $lokasi->tagline = $request->tagline;
         $lokasi->koordinat = $request->koordinat;
         $lokasi->provinsi = $request->provinsi;
@@ -176,10 +176,10 @@ class LokasiController extends Controller
         $lokasi->spot = $request->spot;
         $lokasi->brand = $request->brand;
         $lokasi->display = $request->display;
-        $lokasi->deskripsi_lokasi = [
+        $lokasi->deskripsi_lokasi = json_encode([
             'id' => $request->deskripsi_lokasi_id,
             'en' => $request->deskripsi_lokasi_en,
-        ];
+        ]);
         $lokasi->status = $request->status ?? 'Tidak aktif';
         $lokasi->availability = $request->availability ?? 'Available';
 
