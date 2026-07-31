@@ -107,7 +107,7 @@
 
                                             <div class="form-group mb-4">
                                                 <label>Image / Gambar</label>
-                                                <input type="file" class="form-control" name="gambar" accept="image/*">
+                                                <input type="file" class="form-control crop-image-input" name="gambar" accept="image/*" data-aspect-ratio="16/9">
                                             </div>
 
                                             <div class="text-right">

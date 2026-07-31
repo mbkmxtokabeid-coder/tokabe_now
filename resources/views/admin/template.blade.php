@@ -34,6 +34,8 @@
 	<link rel="stylesheet" href="{{asset('dashboard_assets/css/style.css')}}">
 
 	<link rel="stylesheet" href="{{asset('dashboard_assets/plugins/data-tables/css/datatables.min.css')}}">
+	<!-- Cropper.js CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -344,12 +346,48 @@
     @yield('content')
 
 
+	<!-- [ Reusable Image Cropper Modal ] -->
+	<div class="modal fade" id="cropperModal" tabindex="-1" aria-labelledby="cropperModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content border-0 shadow-lg">
+				<div class="modal-header bg-dark text-white">
+					<h5 class="modal-title text-white" id="cropperModalLabel">
+						<i class="feather icon-crop me-2"></i>Potong & Sesuaikan Gambar (Crop Image)
+					</h5>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body p-4 text-center">
+					<div class="mb-3 flex-wrap d-flex justify-content-center gap-2 align-items-center">
+						<span class="fw-bold me-2 text-muted">Pilih Rasio Frame:</span>
+						<button type="button" class="btn btn-sm btn-outline-primary active" data-aspect="free">Bebas (Free)</button>
+						<button type="button" class="btn btn-sm btn-outline-primary" data-aspect="16/9">16:9 (Banner / Wide)</button>
+						<button type="button" class="btn btn-sm btn-outline-primary" data-aspect="4/3">4:3 (Kategori / Card)</button>
+						<button type="button" class="btn btn-sm btn-outline-primary" data-aspect="1/1">1:1 (Persegi / Square)</button>
+					</div>
+					<div class="img-container overflow-hidden rounded bg-light" style="max-height: 450px; min-height: 300px;">
+						<img id="cropperModalImage" src="" class="img-fluid" style="max-width: 100%; display: block; margin: 0 auto;">
+					</div>
+				</div>
+				<div class="modal-footer bg-light">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+					<button type="button" class="btn btn-success font-weight-bold" id="cropperModalSave">
+						<i class="feather icon-check me-1"></i>Potong & Simpan
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 @stack('scripts')
 <!-- Required Js -->
 <script src="{{asset('dashboard_assets/js/vendor-all.min.js')}}"></script>
 <script src="{{asset('dashboard_assets/plugins/bootstrap/js/popper.min.js')}}"></script>
 <script src="{{asset('dashboard_assets/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 <script src="{{asset('dashboard_assets/js/pcoded.min.js')}}"></script>
+
+<!-- Cropper.js & Global Helper -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="{{asset('dashboard_assets/js/image-cropper.js')}}"></script>
 
 <!-- datatable js -->
 <script src="{{asset('dashboard_assets/plugins/data-tables/js/datatables.min.js')}}"></script>

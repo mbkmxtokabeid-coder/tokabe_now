@@ -68,8 +68,9 @@
 
                                                 <input type="file"
                                                        name="image"
-                                                       class="form-control"
-                                                       accept="image/*">
+                                                       class="form-control crop-image-input"
+                                                       accept="image/*"
+                                                       data-aspect-ratio="4/3">
                                             </div>
 
                                             {{-- Nama --}}

@@ -68,9 +68,11 @@
                                                 <label>Gambar Kategori</label>
                                                 <input type="file"
                                                        name="image"
-                                                       class="form-control"
+                                                       class="form-control crop-image-input"
                                                        id="imageInput"
-                                                       accept="image/*">
+                                                       accept="image/*"
+                                                       data-aspect-ratio="4/3"
+                                                       data-preview="#previewImage">
 
                                                 <small class="text-muted">
                                                     1 gambar akan digunakan untuk semua kategori yang ditambahkan

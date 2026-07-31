@@ -268,10 +268,11 @@ class HomeController extends Controller
                 return (object)[
                     'id' => $cat->id,
                     'tab_title' => $cat->nama,
+                    'has_main' => $firstDetail ? true : false,
                     'nama_brand' => is_array($cat->nama) ? ($cat->nama['id'] ?? '') : $cat->nama,
                     'judul' => $firstDetail ? $firstDetail->judul : '',
                     'deskripsi' => $firstDetail ? $firstDetail->deskripsi : '',
-                    'gambar' => $firstDetail && $firstDetail->gambar ? asset('storage/service_details/' . $firstDetail->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=1200&auto=format&fit=crop',
+                    'gambar' => $firstDetail ? ($firstDetail->gambar ? asset('storage/service_details/' . $firstDetail->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=1200&auto=format&fit=crop') : '',
                     'detail' => $otherDetails->map(function($d) {
                         return [
                             'title' => $d->judul,

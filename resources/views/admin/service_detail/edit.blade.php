@@ -103,7 +103,7 @@
                                                         <img src="{{ asset('storage/service_details/' . $detail->gambar) }}" style="max-height: 150px; border-radius: 8px;">
                                                     </div>
                                                 @endif
-                                                <input type="file" class="form-control" name="gambar" accept="image/*">
+                                                <input type="file" class="form-control crop-image-input" name="gambar" accept="image/*" data-aspect-ratio="16/9">
                                                 <small class="text-muted">Leave blank if you don't want to change the image.</small>
                                             </div>
 

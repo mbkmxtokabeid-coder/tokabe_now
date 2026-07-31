@@ -154,7 +154,9 @@
                     <!-- Right: Hero Image -->
                     <div class="relative hidden lg:block" data-aos="fade-left" data-aos-duration="1200">
                         @php
-                            $heroImage = $portfolios->first() ? ($portfolios->first()->gambar ? asset('storage/image_portofolio/' . $portfolios->first()->gambar) : ($portfolios->first()->firstImage ? asset('storage/' . $portfolios->first()->firstImage->image) : null)) : null;
+                            $heroImage = $category->image 
+                                ? (\Illuminate\Support\Str::startsWith($category->image, 'http') ? $category->image : asset('storage/' . $category->image)) 
+                                : ($portfolios->first() ? ($portfolios->first()->gambar ? asset('storage/image_portofolio/' . $portfolios->first()->gambar) : ($portfolios->first()->firstImage ? asset('storage/' . $portfolios->first()->firstImage->image) : null)) : null);
                         @endphp
                         
                         @if($heroImage)

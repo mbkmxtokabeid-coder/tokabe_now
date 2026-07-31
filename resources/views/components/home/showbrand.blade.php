@@ -41,8 +41,11 @@
         $deskripsi = is_array($rawDeskripsi)
             ? (($rawDeskripsi[app()->getLocale()] ?? '') ?: ($rawDeskripsi['en'] ?? '') ?: ($rawDeskripsi['id'] ?? '') ?: collect($rawDeskripsi)->first() ?? '')
             : ($rawDeskripsi ?: (method_exists($brand, 'getRawOriginal') ? $brand->getRawOriginal('deskripsi') : ''));
+
+        $hasMain = isset($brand->has_main) ? $brand->has_main : (!empty($judul) || !empty($deskripsi) || !empty($brand->gambar));
     @endphp
     <div class="service-content {{ $activeTab == $loop->index ? '' : 'hidden' }}" data-content="{{ $loop->index }}">
+        @if ($hasMain)
         <div class="bg-gradient-to-br from-[#2C1A0E] via-[#3D2514] to-[#2C1A0E] rounded-3xl shadow-2xl overflow-hidden border border-white/10 max-w-5xl mx-auto">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
                 <!-- Image -->
@@ -75,10 +78,11 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <!-- Additional Details -->
         @if (isset($brand->detail) && !empty($brand->detail))
-        <div class="mt-16 flex flex-col md:flex-row gap-8 max-w-4xl mx-auto items-start">
+        <div class="{{ $hasMain ? 'mt-16' : 'mt-4' }} flex flex-col md:flex-row gap-8 max-w-4xl mx-auto items-start">
             <!-- Left Column -->
             <div class="w-full md:w-1/2 flex flex-col gap-8">
                 @foreach ($brand->detail as $d)
