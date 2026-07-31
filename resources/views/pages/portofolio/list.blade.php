@@ -154,21 +154,16 @@
                     <!-- Right: Hero Image -->
                     <div class="relative hidden lg:block" data-aos="fade-left" data-aos-duration="1200">
                         @php
-<<<<<<< HEAD
-                            $heroImage = $category->image 
-                                ? (\Illuminate\Support\Str::startsWith($category->image, 'http') ? $category->image : asset('storage/' . $category->image)) 
-                                : ($portfolios->first() ? ($portfolios->first()->gambar ? asset('storage/image_portofolio/' . $portfolios->first()->gambar) : ($portfolios->first()->firstImage ? asset('storage/' . $portfolios->first()->firstImage->image) : null)) : null);
-=======
-                            $firstItem = $portfolios->first();
                             $heroImage = null;
-                            if ($firstItem) {
+                            if (isset($category) && $category->image) {
+                                $heroImage = \Illuminate\Support\Str::startsWith($category->image, 'http') ? $category->image : asset('storage/' . ltrim($category->image, '/'));
+                            } elseif ($firstItem = $portfolios->first()) {
                                 if ($firstItem->gambar) {
-                                    $heroImage = str_starts_with($firstItem->gambar, 'http') ? $firstItem->gambar : asset('storage/' . ltrim($firstItem->gambar, '/'));
+                                    $heroImage = \Illuminate\Support\Str::startsWith($firstItem->gambar, 'http') ? $firstItem->gambar : asset('storage/image_portofolio/' . ltrim($firstItem->gambar, '/'));
                                 } elseif ($firstItem->firstImage) {
                                     $heroImage = asset('storage/' . ltrim($firstItem->firstImage->image, '/'));
                                 }
                             }
->>>>>>> f93d13293ba78146c5d34202cc6c798e3424e18f
                         @endphp
                         
                         @if($heroImage)
