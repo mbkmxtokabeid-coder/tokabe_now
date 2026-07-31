@@ -13,7 +13,7 @@ class Lokasiooh extends Model
 
     private function decodeField(string $field): mixed
     {
-        $raw = $this->getRawOriginal($field);
+        $raw = $this->attributes[$field] ?? $this->getRawOriginal($field);
         if ($raw === null || $raw === '') return null;
         if (is_array($raw)) return $raw;
         $decoded = json_decode($raw, true);
@@ -23,6 +23,16 @@ class Lokasiooh extends Model
     public function getNamaAttribute(): mixed            { return $this->decodeField('nama'); }
     public function getDeskripsiLokasiAttribute(): mixed { return $this->decodeField('deskripsi_lokasi'); }
     public function getTaglineAttribute(): mixed         { return $this->decodeField('tagline'); }
+
+    public function setNamaAttribute($value)
+    {
+        $this->attributes['nama'] = is_array($value) ? json_encode($value) : $value;
+    }
+
+    public function setDeskripsiLokasiAttribute($value)
+    {
+        $this->attributes['deskripsi_lokasi'] = is_array($value) ? json_encode($value) : $value;
+    }
 
     protected static function booted()
     {
