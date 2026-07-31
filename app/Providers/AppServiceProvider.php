@@ -11,7 +11,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Ubah public_path ke public_html jika aplikasi berjalan di hosting (struktur folder terpisah)
+        $publicPath = null;
+
+        if (isset($_SERVER['DOCUMENT_ROOT']) && !empty($_SERVER['DOCUMENT_ROOT']) && is_dir($_SERVER['DOCUMENT_ROOT']) && str_contains($_SERVER['DOCUMENT_ROOT'], 'public_html')) {
+            $publicPath = $_SERVER['DOCUMENT_ROOT'];
+        } elseif (is_dir(base_path('../public_html'))) {
+            $publicPath = realpath(base_path('../public_html'));
+        }
+
+        if ($publicPath) {
+            $this->app->usePublicPath($publicPath);
+        }
     }
 
     /**
