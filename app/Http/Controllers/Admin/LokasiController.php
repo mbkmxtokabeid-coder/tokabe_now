@@ -220,8 +220,8 @@ class LokasiController extends Controller
         
         if ($lokasi) {
             // Hapus file gambar dari storage jika ada
-            if ($lokasi->gambar && Storage::exists('public/image_lokasi/' . $lokasi->gambar)) {
-                Storage::delete('public/image_lokasi/' . $lokasi->gambar);
+            if ($lokasi->gambar && Storage::disk('public')->exists('image_lokasi/' . $lokasi->gambar)) {
+                Storage::disk('public')->delete('image_lokasi/' . $lokasi->gambar);
             }
 
             // Hapus data dari database

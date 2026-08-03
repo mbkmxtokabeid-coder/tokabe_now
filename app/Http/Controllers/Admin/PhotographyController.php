@@ -85,8 +85,8 @@ class PhotographyController extends Controller
 
     if ($photography) {
         // Hapus file gambar dari storage jika ada
-        if ($photography->image_url && Storage::exists('public/image_photography/' . $photography->image_url)) {
-            Storage::delete('public/image_photography/' . $photography->image_url);
+        if ($photography->image_url && Storage::disk('public')->exists('image_photography/' . $photography->image_url)) {
+            Storage::disk('public')->delete('image_photography/' . $photography->image_url);
         }
 
         // Hapus data dari database

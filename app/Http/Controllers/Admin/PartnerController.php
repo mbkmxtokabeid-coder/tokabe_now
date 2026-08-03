@@ -181,8 +181,8 @@ class PartnerController extends Controller
         $partner = Partner::find($id);
         if ($partner) {
         // Hapus file gambar dari storage jika ada
-        if ($partner->gambar && Storage::exists('public/image_partner/' . $partner->gambar)) {
-            Storage::delete('public/image_partner/' . $partner->gambar);
+        if ($partner->gambar && Storage::disk('public')->exists('image_partner/' . $partner->gambar)) {
+            Storage::disk('public')->delete('image_partner/' . $partner->gambar);
         }
 
         // Hapus data dari database

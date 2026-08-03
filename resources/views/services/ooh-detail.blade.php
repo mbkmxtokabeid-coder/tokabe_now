@@ -80,6 +80,20 @@
                             </div>
                         </div>
 
+                        <!-- Preview Gambar Tempat Periklanan -->
+                        <div class="rounded-2xl overflow-hidden shadow-lg border border-[#D4A569]/30 w-full relative group bg-[#2C1A0E]">
+                            <div class="aspect-video w-full overflow-hidden">
+                                <img src="{{ $lokasiooh->gambar ? asset('storage/image_lokasiooh/' . $lokasiooh->gambar) : 'https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1200&auto=format&fit=crop' }}" 
+                                     alt="{{ \App\Helpers\SeoHelper::getImageAlt('ooh', $namaLokasi, $lokasiooh->kota ?? 'Medan') }}" 
+                                     class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 {{ !$isAvailable ? 'filter grayscale' : '' }}" 
+                                     loading="lazy">
+                            </div>
+                            <div class="absolute top-4 left-4 bg-[#1F120A]/85 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#D4A569]/30 text-xs font-semibold text-[#F2EBE2] flex items-center gap-2 shadow-md">
+                                <i class="fa-solid fa-camera text-[#D4A569]"></i>
+                                <span>{{ __('Preview Lokasi Iklan') }}</span>
+                            </div>
+                        </div>
+
                         <!-- Map -->
                         @if($lokasiooh->koordinat)
                         <div class="rounded-2xl overflow-hidden shadow-md border border-[#D4A569]/30 w-full aspect-square sm:aspect-video">

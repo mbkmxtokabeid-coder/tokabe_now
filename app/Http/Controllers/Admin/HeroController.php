@@ -166,8 +166,8 @@ class HeroController extends Controller
         
         if ($hero) {
             // Hapus file gambar dari storage jika ada
-            if ($hero->gambar && Storage::exists('public/image_hero/' . $hero->gambar)) {
-                Storage::delete('public/image_hero/' . $hero->gambar);
+            if ($hero->gambar && Storage::disk('public')->exists('image_hero/' . $hero->gambar)) {
+                Storage::disk('public')->delete('image_hero/' . $hero->gambar);
             }
 
             // Hapus data dari database
