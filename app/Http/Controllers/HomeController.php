@@ -82,38 +82,21 @@ class HomeController extends Controller
             }
             $items = $query->paginate($limit);
             
-            if ($items->isEmpty() && !$search && !$province) {
-                $items = collect([
-                    (object)[
-                        'id' => 1,
-                        'title' => 'Putri Hijau Street, Next To GMP Building',
-                        'description' => 'The ONE and ONLY in Medan two screens Videotron, connecting vertical and horizontal motion also HIGHLIGHTS the SYNCHRONIZED MOTION.',
-                        'image' => 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop',
-                    ],
-                    (object)[
-                        'id' => 2,
-                        'title' => 'View From Jl. Gatot Subroto (Bundaran SIB) Medan',
-                        'description' => 'An ICONIC CURVE LED on Medan SIB Tower! Display for DOOH Advertising, visually on the STRIKING CURVE LED SCREEN on or around prominent clock tower.',
-                        'image' => 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop',
-                    ]
-                ]);
-            } else {
-                $items->getCollection()->transform(function($i) {
-                    $title = $this->resolveText($i->nama, $i->provinsi . ' - ' . $i->media);
-                    $desc  = $this->resolveText($i->deskripsi_lokasi) ?: $this->resolveText($i->tagline);
-                    return (object)[
-                        'id'         => $i->id,
-                        'title'      => $title,
-                        'description'=> $desc,
-                        'image'      => $i->gambar ? asset('storage/image_lokasi/' . $i->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop',
-                        'detail_url' => route('dooh.detail', $i->id),
-                        'kota'       => $i->kota,
-                        'media'      => $i->media,
-                        'size'       => $i->size,
-                        'availability' => $i->availability ?? 'Available',
-                    ];
-                });
-            }
+            $items->getCollection()->transform(function($i) {
+                $title = $this->resolveText($i->nama, $i->provinsi . ' - ' . $i->media);
+                $desc  = $this->resolveText($i->deskripsi_lokasi) ?: $this->resolveText($i->tagline);
+                return (object)[
+                    'id'         => $i->id,
+                    'title'      => $title,
+                    'description'=> $desc,
+                    'image'      => $i->gambar ? asset('storage/image_lokasi/' . $i->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop',
+                    'detail_url' => route('dooh.detail', $i->id),
+                    'kota'       => $i->kota,
+                    'media'      => $i->media,
+                    'size'       => $i->size,
+                    'availability' => $i->availability ?? 'Available',
+                ];
+            });
         } elseif ($id == 2) { // OOH
             $allProvinces = \App\Models\Lokasiooh::pluck('provinsi')->filter()->map(function($p) { return str_replace('Sumatra', 'Sumatera', $p); })->unique()->sort()->values();
             
@@ -149,33 +132,22 @@ class HomeController extends Controller
             }
             $items = $query->paginate($limit);
             
-            if ($items->isEmpty() && !$search && !$province) {
-                $items = collect([
-                    (object)[
-                        'id' => 1,
-                        'title' => 'SUPER LOCATION OOH Billboards',
-                        'description' => 'Premium traditional outdoor advertising placed in highly strategic intersections across the city.',
-                        'image' => 'https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=600&auto=format&fit=crop',
-                    ]
-                ]);
-            } else {
-                $items->getCollection()->transform(function($i) {
-                    $title = $this->resolveText($i->nama, $i->wilayah ?? '');
-                    $desc  = $this->resolveText($i->deskripsi_lokasi) ?: $this->resolveText($i->tagline);
-                    $imgFile = $i->getRawOriginal('gambar') ?? '';
-                    return (object)[
-                        'id'         => $i->id,
-                        'title'      => $title,
-                        'description'=> $desc,
-                        'image'      => (!empty($imgFile)) ? asset('storage/image_lokasiooh/' . $imgFile) : 'https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=600&auto=format&fit=crop',
-                        'detail_url' => route('ooh.detail', $i->id),
-                        'kota'       => $i->wilayah ?? $i->kota,
-                        'media'      => $i->tipe ?? $i->type,
-                        'size'       => $i->ukuran ?? $i->size,
-                        'availability' => $i->availability ?? 'Available',
-                    ];
-                });
-            }
+            $items->getCollection()->transform(function($i) {
+                $title = $this->resolveText($i->nama, $i->wilayah ?? '');
+                $desc  = $this->resolveText($i->deskripsi_lokasi) ?: $this->resolveText($i->tagline);
+                $imgFile = $i->getRawOriginal('gambar') ?? '';
+                return (object)[
+                    'id'         => $i->id,
+                    'title'      => $title,
+                    'description'=> $desc,
+                    'image'      => (!empty($imgFile)) ? asset('storage/image_lokasiooh/' . $imgFile) : 'https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=600&auto=format&fit=crop',
+                    'detail_url' => route('ooh.detail', $i->id),
+                    'kota'       => $i->wilayah ?? $i->kota,
+                    'media'      => $i->tipe ?? $i->type,
+                    'size'       => $i->ukuran ?? $i->size,
+                    'availability' => $i->availability ?? 'Available',
+                ];
+            });
         }
 
         return view('services.show', compact('service', 'items', 'search', 'province', 'allProvinces', 'availability'));
@@ -299,21 +271,7 @@ class HomeController extends Controller
         $lokasiooh = \App\Models\Lokasiooh::find($id);
         
         if (!$lokasiooh) {
-            // Dummy fallback if ID doesn't exist in DB (e.g. dummy card 3)
-            $lokasiooh = (object)[
-                'id' => $id,
-                'nama' => 'Jl. S. Parman (Cambridge Area)',
-                'deskripsi_lokasi' => 'This is a premium dummy location shown because there are only ' . \App\Models\Lokasiooh::count() . ' records in the database.',
-                'gambar' => null,
-                'koordinat' => '3.5852,98.6652',
-                'mobil' => '120,000',
-                'motor' => '85,000',
-                'media' => 'Videotron',
-                'type' => 'Horizontal',
-                'size' => '4m x 6m',
-                'lighting' => 'LED',
-            ];
-            return view('services.ooh-detail', compact('lokasiooh'));
+            abort(404);
         }
 
         // Ensure translations are handled if needed, though view can also handle it
@@ -328,21 +286,7 @@ class HomeController extends Controller
         $lokasi = \App\Models\Lokasi::find($id);
         
         if (!$lokasi) {
-            // Dummy fallback if ID doesn't exist in DB
-            $lokasi = (object)[
-                'id' => $id,
-                'nama' => 'Jl. S. Parman (Cambridge Area)',
-                'deskripsi_lokasi' => 'This is a premium dummy location shown because there are only ' . \App\Models\Lokasi::count() . ' records in the database.',
-                'gambar' => null,
-                'koordinat' => '3.5852,98.6652',
-                'mobil' => '120,000',
-                'motor' => '85,000',
-                'media' => 'Videotron',
-                'type' => 'Horizontal',
-                'size' => '4m x 6m',
-                'lighting' => 'LED',
-            ];
-            return view('services.dooh-detail', compact('lokasi'));
+            abort(404);
         }
 
         // Ensure translations are handled if needed, though view can also handle it

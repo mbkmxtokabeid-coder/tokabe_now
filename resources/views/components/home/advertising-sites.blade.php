@@ -1,36 +1,8 @@
 @props(['lokasi', 'lokasiooh'])
 
 @php
-    // SIHIR MIMI: Kita buat data dummy cadangan biar 3 kotak tetap terisi penuh dan estetik jika data OOH kosong!
-    $dummyOoh = [
-        (object)[
-            'id' => 1,
-            'nama' => 'Jl. Gatot Subroto (Simpang Majestik)',
-            'kota' => 'Medan Prime',
-            'tipe' => 'Videotron',
-            'ukuran' => '4m x 8m',
-            'gambar' => 'https://images.unsplash.com/photo-1506146332389-18140dc7b2fb?q=80&w=800&auto=format&fit=crop'
-        ],
-        (object)[
-            'id' => 2,
-            'nama' => 'Jl. Jend. Sudirman (Kawasan CBD)',
-            'kota' => 'Medan Center',
-            'tipe' => 'Billboard',
-            'ukuran' => '5m x 10m',
-            'gambar' => 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=800&auto=format&fit=crop'
-        ],
-        (object)[
-            'id' => 3,
-            'nama' => 'Jl. S. Parman (Cambridge Area)',
-            'kota' => 'Medan Premium',
-            'tipe' => 'Videotron',
-            'ukuran' => '4m x 6m',
-            'gambar' => 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?q=80&w=800&auto=format&fit=crop'
-        ]
-    ];
-
     $activeOoh = collect($lokasiooh)->where('status', 'Aktif');
-    $oohData = $activeOoh->isNotEmpty() ? $activeOoh->take(3) : $dummyOoh;
+    $oohData = $activeOoh->take(3);
 @endphp
 
 <style>
@@ -181,11 +153,17 @@
         <div class="tab-container-relative">
             <!-- DOOH Content Tab -->
             <div id="content-dooh" class="tab-content active">
+                @php
+                    $activeDooh = collect($lokasi)->where('status', 'Aktif')->take(3);
+                @endphp
+                @if($activeDooh->isEmpty())
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fas fa-video text-4xl mb-3 text-[#D4A574]/60"></i>
+                        <p class="text-base font-medium">{{ __('Lokasi DOOH belum tersedia.') }}</p>
+                    </div>
+                @else
                 <div class="swiper adv-swiper-dooh w-full !pt-6 !pb-12 !-mt-6 !-mb-12">
                     <div class="swiper-wrapper">
-                        @php
-                            $activeDooh = collect($lokasi)->where('status', 'Aktif')->take(3);
-                        @endphp
                         @foreach($activeDooh as $index => $item)
                         @php
                             $namaData = $item->nama ?: ($item->getRawOriginal ? $item->getRawOriginal('nama') : '');
@@ -259,10 +237,17 @@
                     </div>
                     <div class="swiper-pagination dooh-pagination"></div>
                 </div>
+                @endif
             </div>
 
             <!-- OOH Content Tab -->
             <div id="content-ooh" class="tab-content">
+                @if($oohData->isEmpty())
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fas fa-ad text-4xl mb-3 text-[#D4A574]/60"></i>
+                        <p class="text-base font-medium">{{ __('Lokasi OOH belum tersedia.') }}</p>
+                    </div>
+                @else
                 <div class="swiper adv-swiper-ooh w-full !pt-6 !pb-12 !-mt-6 !-mb-12">
                     <div class="swiper-wrapper">
                         @foreach($oohData as $index => $item)
@@ -338,6 +323,7 @@
                     </div>
                     <div class="swiper-pagination ooh-pagination"></div>
                 </div>
+                @endif
             </div>
         </div>
 
