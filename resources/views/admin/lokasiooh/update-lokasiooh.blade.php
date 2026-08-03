@@ -116,11 +116,13 @@
                                                 <div class="col-lg-6 mb-3">
                                                     <label class="form-label">Region (City/District)</label>
                                                     <input type="text" name="wilayah" class="form-control" value="{{ old('wilayah', $lokasiooh->wilayah) }}">
+                                                    @error('wilayah') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
 
                                                 <div class="col-lg-6 mb-3">
                                                     <label class="form-label">Coordinate</label>
                                                     <input type="text" name="koordinat" class="form-control" value="{{ old('koordinat', $lokasiooh->koordinat) }}">
+                                                    @error('koordinat') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
 
                                                 <div class="col-lg-6 mb-3">
@@ -131,34 +133,41 @@
                                                             <option value="{{ $prov }}" {{ old('provinsi', $lokasiooh->provinsi) == $prov ? 'selected' : '' }}>{{ $prov }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('provinsi') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
 
                                                 <div class="col-lg-6 mb-3">
                                                     <label class="form-label">Media</label>
                                                     <input type="text" name="media" class="form-control" value="{{ old('media', $lokasiooh->media) }}">
+                                                    @error('media') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
 
                                                 <div class="col-lg-6 mb-3">
                                                     <label class="form-label">OOH Size</label>
                                                     <input type="text" name="size" class="form-control" value="{{ old('size', $lokasiooh->size) }}">
+                                                    @error('size') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
 
                                                 <div class="col-lg-6 mb-3">
                                                     <label class="form-label">OOH Type</label>
                                                     <input type="text" name="type" class="form-control" value="{{ old('type', $lokasiooh->type) }}">
+                                                    @error('type') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
 
                                                 <div class="col-lg-4 mb-3">
                                                     <label class="form-label">Motorcycle Traffic</label>
                                                     <input type="text" name="motor" class="form-control" value="{{ old('motor', $lokasiooh->motor) }}">
+                                                    @error('motor') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
                                                 <div class="col-lg-4 mb-3">
                                                     <label class="form-label">Car Traffic</label>
                                                     <input type="text" name="mobil" class="form-control" value="{{ old('mobil', $lokasiooh->mobil) }}">
+                                                    @error('mobil') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
                                                 <div class="col-lg-4 mb-3">
                                                     <label class="form-label">Lighting</label>
                                                     <input type="text" name="lighting" class="form-control" value="{{ old('lighting', $lokasiooh->lighting) }}">
+                                                    @error('lighting') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
 
                                                 <div class="col-lg-6 mb-3">
@@ -181,6 +190,7 @@
                                                 <div class="col-lg-6 mb-3">
                                                     <label class="form-label">Ganti Gambar (Kosongkan jika tidak ingin ganti)</label>
                                                     <input type="file" name="gambar" class="form-control" id="gambarInput" accept="image/*">
+                                                    @error('gambar') <div class="text-danger small">{{ $message }}</div> @enderror
                                                     
                                                     @if($lokasiooh->gambar)
                                                         <div class="mt-2">

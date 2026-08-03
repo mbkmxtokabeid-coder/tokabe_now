@@ -1,13 +1,13 @@
 @extends ('admin.template')
 @section('content')
   
-@if (session('update'))
+@if (session('success') || session('update'))
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             Swal.fire({
                 icon: 'success',
-                title: 'OOH Billboard has been successfully updated',
-                text: {!! json_encode(session('success')) !!},
+                title: 'Berhasil',
+                text: {!! json_encode(session('success') ?? session('update')) !!},
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'OK'
             });
@@ -34,7 +34,7 @@
                                                         <i class="feather icon-home"></i></a></li>
                                                 <li class="breadcrumb-item"><a
                                                         href="{{ route('wilayah-list-ooh') }}">Billboard List</a></li>
-                                                <li class="breadcrumb-item"><a href="#!">{{ $lokasiooh->first()->wilayah }}</a>
+                                                <li class="breadcrumb-item"><a href="#!">{{ $lokasiooh->first()?->wilayah ?? $wilayah }}</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -73,15 +73,23 @@
                                                         </thead>
                                                         <tbody>
                                                             @foreach ($lokasiooh as $item)
+                                                                @php
+                                                                    $namaDisplay = is_array($item->nama) 
+                                                                        ? ($item->nama['id'] ?? $item->nama['en'] ?? '') 
+                                                                        : ($item->nama ?: $item->getRawOriginal('nama'));
+                                                                    $descDisplay = is_array($item->deskripsi_lokasi) 
+                                                                        ? ($item->deskripsi_lokasi['id'] ?? $item->deskripsi_lokasi['en'] ?? '') 
+                                                                        : ($item->deskripsi_lokasi ?: $item->getRawOriginal('deskripsi_lokasi'));
+                                                                @endphp
                                                                 <tr>
                                                                     <td>{{ $loop->iteration }}</td>
                                                                     <td
                                                                         style="white-space: normal !important; word-wrap: break-word; min-width: 150px; max-width: 250px;">
-                                                                        {{ \Illuminate\Support\Str::limit(is_array($item->nama) ? ($item->nama['en'] ?? '') : ($item->nama ?: $item->getRawOriginal('nama')), 50, '...') }}
+                                                                        {{ \Illuminate\Support\Str::limit($namaDisplay, 50, '...') }}
                                                                     </td>
                                                                     <td
                                                                         style="white-space: normal !important; word-wrap: break-word; min-width: 150px; max-width: 250px;">
-                                                                        {{ \Illuminate\Support\Str::limit(is_array($item->deskripsi_lokasi) ? ($item->deskripsi_lokasi['en'] ?? '') : ($item->deskripsi_lokasi ?: $item->getRawOriginal('deskripsi_lokasi')), 100, '...') }}
+                                                                        {{ \Illuminate\Support\Str::limit($descDisplay, 100, '...') }}
                                                                     </td>
                                                                     <td
                                                                         style="white-space: normal !important; word-wrap: break-word; min-width: 100px; max-width: 150px;">
@@ -106,7 +114,7 @@
                                                                     <td>
                                                                         @if ($item->gambar)
                                                                             <img src="{{ \Illuminate\Support\Str::startsWith($item->gambar, 'http') ? $item->gambar : asset('storage/image_lokasiooh/' . $item->gambar) }}"
-                                                                                alt="{{ is_array($item->nama) ? ($item->nama['en'] ?? '') : ($item->nama ?: $item->getRawOriginal('nama')) }}"
+                                                                                alt="{{ $namaDisplay }}"
                                                                                 style="max-width: 150px; max-height: 150px;">
                                                                         @else
                                                                             <span>No Image</span>

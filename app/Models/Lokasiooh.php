@@ -9,29 +9,42 @@ class Lokasiooh extends Model
 {
     use HasFactory;
 
+    protected $table = 'lokasioohs';
+
     protected $guarded = ['id'];
 
-    private function decodeField(string $field): mixed
+    public function getNamaAttribute($value)
     {
-        $raw = $this->attributes[$field] ?? $this->getRawOriginal($field);
-        if ($raw === null || $raw === '') return null;
-        if (is_array($raw)) return $raw;
-        $decoded = json_decode($raw, true);
-        return (json_last_error() === JSON_ERROR_NONE) ? $decoded : $raw;
+        if (empty($value)) return null;
+        if (is_array($value)) return $value;
+        $decoded = json_decode($value, true);
+        return (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : $value;
     }
-
-    public function getNamaAttribute(): mixed            { return $this->decodeField('nama'); }
-    public function getDeskripsiLokasiAttribute(): mixed { return $this->decodeField('deskripsi_lokasi'); }
-    public function getTaglineAttribute(): mixed         { return $this->decodeField('tagline'); }
 
     public function setNamaAttribute($value)
     {
-        $this->attributes['nama'] = is_array($value) ? json_encode($value) : $value;
+        $this->attributes['nama'] = is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
+    }
+
+    public function getDeskripsiLokasiAttribute($value)
+    {
+        if (empty($value)) return null;
+        if (is_array($value)) return $value;
+        $decoded = json_decode($value, true);
+        return (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : $value;
     }
 
     public function setDeskripsiLokasiAttribute($value)
     {
-        $this->attributes['deskripsi_lokasi'] = is_array($value) ? json_encode($value) : $value;
+        $this->attributes['deskripsi_lokasi'] = is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
+    }
+
+    public function getTaglineAttribute($value)
+    {
+        if (empty($value)) return null;
+        if (is_array($value)) return $value;
+        $decoded = json_decode($value, true);
+        return (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : $value;
     }
 
     protected static function booted()

@@ -20,8 +20,8 @@
         document.addEventListener('DOMContentLoaded', function () {
             Swal.fire({
                 icon: 'success',
-                title: 'OOH Billboard has been successfully deleted',
-                text: {!! json_encode(session('success')) !!},
+                title: 'Berhasil Hapus',
+                text: {!! json_encode(session('delete') ?? session('success')) !!},
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'OK'
             });

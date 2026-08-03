@@ -18,7 +18,7 @@ class LokasioohController extends Controller
 {
     public function index($wilayah)
     {
-        $lokasiooh = Lokasiooh::where('wilayah', $wilayah)->get();
+        $lokasiooh = Lokasiooh::whereRaw('LOWER(wilayah) = ?', [strtolower(trim($wilayah))])->get();
         return view('admin.lokasiooh.index', compact('lokasiooh', 'wilayah'));
     }
 
@@ -56,7 +56,7 @@ class LokasioohController extends Controller
             'wilayah' => 'required',
             'lighting' => 'required',
             'provinsi' => 'required',
-            'gambar' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+            'gambar' => 'required|image|max:10240',
         ]);
 
         if ($request->status === 'Aktif') {
@@ -68,18 +68,17 @@ class LokasioohController extends Controller
 
         $lokasiooh = new Lokasiooh();
         
-        // Simpan data multi-bahasa sebagai JSON string
-        $lokasiooh->nama = json_encode([
+        $lokasiooh->nama = [
             'id' => $request->nama_id,
             'en' => $request->nama_en
-        ], JSON_UNESCAPED_UNICODE);
-        $lokasiooh->deskripsi_lokasi = json_encode([
+        ];
+        $lokasiooh->deskripsi_lokasi = [
             'id' => $request->deskripsi_lokasi_id,
             'en' => $request->deskripsi_lokasi_en
-        ], JSON_UNESCAPED_UNICODE);
+        ];
 
         $lokasiooh->koordinat = $request->koordinat;
-        $lokasiooh->wilayah = $request->wilayah;
+        $lokasiooh->wilayah = trim($request->wilayah);
         $lokasiooh->provinsi = $request->provinsi;
         $lokasiooh->media = $request->media;
         $lokasiooh->size = $request->size;
@@ -112,12 +111,12 @@ class LokasioohController extends Controller
 
         $lokasiooh->save();
         \Illuminate\Support\Facades\Cache::forget('homepage_data');
-        return redirect('/admin/lokasiooh-wilayah')->with('success', 'Kamu berhasil menambahkan Lokasi baru!');
+        return redirect('/admin/lokasiooh-list/' . trim($lokasiooh->wilayah))->with('success', 'Kamu berhasil menambahkan Lokasi baru!');
     }
 
     public function updateLokasiooh(Request $request, $id)
     {
-        $lokasiooh = Lokasiooh::find($id);
+        $lokasiooh = Lokasiooh::findOrFail($id);
 
         $request->validate([
             'nama_id' => 'required|min:3',
@@ -125,6 +124,7 @@ class LokasioohController extends Controller
             'deskripsi_lokasi_id' => 'required|min:10',
             'deskripsi_lokasi_en' => 'required|min:10',
             'koordinat' => 'required',
+            'wilayah' => 'required',
             'media' => 'required',
             'size' => 'required',
             'type' => 'required',
@@ -132,6 +132,7 @@ class LokasioohController extends Controller
             'mobil' => 'required',
             'lighting' => 'required',
             'provinsi' => 'required',
+            'gambar' => 'nullable|image|max:10240',
         ]);
 
         if ($request->status === 'Aktif') {
@@ -141,18 +142,17 @@ class LokasioohController extends Controller
             }
         }
 
-        // Update data multi-bahasa
-        $lokasiooh->nama = json_encode([
+        $lokasiooh->nama = [
             'id' => $request->nama_id,
             'en' => $request->nama_en
-        ], JSON_UNESCAPED_UNICODE);
-        $lokasiooh->deskripsi_lokasi = json_encode([
+        ];
+        $lokasiooh->deskripsi_lokasi = [
             'id' => $request->deskripsi_lokasi_id,
             'en' => $request->deskripsi_lokasi_en
-        ], JSON_UNESCAPED_UNICODE);
+        ];
 
         $lokasiooh->koordinat = $request->koordinat;
-        $lokasiooh->wilayah = $request->wilayah;
+        $lokasiooh->wilayah = trim($request->wilayah);
         $lokasiooh->media = $request->media;
         $lokasiooh->size = $request->size;
         $lokasiooh->type = $request->type;
@@ -189,7 +189,7 @@ class LokasioohController extends Controller
 
         $lokasiooh->save();
         \Illuminate\Support\Facades\Cache::forget('homepage_data');
-        return redirect('/admin/lokasiooh-list/' . $lokasiooh->wilayah)->with('update', 'Kamu berhasil meng-update lokasi!');
+        return redirect('/admin/lokasiooh-list/' . trim($lokasiooh->wilayah))->with('success', 'Kamu berhasil meng-update lokasi!');
     }
 
     public function delete($id)
