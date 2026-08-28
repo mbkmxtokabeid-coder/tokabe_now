@@ -257,7 +257,7 @@
                             $doohUrl = "https://wa.me/{$doohPhone}?text={$doohMessage}";
                         @endphp
                         <a href="{{ $doohUrl }}" target="_blank" class="flex items-center justify-center w-full py-4 px-2 sm:px-6 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#1F1611] font-bold text-center rounded-xl shadow-[0_0_20px_rgba(212,165,105,0.5)] hover:shadow-[0_0_35px_rgba(240,201,122,0.7)] transform hover:-translate-y-1 transition-all whitespace-nowrap text-sm sm:text-base">
-                            <i class="fa-brands fa-whatsapp mr-2"></i> {{ __('Contact via WhatsApp') }}
+                            <i class="fa-brands fa-whatsapp mr-2"></i> {{ __('Ask for Availability') }}
                         </a>
 
                     </div>
