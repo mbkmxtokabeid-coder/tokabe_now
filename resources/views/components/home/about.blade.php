@@ -12,9 +12,11 @@
                 <p class="text-gray-300 text-base lg:text-sm xl:text-lg mb-6 lg:mb-8 leading-relaxed">
                     {{ $about ? ($about->description[app()->getLocale()] ?? $about->description['id'] ?? '') : __('Tokabe.id adalah agensi periklanan terbaik di Medan, Sumatera. Kami membantu Anda merancang, mengelola, dan memaksimalkan jangkauan bisnis melalui layanan Videotron (DOOH), Billboard (OOH), dan Brand Activation yang inovatif.') }}
                 </p>
-                <a href="#services" class="inline-flex items-center justify-center px-6 py-3 xl:px-8 xl:py-4 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#1F1611] border-0 text-sm xl:text-base font-semibold rounded-full shadow-[0_0_20px_rgba(212,165,105,0.4)] transition-all duration-300">
-                    {{ __('Learn More') }} <i class="fa-solid fa-arrow-right ml-2"></i>
-                </a>
+                <div class="flex items-center">
+                    <a href="https://drive.google.com/file/d/1tjBPWl-gIRPUJhSGqP3-ZdFsq_hXCkOI/view?usp=sharing" target="_blank" rel="noopener noreferrer" id="btn-compro-about" data-gtm-event="download_company_profile" class="inline-flex items-center justify-center px-7 py-3.5 xl:px-8 xl:py-4 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#1F1611] font-bold text-sm xl:text-base rounded-full shadow-[0_0_20px_rgba(212,165,105,0.4)] hover:shadow-[0_0_25px_rgba(240,201,122,0.7)] hover:scale-105 transition-all duration-300">
+                        {{ __('Learn More') }} <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
             </div>
 
             <!-- Right Bento Grid -->

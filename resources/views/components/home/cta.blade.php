@@ -23,8 +23,8 @@
                 </p>
                 
                 <div class="flex flex-wrap items-center gap-4">
-                    <a href="https://api.whatsapp.com/send/?phone={{ $ctaPhone }}&text={{ $ctaMessage }}" target="_blank" class="px-8 py-3.5 lg:px-5 lg:py-2.5 xl:px-8 xl:py-3.5 lg:text-sm xl:text-base bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-extrabold rounded-full shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-1 hover:scale-105 transition-all duration-300">
-                        Hubungi Kami
+                    <a href="https://drive.google.com/file/d/1tjBPWl-gIRPUJhSGqP3-ZdFsq_hXCkOI/view?usp=sharing" target="_blank" rel="noopener noreferrer" id="btn-compro-cta" data-gtm-event="download_company_profile" class="px-8 py-3.5 lg:px-5 lg:py-2.5 xl:px-8 xl:py-3.5 lg:text-sm xl:text-base bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-extrabold rounded-full shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i> Company Profile
                     </a>
                     <a href="{{ route('portofolio') }}" class="px-8 py-3.5 lg:px-5 lg:py-2.5 xl:px-8 xl:py-3.5 lg:text-sm xl:text-base bg-transparent border border-gray-500 text-gray-300 font-bold rounded-full hover:border-[#F0C97A] hover:text-[#F0C97A] hover:-translate-y-1 transition-all duration-300">
                         Lihat Portofolio

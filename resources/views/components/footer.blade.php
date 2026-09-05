@@ -14,6 +14,11 @@
                         <li><a href="#services" class="hover:text-white">{{ __('Services') }}</a></li>
                         <li><a href="#partners" class="hover:text-white">{{ __('Partners') }}</a></li>
                         <li><a href="#news" class="hover:text-white">{{ __('News') }}</a></li>
+                        <li>
+                            <a href="https://drive.google.com/file/d/1tjBPWl-gIRPUJhSGqP3-ZdFsq_hXCkOI/view?usp=sharing" target="_blank" rel="noopener noreferrer" id="btn-compro-footer" data-gtm-event="download_company_profile" class="hover:text-[#F0C97A] text-gray-300 flex items-center gap-1.5 transition-colors">
+                                <i class="fa-solid fa-file-pdf text-[#D4A574] text-xs"></i> {{ __('Company Profile (PDF)') }}
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div>
@@ -42,3 +47,18 @@
     <!-- Floating Interactive WhatsApp Widget with dynamic per-page messaging -->
     <x-floating-whatsapp />
 </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('[data-gtm-event="download_company_profile"]').forEach(function(el) {
+            el.addEventListener('click', function() {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    'event': 'download_company_profile',
+                    'button_location': el.id || 'unknown',
+                    'file_url': el.getAttribute('href')
+                });
+            });
+        });
+    });
+</script>

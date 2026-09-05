@@ -155,6 +155,10 @@
                 </div>
             </div>
 
+            <a href="https://drive.google.com/file/d/1tjBPWl-gIRPUJhSGqP3-ZdFsq_hXCkOI/view?usp=sharing" target="_blank" rel="noopener noreferrer" id="btn-compro-navbar" data-gtm-event="download_company_profile" class="px-4 py-2 bg-white/10 hover:bg-[#D4A574]/20 text-[#F0C97A] hover:text-white border border-[#D4A574]/40 hover:border-[#F0C97A] text-xs font-semibold rounded-full shadow-sm transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-file-pdf"></i> {{ __('Company Profile') }}
+            </a>
+
             <a href="https://loker.tokabe.id/" target="_blank" class="px-6 py-2.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#2C1A0E] text-sm font-bold tracking-wide btn-cut-corner shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:scale-105 transition-all duration-300 flex items-center gap-2">
                 {{ strtoupper(__('Career')) }}
             </a>
@@ -227,6 +231,10 @@
             <a href="{{ route('legalitas') }}" class="text-[#f2ebe2] hover:text-[#D4A574] text-sm font-medium transition-colors">{{ __('Legality') }}</a>
             
             <a href="{{ route('contact') }}" class="text-[#f2ebe2] hover:text-[#D4A574] text-sm font-medium transition-colors">{{ __('Contact') }}</a>
+
+            <a href="https://drive.google.com/file/d/1tjBPWl-gIRPUJhSGqP3-ZdFsq_hXCkOI/view?usp=sharing" target="_blank" rel="noopener noreferrer" id="btn-compro-navbar-mobile" data-gtm-event="download_company_profile" class="text-[#F0C97A] hover:text-white text-sm font-semibold flex items-center gap-2 py-1 transition-colors">
+                <i class="fa-solid fa-file-pdf"></i> {{ __('Company Profile (PDF)') }}
+            </a>
 
             <a href="https://loker.tokabe.id/" target="_blank" class="bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#2C1A0E] text-sm font-bold btn-cut-corner shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:scale-105 transition-all duration-300 inline-block text-center mt-2 py-2.5">
                 {{ strtoupper(__('Career')) }}
