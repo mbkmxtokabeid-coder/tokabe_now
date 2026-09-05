@@ -38,4 +38,7 @@
             <span>{{ __('Designed for Indonesian advertising clients.') }}</span>
         </div>
     </div>
+
+    <!-- Floating Interactive WhatsApp Widget with dynamic per-page messaging -->
+    <x-floating-whatsapp />
 </footer>

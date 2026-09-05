@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -51,9 +51,10 @@
     <link rel="preload" as="image" href="{{ asset('storage/image_hero/' . $heroes->first()->gambar) }}">
     @endif
     
-    <!-- Load Swiper CSS and JS synchronously to prevent FOUC -->
+    <!-- Load Swiper and D3 for Sumatra Map -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js" defer></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 

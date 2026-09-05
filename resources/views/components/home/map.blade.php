@@ -69,12 +69,20 @@
 
         <div class="flex flex-col lg:flex-row gap-6 items-stretch justify-center">
             
-            <div class="w-full lg:w-7/12 bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] border border-white/25 p-3 rounded-3xl shadow-xl flex flex-col">
+            <!-- Map Container -->
+            <div class="w-full lg:w-7/12 bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] border border-white/25 p-3 rounded-3xl shadow-xl flex flex-col relative overflow-hidden">
+                <!-- Loading Spinner / Indicator -->
+                <div id="mapLoader" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#2C1A0E]/80 backdrop-blur-sm z-20 transition-opacity duration-500">
+                    <div class="w-10 h-10 border-4 border-[#D4A574]/30 border-t-[#F0C97A] rounded-full animate-spin"></div>
+                    <span class="text-xs font-semibold tracking-wider text-[#F0C97A] uppercase">Memuat Peta Sumatra...</span>
+                </div>
+
                 <div class="w-full flex-grow relative min-h-[400px] lg:min-h-[450px]">
                     <svg id="sumatraSvg" class="w-full h-full absolute inset-0 block rounded-xl"></svg>
                 </div>
             </div>
 
+            <!-- Detail Info Panel -->
             <aside id="mapInfo" class="w-full lg:w-5/12 bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] border border-white/25 p-6 rounded-3xl shadow-xl flex flex-col justify-center">
                 <div id="mapInfoContent" class="font-sans text-sm w-full">
                     <div class="font-bold text-2xl text-white mb-1">{{ __('Select a province on the map') }}</div>
@@ -88,14 +96,33 @@
 
 <script>
 let mapInitialized = false;
+
+function loadD3Script(callback) {
+    if (typeof window.d3 !== 'undefined') {
+        callback();
+        return;
+    }
+    const script = document.createElement('script');
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js";
+    script.onload = callback;
+    script.onerror = function() {
+        // Fallback CDN if cloudflare fails
+        const fallbackScript = document.createElement('script');
+        fallbackScript.src = "https://d3js.org/d3.v7.min.js";
+        fallbackScript.onload = callback;
+        document.head.appendChild(fallbackScript);
+    };
+    document.head.appendChild(script);
+}
+
 function initMap() {
     if (mapInitialized) return;
     mapInitialized = true;
-    
-    const script = document.createElement('script');
-    script.src = "https://d3js.org/d3.v7.min.js";
-    script.onload = async function() {
-        const geoJsonUrl = '/geojson/id.json';
+
+    loadD3Script(async function() {
+        // Use lightweight Sumatra-only GeoJSON (239 KB vs 2.56 MB full ID)
+        const primaryGeoJsonUrl = '{{ asset('geojson/sumatra.json') }}';
+        const fallbackGeoJsonUrl = '{{ asset('geojson/id.json') }}';
         const apiUrl = '/api/map-data';
 
         const sumatraProvNames = [
@@ -104,6 +131,8 @@ function initMap() {
         ];
 
         const svg = d3.select('#sumatraSvg');
+        // Clear any old group if reloaded
+        svg.selectAll('*').remove();
         const g = svg.append('g');
         const projection = d3.geoMercator();
         const pathGen = d3.geoPath().projection(projection);
@@ -116,12 +145,15 @@ function initMap() {
             const billboards = found ? found.billboards : 0;
             const videotron = found ? found.videotron : 0;
             const allLocations = [...(found?.lokasi_ooh || []), ...(found?.lokasi_videotron || [])];
-            const topLocations = allLocations.length > 0 ? allLocations.sort(() => 0.5 - Math.random()).slice(0, 3) : ['{{ __('Location data is currently unavailable') }}'];
+            const topLocations = allLocations.length > 0 ? allLocations.slice(0, 4) : ['{{ __('Location data is currently unavailable') }}'];
 
-            document.getElementById('mapInfoContent').innerHTML = `
+            const contentEl = document.getElementById('mapInfoContent');
+            if (!contentEl) return;
+
+            contentEl.innerHTML = `
                 <div class="font-sans text-[15px] leading-relaxed text-gray-300">
                     <div class="font-bold text-2xl text-white">${name}</div>
-                    <div class="text-gray-300 mt-1 mb-4">{{ __('OOH/DOOH Information') }}</div>
+                    <div class="text-[#F0C97A] text-xs font-semibold uppercase tracking-wider mt-1 mb-4">{{ __('OOH/DOOH Information') }}</div>
                     <div class="border-t border-white/20 pt-4">
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-gray-300">{{ __('Billboard') }}</span><strong class="text-lg text-white">${billboards}</strong>
@@ -133,7 +165,7 @@ function initMap() {
                             <strong class="text-white">{{ __('Top Locations') }}</strong>
                             <ul class="mt-3 space-y-2 max-h-36 overflow-y-auto pr-2 map-scrollbar">
                                 ${topLocations.map(l => `
-                                    <li class="relative pl-5 text-gray-300">
+                                    <li class="relative pl-5 text-gray-300 text-xs sm:text-sm">
                                         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#D4A574] rounded-full"></span>
                                         ${l}
                                     </li>`).join('')}
@@ -147,9 +179,12 @@ function initMap() {
         }
 
         try {
+            // Fetch geojson (prefer lightweight sumatra.json, fallback to id.json)
             const [apiData, geojson] = await Promise.all([
-                fetch(apiUrl).then(r => r.ok ? r.json() : []),
-                d3.json(geoJsonUrl)
+                fetch(apiUrl).then(r => r.ok ? r.json() : []).catch(() => []),
+                fetch(primaryGeoJsonUrl)
+                    .then(r => r.ok ? r.json() : fetch(fallbackGeoJsonUrl).then(fr => fr.json()))
+                    .catch(() => fetch(fallbackGeoJsonUrl).then(fr => fr.json()))
             ]);
 
             const features = (geojson.features || []).filter(f => {
@@ -160,17 +195,26 @@ function initMap() {
             fc = { type: 'FeatureCollection', features };
 
             function renderMap() {
-                if (!fc) return;
+                if (!fc || !svg.node()) return;
                 const container = svg.node().getBoundingClientRect();
-                if (container.width === 0) return; // Prevent error if hidden
-                projection.fitSize([container.width, container.height], fc);
+                const w = container.width > 0 ? container.width : 500;
+                const h = container.height > 100 ? container.height : 450;
+                projection.fitSize([w, h], fc);
                 g.selectAll('path').attr('d', pathGen);
             }
 
-            g.selectAll('path')
+            // Initial projection sizing
+            const initialBbox = svg.node().getBoundingClientRect();
+            const initialW = initialBbox.width > 0 ? initialBbox.width : 500;
+            const initialH = initialBbox.height > 100 ? initialBbox.height : 450;
+            projection.fitSize([initialW, initialH], fc);
+
+            // Render path elements immediately with d attribute
+            const paths = g.selectAll('path')
                 .data(fc.features)
                 .enter()
                 .append('path')
+                .attr('d', pathGen)
                 .attr('fill', '#ffffff')
                 .attr('stroke', '#8B5E3C')
                 .attr('stroke-width', 1.5)
@@ -190,35 +234,72 @@ function initMap() {
                     showInfo(d.properties, apiData);
                 });
 
+            // Hide loader smoothly
+            const loader = document.getElementById('mapLoader');
+            if (loader) {
+                loader.style.opacity = '0';
+                loader.style.pointerEvents = 'none';
+                setTimeout(() => loader.remove(), 400);
+            }
+
+            // Auto-select Sumatera Utara by default on load
+            const sumutPath = paths.filter(d => {
+                const name = (d.properties.NAME_1 || d.properties.name || d.properties.provinsi || '').toString();
+                return name.toLowerCase().includes('sumatera utara');
+            });
+
+            if (!sumutPath.empty()) {
+                sumutPath.attr('stroke', '#5C3317').attr('stroke-width', 2.5).attr('fill', '#D4A574').attr('data-selected', 'true');
+                showInfo(sumutPath.datum().properties, apiData);
+            } else if (fc.features.length > 0) {
+                // Fallback select first feature
+                paths.filter((d, i) => i === 0).attr('stroke', '#5C3317').attr('stroke-width', 2.5).attr('fill', '#D4A574').attr('data-selected', 'true');
+                showInfo(fc.features[0].properties, apiData);
+            }
+
+            // Resize listeners
             setTimeout(renderMap, 100);
             window.addEventListener('resize', renderMap);
-            const observer = new ResizeObserver(() => renderMap());
-            observer.observe(document.getElementById('mapInfo').parentElement);
+            if (window.ResizeObserver) {
+                const containerParent = document.getElementById('mapInfo')?.parentElement;
+                if (containerParent) {
+                    const observer = new ResizeObserver(() => renderMap());
+                    observer.observe(containerParent);
+                }
+            }
 
         } catch (error) {
             console.error("Error loading map data:", error);
+            const loader = document.getElementById('mapLoader');
+            if (loader) {
+                loader.innerHTML = '<span class="text-xs text-red-300">Gagal memuat peta. Silakan muat ulang halaman.</span>';
+            }
         }
-    };
-    document.head.appendChild(script);
+    });
 }
 
-// ⚙️ SCRIPT ANIMASI SCROLL (NEW!)
+// ⚙️ INITIALIZATION TRIGGER
 document.addEventListener("DOMContentLoaded", function() {
-    const observerOptions = {
-        root: null,
-        threshold: 0.15 
-    };
+    // Eager IntersectionObserver with generous rootMargin (350px before entering viewport)
+    if ('IntersectionObserver' in window) {
+        const observerMap = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('smooth-active-map');
+                    obs.unobserve(entry.target); 
+                    initMap(); 
+                }
+            });
+        }, { root: null, rootMargin: '350px 0px', threshold: 0.01 });
 
-    const observerMap = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('smooth-active-map');
-                obs.unobserve(entry.target); 
-                initMap(); // Lazy load the map resources when section becomes visible
-            }
-        });
-    }, observerOptions);
+        document.querySelectorAll('.reveal-target-map, #sumatraSvg').forEach(el => observerMap.observe(el));
+    }
 
-    document.querySelectorAll('.reveal-target-map, #sumatraSvg').forEach(el => observerMap.observe(el));
+    // Safety fallback: if user is on desktop or observer doesn't fire, init within 2.5s anyway
+    setTimeout(function() {
+        if (!mapInitialized) {
+            initMap();
+        }
+    }, 2500);
 });
 </script>
