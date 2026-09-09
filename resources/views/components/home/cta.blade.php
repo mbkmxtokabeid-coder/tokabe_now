@@ -2,7 +2,11 @@
     @php
         $globalContact = \App\Models\Contact::first();
         $ctaPhone = isset($globalContact) && $globalContact->phone ? $globalContact->phone : '628115239999';
-        $ctaMessage = urlencode("Halo, saya tertarik untuk memulai kampanye periklanan dengan Tokabe.id");
+        $isEn = app()->getLocale() === 'en';
+        $ctaMsgText = $isEn 
+            ? 'Hello, I am interested in starting an advertising campaign with Tokabe.id'
+            : 'Halo, saya tertarik untuk memulai kampanye periklanan dengan Tokabe.id';
+        $ctaMessage = urlencode($ctaMsgText);
     @endphp
 
     <!-- Dekorasi background ringan -->
@@ -15,19 +19,18 @@
             <!-- Left Side: Content -->
             <div class="w-full lg:w-1/2 text-left">
                 <h2 class="text-3xl md:text-5xl lg:text-4xl xl:text-5xl font-black text-white leading-[1.15] mb-6 lg:mb-4 xl:mb-6 tracking-tight">
-                    Mulai Kampanye <br class="hidden sm:block"/>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#F0C97A]">Periklanan Anda</span>
+                    {!! __('Mulai Kampanye <br class="hidden sm:block"/> <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#D4A574] to-[#F0C97A]">Periklanan Anda</span>') !!}
                 </h2>
                 <p class="text-gray-400 text-base md:text-lg lg:text-sm xl:text-lg mb-10 lg:mb-6 xl:mb-10 leading-relaxed max-w-lg">
-                    Lebih dari sekadar iklan. Kami menciptakan pengalaman visual yang tak terlupakan melalui Videotron DOOH, Billboard, dan Aktivasi Merek di seluruh Sumatera. Konsultasikan kebutuhan Anda sekarang.
+                    {{ __('Lebih dari sekadar iklan. Kami menciptakan pengalaman visual yang tak terlupakan melalui Videotron DOOH, Billboard, dan Aktivasi Merek di seluruh Sumatera. Konsultasikan kebutuhan Anda sekarang.') }}
                 </p>
                 
                 <div class="flex flex-wrap items-center gap-4">
                     <a href="https://api.whatsapp.com/send/?phone={{ $ctaPhone }}&text={{ $ctaMessage }}" target="_blank" class="px-8 py-3.5 lg:px-5 lg:py-2.5 xl:px-8 xl:py-3.5 lg:text-sm xl:text-base bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-extrabold rounded-full shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-1 hover:scale-105 transition-all duration-300">
-                        Hubungi Kami
+                        {{ __('Hubungi Kami') }}
                     </a>
                     <a href="{{ route('portofolio') }}" class="px-8 py-3.5 lg:px-5 lg:py-2.5 xl:px-8 xl:py-3.5 lg:text-sm xl:text-base bg-transparent border border-gray-500 text-gray-300 font-bold rounded-full hover:border-[#F0C97A] hover:text-[#F0C97A] hover:-translate-y-1 transition-all duration-300">
-                        Lihat Portofolio
+                        {{ __('Lihat Portofolio') }}
                     </a>
                 </div>
             </div>

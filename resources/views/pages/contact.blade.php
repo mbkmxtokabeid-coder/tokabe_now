@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -94,7 +94,7 @@
                                 <div>
                                     <span class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Location:') }}</span>
                                     <a href="https://maps.app.goo.gl/m2DKjqNtE15Muzqg6" target="_blank" class="text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors leading-relaxed whitespace-nowrap">
-                                        Komplek Setiabudi Point No. D-10<br>Medan, Indonesia
+                                        {!! __('Komplek Setiabudi Point No. D-10<br>Medan, Indonesia') !!}
                                     </a>
                                 </div>
                             </div>

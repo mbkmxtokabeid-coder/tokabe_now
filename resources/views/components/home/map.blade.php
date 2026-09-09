@@ -74,7 +74,7 @@
                 <!-- Loading Spinner / Indicator -->
                 <div id="mapLoader" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#2C1A0E]/80 backdrop-blur-sm z-20 transition-opacity duration-500">
                     <div class="w-10 h-10 border-4 border-[#D4A574]/30 border-t-[#F0C97A] rounded-full animate-spin"></div>
-                    <span class="text-xs font-semibold tracking-wider text-[#F0C97A] uppercase">Memuat Peta Sumatra...</span>
+                    <span class="text-xs font-semibold tracking-wider text-[#F0C97A] uppercase">{{ __('Memuat Peta Sumatra...') }}</span>
                 </div>
 
                 <div class="w-full flex-grow relative min-h-[400px] lg:min-h-[450px]">
@@ -139,8 +139,22 @@ function initMap() {
         let fc = null; 
 
         function showInfo(props, data) {
-            const name = props.NAME_1 || props.name || props.provinsi || '';
-            const found = data.find(item => item.provinsi && name.toLowerCase().includes(item.provinsi.toLowerCase()));
+            const rawName = props.NAME_1 || props.name || props.provinsi || '';
+            const provTranslations = {
+                'Sumatera Utara': '{{ __('Sumatera Utara') }}',
+                'Sumatera Barat': '{{ __('Sumatera Barat') }}',
+                'Sumatera Selatan': '{{ __('Sumatera Selatan') }}',
+                'Kepulauan Riau': '{{ __('Kepulauan Riau') }}',
+                'Aceh': '{{ __('Aceh') }}',
+                'Riau': '{{ __('Riau') }}',
+                'Jambi': '{{ __('Jambi') }}',
+                'Bengkulu': '{{ __('Bengkulu') }}',
+                'Bangka Belitung': '{{ __('Bangka Belitung') }}',
+                'Bangka-Belitung': '{{ __('Bangka Belitung') }}',
+                'Lampung': '{{ __('Lampung') }}'
+            };
+            const name = provTranslations[rawName] || rawName;
+            const found = data.find(item => item.provinsi && rawName.toLowerCase().includes(item.provinsi.toLowerCase()));
             
             const billboards = found ? found.billboards : 0;
             const videotron = found ? found.videotron : 0;

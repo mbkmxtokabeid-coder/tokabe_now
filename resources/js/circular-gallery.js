@@ -26,7 +26,7 @@ function getFontSize(font) {
     return match ? parseInt(match[1], 10) : 30;
 }
 
-function createTextTexture(gl, text, category, date, font = 'bold 30px monospace', color = 'white', showButton = true) {
+function createTextTexture(gl, text, category, date, font = 'bold 30px monospace', color = 'white', showButton = true, buttonText = 'Explore Now') {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     
@@ -58,7 +58,7 @@ function createTextTexture(gl, text, category, date, font = 'bold 30px monospace
         context.font = 'bold 95px Figtree, sans-serif'; // Increased font size
         context.textAlign = 'left';
         context.textBaseline = 'middle';
-        context.fillText('Explore Now', paddingX + 80, btnY + btnHeight / 2); // Adjusted padding
+        context.fillText(buttonText, paddingX + 80, btnY + btnHeight / 2); // Adjusted padding
         
         context.font = 'bold 120px Figtree, sans-serif'; // Increased arrow size
         context.textAlign = 'right';
@@ -140,7 +140,8 @@ class Media {
         textColor,
         borderRadius = 0,
         font,
-        showButton = true
+        showButton = true,
+        buttonText = 'Explore Now'
     }) {
         this.extra = 0;
         this.geometry = geometry;
@@ -161,6 +162,7 @@ class Media {
         this.borderRadius = borderRadius;
         this.font = font;
         this.showButton = showButton;
+        this.buttonText = buttonText;
         this.createShader();
         this.createMesh();
         this.onResize();
@@ -169,7 +171,7 @@ class Media {
         const texture = new Texture(this.gl, {
             generateMipmaps: true
         });
-        const { texture: tText } = createTextTexture(this.gl, this.text, this.category, this.date, this.font, this.textColor, this.showButton);
+        const { texture: tText } = createTextTexture(this.gl, this.text, this.category, this.date, this.font, this.textColor, this.showButton, this.buttonText);
         
         this.program = new Program(this.gl, {
             depthTest: false,
@@ -424,7 +426,8 @@ class CircularGalleryApp {
             font = 'bold 30px Figtree',
             scrollSpeed = 2,
             scrollEase = 0.08,
-            showButton = true
+            showButton = true,
+            buttonText = 'Explore Now'
         } = {}
     ) {
         this.container = container;
@@ -436,7 +439,7 @@ class CircularGalleryApp {
         this.createScene();
         this.onResize();
         this.createGeometry();
-        this.createMedias(items, bend, textColor, borderRadius, font, showButton);
+        this.createMedias(items, bend, textColor, borderRadius, font, showButton, buttonText);
         this.update();
         this.addEventListeners();
         
@@ -468,7 +471,7 @@ class CircularGalleryApp {
             widthSegments: 100
         });
     }
-    createMedias(items, bend = 1, textColor, borderRadius, font, showButton = true) {
+    createMedias(items, bend = 1, textColor, borderRadius, font, showButton = true, buttonText = 'Explore Now') {
         const galleryItems = items && items.length ? items : [];
         this.mediasImages = galleryItems.concat(galleryItems); // Duplicate for infinite scroll
         this.medias = this.mediasImages.map((data, index) => {
@@ -490,7 +493,8 @@ class CircularGalleryApp {
                 textColor,
                 borderRadius,
                 font,
-                showButton
+                showButton,
+                buttonText
             });
         });
     }

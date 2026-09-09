@@ -84,8 +84,9 @@
                     $galleryItems = [];
                     foreach($portofolios as $item) {
                         $judulData = $item->judul ?? '';
-                        $judulArray = is_string($judulData) && str_starts_with($judulData, '{') ? json_decode($judulData, true) : $judulData;
-                        $judulText = is_array($judulArray) ? ($judulArray[app()->getLocale()] ?? $judulArray['id'] ?? collect($judulArray)->first() ?? '') : $judulArray;
+                        $judulArray = is_string($judulData) && str_starts_with($judulData, '{') ? json_decode($judulData, true) : (is_array($judulData) ? $judulData : null);
+                        $rawText = is_array($judulArray) ? ($judulArray[app()->getLocale()] ?? $judulArray['id'] ?? collect($judulArray)->first() ?? '') : $judulData;
+                        $judulText = __($rawText);
                         
                         $image = '';
                         if($item->gambar) {
@@ -135,7 +136,8 @@
                                                     bend: 2, 
                                                     textColor: '#ffffff',
                                                     borderRadius: 0.05,
-                                                    font: 'bold 30px sans-serif'
+                                                    font: 'bold 30px sans-serif',
+                                                    buttonText: '{{ __("Explore Now") }}'
                                                 });
                                             }
                                         }, 100);

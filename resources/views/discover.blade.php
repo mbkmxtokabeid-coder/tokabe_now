@@ -46,7 +46,7 @@
                                 {{ __('Discover Our OOH Locations') }}
                             @endif
                             @if($region)
-                                <span class="text-[#F0C97A]">in {{ $region }}</span>
+                                <span class="text-[#F0C97A]">{{ __('in') }} {{ __($region) }}</span>
                             @endif
                         </h1>
                         <p class="text-gray-300 mt-6 text-lg">
@@ -68,7 +68,7 @@
                                 <select name="region" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">
                                     <option value="">{{ __('Semua Provinsi') }}</option>
                                     @foreach($allProvinces as $prov)
-                                        <option value="{{ $prov }}" {{ str_replace('Sumatra', 'Sumatera', request('region')) === $prov ? 'selected' : '' }}>{{ $prov }}</option>
+                                        <option value="{{ $prov }}" {{ str_replace('Sumatra', 'Sumatera', request('region')) === $prov ? 'selected' : '' }}>{{ __($prov) }}</option>
                                     @endforeach
                                 </select>
                                 <select name="type" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">

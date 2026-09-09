@@ -22,13 +22,11 @@
                         @php
                             $email = isset($globalContact) && $globalContact->email ? $globalContact->email : 'info@tokabe.id';
                             $phone = isset($globalContact) && $globalContact->phone ? $globalContact->phone : '628115239999';
-                            $location = isset($globalContact) && $globalContact->location ? $globalContact->location : '';
+                            $location = isset($globalContact) && $globalContact->location ? $globalContact->location : 'Komplek Setia Budi Point No. D-10 Medan, Indonesia';
                         @endphp
-                        <li>Email: {{ $email }}</li>
-                        <li>Phone: +{{ $phone }}</li>
-                        @if($location)
-                            <li class="mt-2"><i class="fas fa-map-marker-alt w-5"></i> {{ $location }}</li>
-                        @endif
+                        <li>{{ __('Email:') }} {{ $email }}</li>
+                        <li>{{ __('Phone:') }} +{{ $phone }}</li>
+                        <li>{{ __('Location:') }} {{ __($location) }}</li>
                     </ul>
                 </div>
             </div>

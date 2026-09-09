@@ -4,37 +4,34 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @php
+        $getLocaleValue = function($data) {
+            if (empty($data)) return '';
+            if (is_string($data) && str_starts_with($data, '{')) {
+                $arr = json_decode($data, true);
+            } else {
+                $arr = $data;
+            }
+            if (!is_array($arr)) return (string) $arr;
+            
+            $loc = app()->getLocale();
+            if (!empty($arr[$loc])) return $arr[$loc];
+            if (!empty($arr['id'])) return $arr['id'];
+            if (!empty($arr['en'])) return $arr['en'];
+            
+            foreach ($arr as $val) {
+                if (!empty($val)) return $val;
+            }
+            return '';
+        };
+
         $judulData = $event->judul ?? $event->title ?? '';
-        if (is_string($judulData) && str_starts_with($judulData, '{')) {
-            $judulArray = json_decode($judulData, true);
-        } else {
-            $judulArray = $judulData;
-        }
-        if (is_array($judulArray)) {
-            $judulText = $judulArray[app()->getLocale()] ?? $judulArray['id'] ?? $judulArray['en'] ?? collect($judulArray)->first() ?? '';
-        } else {
-            $judulText = $judulArray;
-        }
+        $judulText = __($getLocaleValue($judulData));
 
         $descData = $event->deskripsi ?? $event->description ?? '';
-        if (is_string($descData) && str_starts_with($descData, '{')) {
-            $descArray = json_decode($descData, true);
-            $descText = $descArray[app()->getLocale()] ?? $descArray['id'] ?? $descArray['en'] ?? collect($descArray)->first() ?? '';
-        } else {
-            $descText = $descData;
-        }
+        $descText = $getLocaleValue($descData);
 
         $catData = $event->category->nama_kategori ?? '';
-        if (is_string($catData) && str_starts_with($catData, '{')) {
-            $catArray = json_decode($catData, true);
-        } else {
-            $catArray = $catData;
-        }
-        if (is_array($catArray)) {
-            $namaKat = $catArray[app()->getLocale()] ?? $catArray['id'] ?? $catArray['en'] ?? collect($catArray)->first() ?? '';
-        } else {
-            $namaKat = $catArray;
-        }
+        $namaKat = $getLocaleValue($catData);
         if (empty($namaKat)) $namaKat = 'Portofolio';
     @endphp
     <title>{{ $judulText }} | Tokabe.id</title>
@@ -83,20 +80,6 @@
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
             
             <div class="absolute bottom-0 left-0 p-8 md:p-12 w-full">
-                @php
-                    $catData = $event->category->nama_kategori ?? '';
-                    if (is_string($catData) && str_starts_with($catData, '{')) {
-                        $catArray = json_decode($catData, true);
-                    } else {
-                        $catArray = $catData;
-                    }
-                    if (is_array($catArray)) {
-                        $namaKat = $catArray[app()->getLocale()] ?? $catArray['id'] ?? $catArray['en'] ?? collect($catArray)->first() ?? '';
-                    } else {
-                        $namaKat = $catArray;
-                    }
-                    if (empty($namaKat)) $namaKat = 'Portofolio';
-                @endphp
                 <span class="inline-block px-4 py-1 bg-gradient-to-r from-[#8B5E3C] to-[#A0522D] text-white font-bold text-sm rounded-full mb-4 shadow-md">
                     {{ $namaKat }}
                 </span>
@@ -111,20 +94,12 @@
         </div>
 
         <!-- Description -->
+        @if(!empty(trim($descText)))
         <div class="bg-[#1A0F07] rounded-3xl p-8 md:p-12 shadow-sm border border-[#D4A574]/30 mb-16" data-aos="fade-up" x-data="{ expanded: false }">
             <h2 class="text-2xl font-bold text-[#F5EFE7] mb-6 border-b-2 border-[#D4A574] pb-2 inline-block">{{ __('Project Overview') }}</h2>
             <div class="relative">
                 <div class="prose prose-lg max-w-none text-gray-300 leading-relaxed transition-all duration-500 overflow-hidden" 
                      :class="expanded ? 'max-h-[5000px]' : 'max-h-[120px] lg:max-h-[5000px]'">
-                    @php
-                        $descData = $event->deskripsi ?? $event->description ?? '';
-                        if (is_string($descData) && str_starts_with($descData, '{')) {
-                            $descArray = json_decode($descData, true);
-                            $descText = $descArray[app()->getLocale()] ?? $descArray['id'] ?? $descArray['en'] ?? collect($descArray)->first() ?? '';
-                        } else {
-                            $descText = $descData;
-                        }
-                    @endphp
                     {!! nl2br(e($descText)) !!}
                 </div>
                 <!-- Gradient Fade -->
@@ -137,6 +112,7 @@
                 <i class="fas" :class="expanded ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
             </button>
         </div>
+        @endif
 
         <!-- Image Gallery -->
         @if($gallery && $gallery->count() > 1)

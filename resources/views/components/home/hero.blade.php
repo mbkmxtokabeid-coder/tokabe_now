@@ -123,7 +123,12 @@
     <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
         @php
             $heroPhone = isset($globalContact) && $globalContact->phone ? $globalContact->phone : '628115239999';
-            $heroMessage = isset($globalContact) && $globalContact->message ? urlencode($globalContact->message) : 'Halo%20Admin';
+            $isEn = app()->getLocale() === 'en';
+            $heroDefaultMsg = $isEn
+                ? 'Hello Tokabe.id, I am interested in consulting about advertising needs for my company.'
+                : 'Halo Tokabe.id, saya tertarik untuk konsultasi kebutuhan periklanan untuk perusahaan saya.';
+            $heroMsgText = (isset($globalContact) && $globalContact->message) ? $globalContact->message : $heroDefaultMsg;
+            $heroMessage = urlencode($heroMsgText);
             $heroUrl = "https://api.whatsapp.com/send/?phone={$heroPhone}&text={$heroMessage}";
         @endphp
         <a href="{{ $heroUrl }}" target="_blank" class="px-5 py-2.5 sm:px-8 sm:py-3.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold text-sm sm:text-base rounded-full hover:from-[#F0C97A] hover:to-[#C8902A] shadow-[0_0_25px_rgba(212,165,105,0.6)] hover:shadow-[0_0_40px_rgba(240,201,122,0.8)] flex items-center justify-center gap-2 sm:gap-3 transition-all duration-300 hover:scale-105 hover:-translate-y-1 whitespace-nowrap w-max mx-auto">

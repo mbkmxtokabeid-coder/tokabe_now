@@ -8,6 +8,57 @@ use Illuminate\Http\Request;
 
 class MapController extends Controller
 {
+    private function formatLocationName(mixed $nama): string
+    {
+        if (empty($nama)) return '';
+        $locale = app()->getLocale();
+
+        if (is_string($nama)) {
+            $trimmed = trim($nama);
+            if (str_starts_with($trimmed, '{') && str_ends_with($trimmed, '}')) {
+                $decoded = json_decode($trimmed, true);
+                if (is_array($decoded)) {
+                    $nama = $decoded;
+                }
+            }
+        }
+
+        if (is_array($nama)) {
+            $str = ($nama[$locale] ?? '')
+                ?: ($nama['en'] ?? '')
+                ?: ($nama['id'] ?? '')
+                ?: (collect($nama)->first() ?? '');
+        } else {
+            $str = (string)$nama;
+        }
+
+        if ($locale === 'en' && !empty($str)) {
+            $replacements = [
+                'Provinsi Sumatera Utara' => 'North Sumatra Province',
+                'Provinsi Sumatera Selatan' => 'South Sumatra Province',
+                'Provinsi Sumatera Barat' => 'West Sumatra Province',
+                'Provinsi Riau' => 'Riau Province',
+                'Provinsi Jambi' => 'Jambi Province',
+                'Provinsi Bengkulu' => 'Bengkulu Province',
+                'Provinsi Lampung' => 'Lampung Province',
+                'Kota Medan' => 'Medan City',
+                'Provinsi ' => 'Province ',
+                'Kota ' => 'City of ',
+                'tepat di persimpangan' => 'right at the intersection of',
+                ' (Eks ' => ' (Ex ',
+                ' Eks ' => ' Ex ',
+                'Simp. ' => 'Junction ',
+                'Simpang ' => 'Junction ',
+                ' dan ' => ' and ',
+            ];
+            foreach ($replacements as $from => $to) {
+                $str = str_replace($from, $to, $str);
+            }
+        }
+
+        return $str;
+    }
+
     /**
      * Return map data for the Sumatra map component.
      * Returns billboard (OOH) and videotron (DOOH) counts per province,
@@ -15,7 +66,10 @@ class MapController extends Controller
      */
     public function getMapData()
     {
-        $result = \Illuminate\Support\Facades\Cache::remember('sumatra_map_data', 3600, function () {
+        $locale = app()->getLocale();
+        $cacheKey = 'sumatra_map_data_' . $locale;
+
+        $result = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () {
             $oohLocations = LocationOoh::all();
             $doohLocations = LocationDooh::all();
 
@@ -44,18 +98,12 @@ class MapController extends Controller
                     'provinsi' => $provinsi ?: 'Sumatera Utara',
                     'billboards' => $oohItems->count(),
                     'videotron' => $doohItems->count(),
-                    'lokasi_ooh' => $oohItems->pluck('nama')->map(function ($nama) {
-                        if (is_array($nama)) {
-                            return $nama['id'] ?? $nama['en'] ?? json_encode($nama);
-                        }
-                        return $nama;
-                    })->values()->toArray(),
-                    'lokasi_videotron' => $doohItems->pluck('nama')->map(function ($nama) {
-                        if (is_array($nama)) {
-                            return $nama['id'] ?? $nama['en'] ?? json_encode($nama);
-                        }
-                        return $nama;
-                    })->values()->toArray(),
+                    'lokasi_ooh' => $oohItems->map(function ($item) {
+                        return $this->formatLocationName($item->nama);
+                    })->filter()->values()->toArray(),
+                    'lokasi_videotron' => $doohItems->map(function ($item) {
+                        return $this->formatLocationName($item->nama);
+                    })->filter()->values()->toArray(),
                 ];
             }
 

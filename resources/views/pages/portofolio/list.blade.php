@@ -4,12 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @php
-        $catData = $category->nama_kategori ?: ($category->getRawOriginal ? $category->getRawOriginal('nama_kategori') : '');
-        $catArray = is_string($catData) && str_starts_with($catData, '{') ? json_decode($catData, true) : $catData;
-        $namaKat = is_array($catArray) ? ($catArray[app()->getLocale()] ?? $catArray['id'] ?? $catArray['en'] ?? collect($catArray)->first() ?? '') : $catArray;
-        
-        $catDesc = $category->deskripsi ?? '';
-    @endphp
+    $catData = $category->nama_kategori ?: ($category->getRawOriginal ? $category->getRawOriginal('nama_kategori') : '');
+    $catArray = is_string($catData) && str_starts_with($catData, '{') ? json_decode($catData, true) : $catData;
+    $namaKat = is_array($catArray) ? ($catArray[app()->getLocale()] ?? $catArray['id'] ?? $catArray['en'] ?? collect($catArray)->first() ?? '') : $catData;
+    $namaKat = __($namaKat);
+    
+    $descData = $category->deskripsi ?: ($category->getRawOriginal ? $category->getRawOriginal('deskripsi') : '');
+    $descArray = is_string($descData) && str_starts_with($descData, '{') ? json_decode($descData, true) : $descData;
+    $catDesc = is_array($descArray) ? ($descArray[app()->getLocale()] ?? $descArray['id'] ?? $descArray['en'] ?? collect($descArray)->first() ?? '') : $descData;
+    if (!empty($catDesc)) {
+        $catDesc = __($catDesc);
+    }
+@endphp
     <title>Portofolio - {{ $namaKat }} | Tokabe.id</title>
     
     <!-- Fonts -->
@@ -196,8 +202,9 @@
                 @forelse($portfolios as $index => $item)
                     @php
                         $judulData = $item->judul ?? $item->title ?? '';
-                        $judulArray = (is_string($judulData) && str_starts_with($judulData, '{')) ? json_decode($judulData, true) : $judulData;
-                        $judulText = is_array($judulArray) ? ($judulArray[app()->getLocale()] ?? $judulArray['id'] ?? collect($judulArray)->first() ?? '') : $judulArray;
+                        $judulArray = (is_string($judulData) && str_starts_with($judulData, '{')) ? json_decode($judulData, true) : (is_array($judulData) ? $judulData : null);
+                        $rawText = is_array($judulArray) ? ($judulArray[app()->getLocale()] ?? $judulArray['id'] ?? collect($judulArray)->first() ?? '') : $judulData;
+                        $judulText = __($rawText);
                         
                         $imgSrc = null;
                         if ($item->gambar) {
