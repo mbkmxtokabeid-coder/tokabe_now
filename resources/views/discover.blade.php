@@ -76,7 +76,6 @@
                                     <option value="DOOH" {{ request('type') === 'DOOH' ? 'selected' : '' }}>DOOH</option>
                                     <option value="OOH" {{ request('type') === 'OOH' ? 'selected' : '' }}>OOH</option>
                                 </select>
-                                <input type="text" name="s" class="form-input w-full flex-1 rounded-xl border-white/20 bg-white/5 text-white placeholder-gray-400 shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50" placeholder="{{ __('Cari...') }}" value="{{ request('s') }}">
                                 <button type="submit" class="bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold py-2 px-6 rounded-xl shadow-[0_0_15px_rgba(212,165,105,0.4)] hover:shadow-[0_0_25px_rgba(240,201,122,0.6)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-0.5 hover:scale-105 transition-all duration-300 whitespace-nowrap">
                                     {{ __('Cari') }}
                                 </button>
@@ -121,11 +120,11 @@
                 @if(isset($totalPagesDooh) && $totalPagesDooh > 1)
                 <div class="flex justify-center mt-10 gap-2">
                     @if($page > 1)
-                        <a href="{{ route('discover', array_merge(request()->query(), ['page' => $page - 1])) }}" class="px-4 py-2 bg-[#2C1A0E] text-white border border-white/20 rounded-lg font-medium hover:bg-white/10">Previous</a>
+                        <a href="{{ route('discover', array_merge(request()->query(), ['page' => $page - 1])) }}" class="px-4 py-2 bg-[#2C1A0E] text-white border border-white/20 rounded-lg font-medium hover:bg-white/10">{{ __('Previous') }}</a>
                     @endif
-                    <span class="px-4 py-2 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold rounded-lg shadow-[0_0_10px_rgba(212,165,105,0.4)]">Page {{ $page }} of {{ $totalPagesDooh }}</span>
+                    <span class="px-4 py-2 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold rounded-lg shadow-[0_0_10px_rgba(212,165,105,0.4)]">{{ __('Page') }} {{ $page }} {{ __('of') }} {{ $totalPagesDooh }}</span>
                     @if($page < $totalPagesDooh)
-                        <a href="{{ route('discover', array_merge(request()->query(), ['page' => $page + 1])) }}" class="px-4 py-2 bg-[#2C1A0E] text-white border border-white/20 rounded-lg font-medium hover:bg-white/10">Next</a>
+                        <a href="{{ route('discover', array_merge(request()->query(), ['page' => $page + 1])) }}" class="px-4 py-2 bg-[#2C1A0E] text-white border border-white/20 rounded-lg font-medium hover:bg-white/10">{{ __('Next') }}</a>
                     @endif
                 </div>
                 @endif
@@ -167,11 +166,11 @@
                 @if(isset($totalPagesOoh) && $totalPagesOoh > 1)
                 <div class="flex justify-center mt-10 gap-2">
                     @if($page > 1)
-                        <a href="{{ route('discover', array_merge(request()->query(), ['page' => $page - 1])) }}" class="px-4 py-2 bg-[#2C1A0E] text-white border border-white/20 rounded-lg font-medium hover:bg-white/10">Previous</a>
+                        <a href="{{ route('discover', array_merge(request()->query(), ['page' => $page - 1])) }}" class="px-4 py-2 bg-[#2C1A0E] text-white border border-white/20 rounded-lg font-medium hover:bg-white/10">{{ __('Previous') }}</a>
                     @endif
-                    <span class="px-4 py-2 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold rounded-lg shadow-[0_0_10px_rgba(212,165,105,0.4)]">Page {{ $page }} of {{ $totalPagesOoh }}</span>
+                    <span class="px-4 py-2 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold rounded-lg shadow-[0_0_10px_rgba(212,165,105,0.4)]">{{ __('Page') }} {{ $page }} {{ __('of') }} {{ $totalPagesOoh }}</span>
                     @if($page < $totalPagesOoh)
-                        <a href="{{ route('discover', array_merge(request()->query(), ['page' => $page + 1])) }}" class="px-4 py-2 bg-[#2C1A0E] text-white border border-white/20 rounded-lg font-medium hover:bg-white/10">Next</a>
+                        <a href="{{ route('discover', array_merge(request()->query(), ['page' => $page + 1])) }}" class="px-4 py-2 bg-[#2C1A0E] text-white border border-white/20 rounded-lg font-medium hover:bg-white/10">{{ __('Next') }}</a>
                     @endif
                 </div>
                 @endif

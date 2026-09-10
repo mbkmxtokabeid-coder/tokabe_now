@@ -8,6 +8,42 @@
         $namaLokasi = is_array($namaLokasi) ? (($namaLokasi[app()->getLocale()] ?? '') ?: ($namaLokasi['id'] ?? '') ?: ($namaLokasi['en'] ?? '') ?: (collect($namaLokasi)->first() ?? '')) : $namaLokasi;
         $descLokasi = is_string($lokasiooh->deskripsi_lokasi) && str_starts_with($lokasiooh->deskripsi_lokasi, '{') ? json_decode($lokasiooh->deskripsi_lokasi, true) : $lokasiooh->deskripsi_lokasi;
         $descLokasi = is_array($descLokasi) ? (($descLokasi[app()->getLocale()] ?? '') ?: ($descLokasi['id'] ?? '') ?: ($descLokasi['en'] ?? '') ?: (collect($descLokasi)->first() ?? '')) : $descLokasi;
+
+        $formatValue = function ($val) {
+            if (empty($val)) return '-';
+            if (is_array($val)) {
+                $val = ($val[app()->getLocale()] ?? '')
+                    ?: ($val['id'] ?? '')
+                    ?: ($val['en'] ?? '')
+                    ?: (collect($val)->first() ?? '-');
+            }
+            $str = (string)$val;
+            if (app()->getLocale() === 'id') {
+                $replacements = [
+                    'Sec / Spot' => 'Detik / Spot',
+                    'Sec' => 'Detik',
+                    'Hours' => 'Jam',
+                    'Hour' => 'Jam',
+                    '/ Day' => '/ Hari',
+                    'Vertical' => 'Vertikal',
+                    '1 Side' => '1 Sisi',
+                    '2 Side' => '2 Sisi',
+                    '1 side' => '1 Sisi',
+                    '2 side' => '2 Sisi',
+                ];
+            } else {
+                $replacements = [
+                    'Detik / Spot' => 'Sec / Spot',
+                    'Detik' => 'Sec',
+                    'Jam' => 'Hours',
+                    '/ Hari' => '/ Day',
+                    'Vertikal' => 'Vertical',
+                    '1 Sisi' => '1 Side',
+                    '2 Sisi' => '2 Side',
+                ];
+            }
+            return strtr($str, $replacements);
+        };
     @endphp
     <title>{{ $namaLokasi }} - Tokabe.id</title>
     <meta name="description" content="{{ \Illuminate\Support\Str::limit(strip_tags($descLokasi ?? ''), 150) }}">
@@ -192,7 +228,7 @@
                                     <i class="fa-solid fa-photo-film text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Media') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasiooh->media ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasiooh->media) }}</div>
                             </div>
                             <!-- Type -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
@@ -200,7 +236,7 @@
                                     <i class="fa-solid fa-expand text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Type') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasiooh->type ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasiooh->type) }}</div>
                             </div>
                             <!-- Size -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
@@ -208,7 +244,7 @@
                                     <i class="fa-solid fa-up-right-and-down-left-from-center text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Size') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasiooh->size ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasiooh->size) }}</div>
                             </div>
                             <!-- Lighting -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
@@ -216,7 +252,7 @@
                                     <i class="fa-solid fa-lightbulb text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Lighting') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasiooh->lighting ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasiooh->lighting) }}</div>
                             </div>
                         </div>
                         

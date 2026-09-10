@@ -1,6 +1,42 @@
 @php
     $namaLokasi = is_string($lokasi->nama) && str_starts_with($lokasi->nama, '{') ? json_decode($lokasi->nama, true) : $lokasi->nama;
     $namaLokasi = is_array($namaLokasi) ? (($namaLokasi[app()->getLocale()] ?? '') ?: ($namaLokasi['id'] ?? '') ?: ($namaLokasi['en'] ?? '') ?: (collect($namaLokasi)->first() ?? '')) : $namaLokasi;
+
+    $formatValue = function ($val) {
+        if (empty($val)) return '-';
+        if (is_array($val)) {
+            $val = ($val[app()->getLocale()] ?? '')
+                ?: ($val['id'] ?? '')
+                ?: ($val['en'] ?? '')
+                ?: (collect($val)->first() ?? '-');
+        }
+        $str = (string)$val;
+        if (app()->getLocale() === 'id') {
+            $replacements = [
+                'Sec / Spot' => 'Detik / Spot',
+                'Sec' => 'Detik',
+                'Hours' => 'Jam',
+                'Hour' => 'Jam',
+                '/ Day' => '/ Hari',
+                'Vertical' => 'Vertikal',
+                '1 Side' => '1 Sisi',
+                '2 Side' => '2 Sisi',
+                '1 side' => '1 Sisi',
+                '2 side' => '2 Sisi',
+            ];
+        } else {
+            $replacements = [
+                'Detik / Spot' => 'Sec / Spot',
+                'Detik' => 'Sec',
+                'Jam' => 'Hours',
+                '/ Hari' => '/ Day',
+                'Vertikal' => 'Vertical',
+                '1 Sisi' => '1 Side',
+                '2 Sisi' => '2 Side',
+            ];
+        }
+        return strtr($str, $replacements);
+    };
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -188,7 +224,7 @@
                                     <i class="fa-solid fa-photo-film text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Media') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasi->media ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasi->media) }}</div>
                             </div>
                             <!-- Type -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
@@ -196,7 +232,7 @@
                                     <i class="fa-solid fa-expand text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Type') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasi->type ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasi->type) }}</div>
                             </div>
                             <!-- Size -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
@@ -204,7 +240,7 @@
                                     <i class="fa-solid fa-up-right-and-down-left-from-center text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Size') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasi->size ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasi->size) }}</div>
                             </div>
 
                             <!-- Duration -->
@@ -213,7 +249,7 @@
                                     <i class="fa-solid fa-stopwatch text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Duration') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasi->duration ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasi->duration) }}</div>
                             </div>
                             <!-- Hour -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
@@ -221,7 +257,7 @@
                                     <i class="fa-solid fa-clock text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Hour') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasi->hour ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasi->hour) }}</div>
                             </div>
                             <!-- Spot -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
@@ -229,7 +265,7 @@
                                     <i class="fa-solid fa-bullseye text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Spot') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasi->spot ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasi->spot) }}</div>
                             </div>
                             <!-- Brand -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
@@ -237,7 +273,7 @@
                                     <i class="fa-solid fa-tags text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Brand') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasi->brand ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasi->brand) }}</div>
                             </div>
                             <!-- Display -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
@@ -245,7 +281,7 @@
                                     <i class="fa-solid fa-tv text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Display') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $lokasi->display ?? '-' }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasi->display) }}</div>
                             </div>
                         </div>
                         
