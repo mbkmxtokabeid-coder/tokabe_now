@@ -209,7 +209,7 @@
 
                         <div class="px-3 sm:px-4 lg:px-6 pb-3 sm:pb-4 lg:pb-6 pt-1 mt-auto">
                             <a href="{{ isset($item->detail_url) ? $item->detail_url : route('dummy.detail') }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-[10px] sm:text-[11px] lg:text-sm uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
-                                <span>{{ __('LIHAT DETAIL') }}</span>
+                                <span>{{ __('View Detail') }}</span>
                                 <i class="fas fa-arrow-right text-[10px] sm:text-xs transition-transform duration-300 group-hover/btn:translate-x-1"></i>
                             </a>
                         </div>

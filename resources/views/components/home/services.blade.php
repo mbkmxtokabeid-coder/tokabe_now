@@ -45,7 +45,7 @@
     }
 </style>
 
-<section id="service" class="py-10 lg:py-16 bg-[#2C1A0E] relative">
+<section id="services" class="py-10 lg:py-16 bg-[#2C1A0E] relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Bagian Judul -->
@@ -136,7 +136,7 @@
 
                             <div class="px-6 pb-6 lg:px-4 lg:pb-4 xl:px-6 xl:pb-6 pt-1 mt-auto">
                                 <a href="{{ route('services.show', $item->id) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 px-6 py-3 lg:px-4 lg:py-2 xl:px-6 xl:py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm lg:text-[10px] xl:text-sm uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
-                                    <span>{{ __('Lihat Detail') }}</span>
+                                    <span>{{ __('View Detail') }}</span>
                                     <i class="fas fa-arrow-right text-xs lg:text-[10px] xl:text-xs transition-transform duration-300 group-hover/btn:translate-x-1"></i>
                                 </a>
                             </div>
@@ -213,7 +213,7 @@
 
                         <div class="px-6 pb-6 pt-1 mt-auto">
                             <a href="{{ route('services.show', $item->id) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm uppercase tracking-wider rounded-full shadow-sm">
-                                <span>{{ __('Lihat Detail') }}</span>
+                                <span>{{ __('View Detail') }}</span>
                                 <i class="fas fa-arrow-right text-xs"></i>
                             </a>
                         </div>

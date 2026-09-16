@@ -11,9 +11,9 @@
                 <div>
                     <h4 class="font-semibold mb-3">{{ __('Company') }}</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#services" class="hover:text-white">{{ __('Services') }}</a></li>
-                        <li><a href="#partners" class="hover:text-white">{{ __('Partners') }}</a></li>
-                        <li><a href="#news" class="hover:text-white">{{ __('News') }}</a></li>
+                        <li><a href="{{ route('home') }}#services" class="hover:text-white">{{ __('Services') }}</a></li>
+                        <li><a href="{{ route('home') }}#partners" class="hover:text-white">{{ __('Partners') }}</a></li>
+                        <!-- <li><a href="#news" class="hover:text-white">{{ __('News') }}</a></li> -->
                     </ul>
                 </div>
                 <div>
