@@ -17,10 +17,23 @@ class DiscoverController extends Controller
         $page = $request->query('page', 1);
         $perPage = 9;
 
+        $provinceMap = [
+            'North Sumatra' => 'Sumatera Utara',
+            'West Sumatra' => 'Sumatera Barat',
+            'South Sumatra' => 'Sumatera Selatan',
+            'Riau Islands' => 'Kepulauan Riau',
+        ];
+        $normRegion = $region ? ($provinceMap[$region] ?? $region) : null;
+
         // Query untuk OOH
         $queryOoh = LocationOoh::query();
-        if ($region) {
-            $queryOoh->where('provinsi', 'LIKE', "%{$region}%");
+        if ($normRegion) {
+            $dbRegionSearch = str_replace('Sumatera', 'Sumatra', $normRegion);
+            $queryOoh->where(function($q) use ($normRegion, $dbRegionSearch, $region) {
+                $q->where('provinsi', 'LIKE', "%{$normRegion}%")
+                  ->orWhere('provinsi', 'LIKE', "%{$dbRegionSearch}%")
+                  ->orWhere('provinsi', 'LIKE', "%{$region}%");
+            });
         }
         if ($search) {
             $queryOoh->where(function($q) use ($search) {
@@ -33,8 +46,13 @@ class DiscoverController extends Controller
 
         // Query untuk DOOH
         $queryDooh = Lokasi::query();
-        if ($region) {
-            $queryDooh->where('provinsi', 'LIKE', "%{$region}%");
+        if ($normRegion) {
+            $dbRegionSearch = str_replace('Sumatera', 'Sumatra', $normRegion);
+            $queryDooh->where(function($q) use ($normRegion, $dbRegionSearch, $region) {
+                $q->where('provinsi', 'LIKE', "%{$normRegion}%")
+                  ->orWhere('provinsi', 'LIKE', "%{$dbRegionSearch}%")
+                  ->orWhere('provinsi', 'LIKE', "%{$region}%");
+            });
         }
         if ($search) {
             $queryDooh->where(function($q) use ($search) {

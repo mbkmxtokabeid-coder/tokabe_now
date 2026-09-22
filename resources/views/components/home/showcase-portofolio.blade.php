@@ -38,7 +38,7 @@
                 {{ __('EXPLORE OUR CREATIVITY') }}
             </span>
             <h2 class="text-4xl sm:text-5xl lg:text-[64px] font-black leading-none tracking-tighter text-white mb-6">
-                {{ __('Showcase Portofolio') }}
+                {{ __('Portfolio Showcase') }}
             </h2>
             <!-- Ornament line with pointed ends -->
             <div class="flex items-center justify-center mx-auto w-full px-8">
@@ -154,7 +154,7 @@
                 <!-- See More Button Container -->
                 <div class="mt-12 text-center" id="see-more-container" data-aos="fade-up" data-aos-offset="0">
                     <a href="{{ route('portofolio') }}" id="see-more-btn" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border-2 border-[#D4A574] text-[#D4A574] rounded-full font-bold uppercase tracking-wider text-sm whitespace-nowrap hover:bg-[#D4A574] hover:text-[#2C1A0E] transition-all duration-300 group shadow-[0_0_15px_rgba(212,165,116,0.2)] hover:shadow-[0_0_25px_rgba(212,165,116,0.4)]">
-                        {{ __('See More Portofolio') }}
+                        {{ __('See More Portfolio') }}
                         <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                         </svg>

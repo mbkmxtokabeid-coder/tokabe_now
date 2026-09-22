@@ -148,7 +148,11 @@
 
                                                 <div class="col-lg-6 mb-3">
                                                     <label class="form-label">OOH Type</label>
-                                                    <input type="text" name="type" class="form-control" placeholder="ex: Vertikal" value="{{ old('type') }}">
+                                                    <select name="type" class="form-control" required>
+                                                        <option value="" disabled {{ old('type') ? '' : 'selected' }}>-- Select OOH Type --</option>
+                                                        <option value="Horizontal" {{ old('type') == 'Horizontal' ? 'selected' : '' }}>Horizontal</option>
+                                                        <option value="Vertical" {{ old('type') == 'Vertical' ? 'selected' : '' }}>Vertical</option>
+                                                    </select>
                                                     @error('type') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
 

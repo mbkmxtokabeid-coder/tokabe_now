@@ -68,7 +68,7 @@
                                 <select name="region" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">
                                     <option value="">{{ __('Semua Provinsi') }}</option>
                                     @foreach($allProvinces as $prov)
-                                        <option value="{{ $prov }}" {{ str_replace('Sumatra', 'Sumatera', request('region')) === $prov ? 'selected' : '' }}>{{ __($prov) }}</option>
+                                        <option value="{{ $prov }}" {{ (request('region') === $prov || __(request('region')) === __($prov) || str_replace('Sumatra', 'Sumatera', request('region')) === $prov) ? 'selected' : '' }}>{{ __($prov) }}</option>
                                     @endforeach
                                 </select>
                                 <select name="type" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">
@@ -77,7 +77,7 @@
                                     <option value="OOH" {{ request('type') === 'OOH' ? 'selected' : '' }}>OOH</option>
                                 </select>
                                 <button type="submit" class="bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold py-2 px-6 rounded-xl shadow-[0_0_15px_rgba(212,165,105,0.4)] hover:shadow-[0_0_25px_rgba(240,201,122,0.6)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-0.5 hover:scale-105 transition-all duration-300 whitespace-nowrap">
-                                    {{ __('Cari') }}
+                                    {{ __('Search') }}
                                 </button>
                             </div>
                         </form>
@@ -99,7 +99,7 @@
                         <div class="w-full aspect-video overflow-hidden relative bg-black">
                             <img src="{{ $item->gambar ? asset('storage/image_lokasi/' . $item->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop' }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="{{ is_array($item->nama) ? ($item->nama['id'] ?? collect($item->nama)->first()) : $item->nama }}">
                             <span class="absolute top-4 left-4 px-3 py-1.5 bg-black/70 backdrop-blur-md text-[#D4A574] text-xs font-bold uppercase tracking-wider rounded-full shadow-md">
-                                {{ $item->provinsi ?? 'Location' }}
+                                {{ __($item->provinsi ?? 'Location') }}
                             </span>
                         </div>
                         <div class="p-6 flex flex-col flex-grow">
@@ -145,7 +145,7 @@
                         <div class="w-full aspect-video overflow-hidden relative bg-black">
                             <img src="{{ $item->gambar ? asset('storage/image_lokasiooh/' . $item->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop' }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="{{ is_array($item->nama) ? ($item->nama['id'] ?? collect($item->nama)->first()) : $item->nama }}">
                             <span class="absolute top-4 left-4 px-3 py-1.5 bg-black/70 backdrop-blur-md text-[#D4A574] text-xs font-bold uppercase tracking-wider rounded-full shadow-md">
-                                {{ $item->wilayah ?? $item->provinsi ?? 'Location' }}
+                                {{ __($item->wilayah ?? $item->provinsi ?? 'Location') }}
                             </span>
                         </div>
                         <div class="p-6 flex flex-col flex-grow">

@@ -196,7 +196,7 @@
 
     <!-- Interactive Chat Bubble / Tooltip -->
     <div id="tokabe-wa-tooltip" 
-         class="pointer-events-auto opacity-0 translate-y-3 transition-all duration-500 ease-out mb-3 max-w-[270px] sm:max-w-[300px] bg-[#1F140D]/95 backdrop-blur-md text-[#F5EFE7] rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.6)] border border-[#D4A574]/40 relative group cursor-pointer hover:border-[#F0C97A] hover:shadow-[0_12px_40px_rgba(212,165,105,0.25)]">
+         class="pointer-events-none opacity-0 translate-y-3 transition-all duration-500 ease-out mb-3 max-w-[270px] sm:max-w-[300px] bg-[#1F140D]/95 backdrop-blur-md text-[#F5EFE7] rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.6)] border border-[#D4A574]/40 relative group cursor-pointer hover:border-[#F0C97A] hover:shadow-[0_12px_40px_rgba(212,165,105,0.25)]">
         
         <!-- Close button -->
         <button type="button" 
@@ -376,8 +376,8 @@
             const isDismissed = sessionStorage.getItem('tokabe_wa_dismissed');
             if (!isDismissed && tooltip) {
                 setTimeout(function() {
-                    tooltip.classList.remove('opacity-0', 'translate-y-3');
-                    tooltip.classList.add('opacity-100', 'translate-y-0');
+                    tooltip.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+                    tooltip.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
                 }, 1200);
             }
 
@@ -386,7 +386,7 @@
                 closeBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    tooltip.classList.remove('opacity-100', 'translate-y-0');
+                    tooltip.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
                     tooltip.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
                     sessionStorage.setItem('tokabe_wa_dismissed', 'true');
                 });

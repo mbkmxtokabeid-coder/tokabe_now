@@ -141,7 +141,7 @@
                     <!-- Left: Content -->
                     <div class="max-w-[700px]" data-aos="fade-up" data-aos-duration="1000">
                         <div class="inline-block px-4 py-1.5 rounded-full bg-[#1A0F07] border border-[#D6A24C]/20 shadow-sm mb-6">
-                            <span class="text-xs font-bold tracking-widest text-[#D6A24C] uppercase">{{ __('PORTFOLIO') }}</span>
+                            <span class="text-xs font-bold tracking-widest text-[#D6A24C] uppercase">{{ __('Portfolio') }}</span>
                         </div>
                         
                         <h1 class="text-4xl sm:text-5xl lg:text-[56px] font-extrabold leading-[1.1] tracking-tight text-white mb-6">

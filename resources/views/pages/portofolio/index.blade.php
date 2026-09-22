@@ -31,7 +31,7 @@
             
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" data-aos="fade-up" data-aos-duration="1000">
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight mb-4 drop-shadow-md">
-                    {!! nl2br(__('Our Recent Portofolio')) !!}
+                    {!! nl2br(__('Explore Our Portfolio')) !!}
                 </h1>
                 <p class="text-base sm:text-lg lg:text-xl text-[#F5EFE7] max-w-3xl mx-auto font-light leading-relaxed drop-shadow-sm">
                     {{ __('Showcasing Videotron Advertising Installations and Experiential Brand Activation Across Sumatra') }}

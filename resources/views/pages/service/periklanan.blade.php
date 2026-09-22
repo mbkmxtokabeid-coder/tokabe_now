@@ -47,7 +47,7 @@
                                         target="_blank"
                                         data-service-id="{{ $service->id }}">
                                         <i class="fa-brands fa-whatsapp mr-2"></i>
-                                        Call Astronaut : {{ $advPhone }}
+                                        {{ __('Call Astronaut') }} : {{ $advPhone }}
                                     </a>
                                 </div>
                             </div>
