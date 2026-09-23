@@ -53,10 +53,18 @@ class HomeController extends Controller
             $query = \App\Models\Lokasi::query();
             
             if ($province) {
-                $dbProvinceSearch = str_replace('Sumatera', 'Sumatra', $province);
-                $query->where(function($q) use ($province, $dbProvinceSearch) {
-                    $q->where('provinsi', 'LIKE', "%{$province}%")
-                      ->orWhere('provinsi', 'LIKE', "%{$dbProvinceSearch}%");
+                $provinceMap = [
+                    'North Sumatra' => 'Sumatera Utara',
+                    'West Sumatra' => 'Sumatera Barat',
+                    'South Sumatra' => 'Sumatera Selatan',
+                    'Riau Islands' => 'Kepulauan Riau',
+                ];
+                $normProv = $provinceMap[$province] ?? $province;
+                $dbProvinceSearch = str_replace('Sumatera', 'Sumatra', $normProv);
+                $query->where(function($q) use ($normProv, $dbProvinceSearch, $province) {
+                    $q->where('provinsi', 'LIKE', "%{$normProv}%")
+                      ->orWhere('provinsi', 'LIKE', "%{$dbProvinceSearch}%")
+                      ->orWhere('provinsi', 'LIKE', "%{$province}%");
                 });
             }
             
@@ -70,14 +78,18 @@ class HomeController extends Controller
             }
 
             if ($availability) {
-                if ($availability === 'Available') {
+                if ($availability === 'Available' || $availability === 'Tersedia') {
                     $query->where(function($q) {
                         $q->whereNull('availability')
                           ->orWhere('availability', '')
-                          ->orWhere('availability', 'Available');
+                          ->orWhere('availability', 'Available')
+                          ->orWhere('availability', 'Tersedia');
                     });
-                } else if ($availability === 'Not Available') {
-                    $query->where('availability', 'Not Available');
+                } else if ($availability === 'Not Available' || $availability === 'Tidak Tersedia') {
+                    $query->where(function($q) {
+                        $q->where('availability', 'Not Available')
+                          ->orWhere('availability', 'Tidak Tersedia');
+                    });
                 }
             }
             $items = $query->paginate($limit);
@@ -103,10 +115,18 @@ class HomeController extends Controller
             $query = \App\Models\Lokasiooh::query();
             
             if ($province) {
-                $dbProvinceSearch = str_replace('Sumatera', 'Sumatra', $province);
-                $query->where(function($q) use ($province, $dbProvinceSearch) {
-                    $q->where('provinsi', 'LIKE', "%{$province}%")
-                      ->orWhere('provinsi', 'LIKE', "%{$dbProvinceSearch}%");
+                $provinceMap = [
+                    'North Sumatra' => 'Sumatera Utara',
+                    'West Sumatra' => 'Sumatera Barat',
+                    'South Sumatra' => 'Sumatera Selatan',
+                    'Riau Islands' => 'Kepulauan Riau',
+                ];
+                $normProv = $provinceMap[$province] ?? $province;
+                $dbProvinceSearch = str_replace('Sumatera', 'Sumatra', $normProv);
+                $query->where(function($q) use ($normProv, $dbProvinceSearch, $province) {
+                    $q->where('provinsi', 'LIKE', "%{$normProv}%")
+                      ->orWhere('provinsi', 'LIKE', "%{$dbProvinceSearch}%")
+                      ->orWhere('provinsi', 'LIKE', "%{$province}%");
                 });
             }
             
@@ -120,14 +140,18 @@ class HomeController extends Controller
             }
 
             if ($availability) {
-                if ($availability === 'Available') {
+                if ($availability === 'Available' || $availability === 'Tersedia') {
                     $query->where(function($q) {
                         $q->whereNull('availability')
                           ->orWhere('availability', '')
-                          ->orWhere('availability', 'Available');
+                          ->orWhere('availability', 'Available')
+                          ->orWhere('availability', 'Tersedia');
                     });
-                } else if ($availability === 'Not Available') {
-                    $query->where('availability', 'Not Available');
+                } else if ($availability === 'Not Available' || $availability === 'Tidak Tersedia') {
+                    $query->where(function($q) {
+                        $q->where('availability', 'Not Available')
+                          ->orWhere('availability', 'Tidak Tersedia');
+                    });
                 }
             }
             $items = $query->paginate($limit);

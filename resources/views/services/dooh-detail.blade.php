@@ -18,7 +18,9 @@
                 'Hours' => 'Jam',
                 'Hour' => 'Jam',
                 '/ Day' => '/ Hari',
+                'Horizontal & Vertical' => 'Horizontal & Vertikal',
                 'Vertical' => 'Vertikal',
+                'Horizontal' => 'Horizontal',
                 '1 Side' => '1 Sisi',
                 '2 Side' => '2 Sisi',
                 '1 side' => '1 Sisi',
@@ -30,7 +32,9 @@
                 'Detik' => 'Sec',
                 'Jam' => 'Hours',
                 '/ Hari' => '/ Day',
+                'Horizontal & Vertikal' => 'Horizontal & Vertical',
                 'Vertikal' => 'Vertical',
+                'Horizontal' => 'Horizontal',
                 '1 Sisi' => '1 Side',
                 '2 Sisi' => '2 Side',
             ];
@@ -82,7 +86,7 @@
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden" style="z-index: 15;">
                     <div class="transform -rotate-12 border-4 md:border-8 border-red-600 rounded-xl px-4 py-2 md:px-8 md:py-4 bg-black/50 backdrop-blur-md text-center opacity-70 whitespace-nowrap">
                         <span class="text-red-500 font-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl tracking-widest uppercase" style="text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;">
-                            NOT AVAILABLE
+                            {{ __('NOT AVAILABLE') }}
                         </span>
                     </div>
                 </div>
@@ -90,7 +94,7 @@
             </div>
             <div class="relative z-20 h-full flex flex-col items-center justify-center text-center px-4 max-w-5xl mx-auto pt-28 pb-16">
                 <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 uppercase tracking-tight shadow-sm leading-tight">{{ $namaLokasi }}</h1>
-                <p class="text-base sm:text-lg md:text-xl text-gray-200 font-medium tracking-wide">{{ __('SUPER LOCATION and EYE-CATCHING DOOH Videotron in Sumatera') }}</p>
+                <p class="text-base sm:text-lg md:text-xl text-gray-200 font-medium tracking-wide">{{ __('SUPER LOCATION and EYE-CATCHING DOOH Videotron in Sumatra') }}</p>
             </div>
         </div>
 
@@ -166,7 +170,7 @@
                                 <div class="w-full h-52 sm:h-60 lg:h-64 relative bg-[#1A0F07]">
                                     <iframe
                                         title="Lokasi Google Maps"
-                                        src="https://www.google.com/maps?q={{ $lokasi->koordinat }}&hl=es;z=14&output=embed"
+                                        src="https://www.google.com/maps?q={{ $lokasi->koordinat }}&hl={{ app()->getLocale() }}&z=14&output=embed"
                                         class="w-full h-full border-0" 
                                         allowfullscreen="" loading="lazy"
                                         referrerpolicy="no-referrer-when-downgrade">

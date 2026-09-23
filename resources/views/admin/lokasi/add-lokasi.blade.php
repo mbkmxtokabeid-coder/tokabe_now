@@ -121,9 +121,19 @@
                                                         ] as $field => $label)
                                                             <div class="mb-3">
                                                                 <label class="form-label">{{ $label }}</label>
-                                                                <input type="text" name="{{ $field }}"
-                                                                    class="form-control" id="{{ $field }}"
-                                                                    placeholder="Fill in the {{ strtolower($label) }} here">
+                                                                @if($field === 'type')
+                                                                    <select name="type" class="form-control" id="type" required>
+                                                                        <option value="" disabled {{ old('type') ? '' : 'selected' }}>-- Select Type --</option>
+                                                                        <option value="Horizontal" {{ old('type') == 'Horizontal' ? 'selected' : '' }}>Horizontal</option>
+                                                                        <option value="Vertical" {{ old('type') == 'Vertical' ? 'selected' : '' }}>Vertical</option>
+                                                                        <option value="Horizontal & Vertical" {{ old('type') == 'Horizontal & Vertical' ? 'selected' : '' }}>Horizontal & Vertical</option>
+                                                                    </select>
+                                                                @else
+                                                                    <input type="text" name="{{ $field }}"
+                                                                        class="form-control" id="{{ $field }}"
+                                                                        placeholder="Fill in the {{ strtolower($label) }} here"
+                                                                        value="{{ old($field) }}">
+                                                                @endif
                                                                 @error($field)
                                                                     <div class="text-danger">{{ $message }}</div>
                                                                 @enderror

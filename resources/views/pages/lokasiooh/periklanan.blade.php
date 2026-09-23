@@ -88,7 +88,7 @@
                                         <div class="shadow-lg border-0 rounded-4 overflow-hidden" style="width: 90%;">
                                             <div class="ratio ratio-16x9">
                                                 <iframe
-                                                    src="https://www.google.com/maps?q={{ $lokasiooh->koordinat }}&hl=es;z=14&output=embed"
+                                                    src="https://www.google.com/maps?q={{ $lokasiooh->koordinat }}&hl={{ app()->getLocale() }}&z=14&output=embed"
                                                     style="border:0;" allowfullscreen="true" loading="lazy"
                                                     referrerpolicy="no-referrer-when-downgrade">
                                                 </iframe>
@@ -113,8 +113,8 @@
                                             <div class="icon-wrapper mb-3">
                                                 <i class="fa-solid fa-expand fa-2x text-warning"></i>
                                             </div>
-                                            <div class="text-orange fw-semibold mb-1 label">Type</div>
-                                            <div class="fw-bold fs-5 text-dark title">{{ $lokasiooh->type }}</div>
+                                            <div class="text-orange fw-semibold mb-1 label">{{ __('Type') }}</div>
+                                            <div class="fw-bold fs-5 text-dark title">{{ __($lokasiooh->type) }}</div>
                                         </div>
 
                                         <!-- Screen Size -->
@@ -123,8 +123,8 @@
                                                 <i
                                                     class="fa-solid fa-up-right-and-down-left-from-center fa-2x text-warning"></i>
                                             </div>
-                                            <div class="text-orange fw-semibold mb-1 label">Screen Size</div>
-                                            <div class="fw-bold fs-5 text-dark title">{{ $lokasiooh->size }}</div>
+                                            <div class="text-orange fw-semibold mb-1 label">{{ __('Screen Size') }}</div>
+                                            <div class="fw-bold fs-5 text-dark title">{{ app()->getLocale() === 'id' ? strtr((string)$lokasiooh->size, ['1 Side' => '1 Sisi', '2 Side' => '2 Sisi', '1 side' => '1 Sisi', '2 side' => '2 Sisi']) : $lokasiooh->size }}</div>
                                         </div>
 
                                         <!-- Coordinates -->

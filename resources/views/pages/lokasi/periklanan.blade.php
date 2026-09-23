@@ -70,7 +70,7 @@
                                 <div class="shadow-lg border-0 rounded-4 overflow-hidden" style="width: 100%;">
                                     <div class="ratio ratio-16x9">
                                         <iframe
-                                            src="https://www.google.com/maps?q={{ $lokasi->koordinat }}&hl=es;z=14&output=embed"
+                                            src="https://www.google.com/maps?q={{ $lokasi->koordinat }}&hl={{ app()->getLocale() }}&z=14&output=embed"
                                             style="border:0;" allowfullscreen="" loading="lazy"
                                             referrerpolicy="no-referrer-when-downgrade">
                                         </iframe>
@@ -162,8 +162,8 @@
                                     <div class="icon-wrapper mb-3">
                                         <i class="fa-solid fa-expand fa-2x text-warning"></i>
                                     </div>
-                                    <div class="text-orange fw-semibold mb-1 label">Type</div>
-                                    <div class="fw-bold fs-5 text-dark title">{{ $lokasi->type }}</div>
+                                    <div class="text-orange fw-semibold mb-1 label">{{ __('Type') }}</div>
+                                    <div class="fw-bold fs-5 text-dark title">{{ __($lokasi->type) }}</div>
                                 </div>
 
                                 <!-- Ukuran Layar -->
@@ -172,8 +172,8 @@
                                         <i
                                             class="fa-solid fa-up-right-and-down-left-from-center fa-2x text-warning"></i>
                                     </div>
-                                    <div class="text-orange fw-semibold mb-1 label">Screen Size</div>
-                                    <div class="fw-bold fs-5 text-dark title">{{ $lokasi->size }}</div>
+                                    <div class="text-orange fw-semibold mb-1 label">{{ __('Screen Size') }}</div>
+                                    <div class="fw-bold fs-5 text-dark title">{{ app()->getLocale() === 'id' ? strtr((string)$lokasi->size, ['1 Side' => '1 Sisi', '2 Side' => '2 Sisi', '1 side' => '1 Sisi', '2 side' => '2 Sisi']) : $lokasi->size }}</div>
                                 </div>
 
                                 <!-- Koordinat -->

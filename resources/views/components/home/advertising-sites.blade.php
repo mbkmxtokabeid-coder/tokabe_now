@@ -3,6 +3,19 @@
 @php
     $activeOoh = collect($lokasiooh)->where('status', 'Aktif');
     $oohData = $activeOoh->take(3);
+    $formatCard = function($val) {
+        if (empty($val)) return '-';
+        $str = __((string)$val);
+        if (app()->getLocale() === 'id') {
+            return strtr($str, [
+                '1 Side' => '1 Sisi',
+                '2 Side' => '2 Sisi',
+                '1 side' => '1 Sisi',
+                '2 side' => '2 Sisi',
+            ]);
+        }
+        return $str;
+    };
 @endphp
 
 <style>
@@ -197,7 +210,7 @@
                             <div class="absolute inset-0 flex items-center justify-center bg-black/40" style="z-index: 10; pointer-events: none;">
                                 <div class="transform -rotate-45 border-4 border-red-600 rounded-lg px-4 py-2 bg-black/50 backdrop-blur-sm">
                                     <span class="text-red-500 text-2xl md:text-3xl font-black uppercase tracking-widest" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
-                                        Not Available
+                                        {{ __('Not Available') }}
                                     </span>
                                 </div>
                             </div>
@@ -215,11 +228,11 @@
                             <div class="flex flex-col gap-3 border-t border-white/20 pt-4 md:pt-3 text-xs md:text-[11px] xl:text-xs text-gray-200">
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-layer-group text-[#D4A574]"></i>
-                                    <span>{{ $item->media ?? $item->tipe ?? $item->type ?? 'Videotron' }}</span>
+                                    <span>{{ $formatCard($item->media ?? $item->tipe ?? $item->type ?? 'Videotron') }}</span>
                                 </div>
                                 <div class="flex items-start gap-2">
                                     <i class="fas fa-expand-arrows-alt text-[#D4A574] mt-0.5"></i>
-                                    <span class="leading-snug">{{ $item->size ?? $item->ukuran ?? '-' }}</span>
+                                    <span class="leading-snug">{{ $formatCard($item->size ?? $item->ukuran ?? '-') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -283,7 +296,7 @@
                             <div class="absolute inset-0 flex items-center justify-center bg-black/40" style="z-index: 10; pointer-events: none;">
                                 <div class="transform -rotate-45 border-4 border-red-600 rounded-lg px-4 py-2 bg-black/50 backdrop-blur-sm">
                                     <span class="text-red-500 text-2xl md:text-3xl font-black uppercase tracking-widest" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
-                                        Not Available
+                                        {{ __('Not Available') }}
                                     </span>
                                 </div>
                             </div>
@@ -301,11 +314,11 @@
                             <div class="flex flex-col gap-3 border-t border-white/20 pt-4 md:pt-3 text-xs md:text-[11px] xl:text-xs text-gray-200">
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-layer-group text-[#D4A574]"></i>
-                                    <span>{{ $item->tipe ?? $item->type ?? 'Billboard' }}</span>
+                                    <span>{{ $formatCard($item->tipe ?? $item->type ?? 'Billboard') }}</span>
                                 </div>
                                 <div class="flex items-start gap-2">
                                     <i class="fas fa-expand-arrows-alt text-[#D4A574] mt-0.5"></i>
-                                    <span class="leading-snug">{{ $item->ukuran ?? $item->size ?? '-' }}</span>
+                                    <span class="leading-snug">{{ $formatCard($item->ukuran ?? $item->size ?? '-') }}</span>
                                 </div>
                             </div>
                         </div>

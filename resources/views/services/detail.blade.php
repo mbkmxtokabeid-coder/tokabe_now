@@ -72,7 +72,7 @@
                             <div class="shrink-0 flex flex-col gap-4 min-w-[200px]">
                                 <a href="{{ $waUrl }}" target="_blank" class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#1F1611] border-0 text-base font-semibold rounded-full shadow-[0_0_20px_rgba(212,165,105,0.5)] hover:shadow-[0_0_35px_rgba(240,201,122,0.7)] hover:-translate-y-1 transform transition-all duration-300 w-full whitespace-nowrap">
                                     <i class="fa-brands fa-whatsapp mr-3 text-xl"></i>
-                                    {{ __('Call Astronaut : ' . $svcPhone) }}
+                                    {{ __('Call Astronaut') }} : {{ $svcPhone }}
                                 </a>
                                 @if($lokasiLink)
                                 <a href="{{ $lokasiLink }}" class="inline-flex items-center justify-center px-8 py-4 bg-[#1F1611]/80 backdrop-blur hover:bg-[#5C3317] text-[#F0C97A] border border-[#C8902A]/50 text-base font-semibold rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(212,165,105,0.4)] transform hover:-translate-y-1 transition-all duration-300 w-full whitespace-nowrap">
@@ -117,7 +117,7 @@
                         <div class="flex flex-col gap-3">
                             <a href="{{ $waUrl }}" target="_blank" class="inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#1F1611] border-0 text-sm font-semibold rounded-full shadow-[0_0_20px_rgba(212,165,105,0.4)] w-full">
                                 <i class="fa-brands fa-whatsapp mr-3 text-lg"></i>
-                                {{ __('Call Astronaut : ' . $svcPhone) }}
+                                {{ __('Call Astronaut') }} : {{ $svcPhone }}
                             </a>
                             @if($lokasiLink)
                             <a href="{{ $lokasiLink }}" class="inline-flex items-center justify-center px-6 py-4 bg-[#1F1611]/80 backdrop-blur hover:bg-[#5C3317] text-[#F0C97A] border border-[#C8902A]/50 text-sm font-semibold rounded-full shadow-lg transition-all duration-300 w-full">

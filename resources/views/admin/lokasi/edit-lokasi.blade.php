@@ -162,7 +162,24 @@
 
                                                     <div class="form-group">
                                                         <label>Type</label>
-                                                        <input type="text" name="type" value="{{ old('type', $lokasis->type) }}" class="form-control">
+                                                        @php
+                                                            $valType = old('type', $lokasis->type);
+                                                            if ($valType === 'Horizontal & Vertical') {
+                                                                $selectedType = 'Horizontal & Vertical';
+                                                            } elseif (stripos($valType, 'vert') !== false) {
+                                                                $selectedType = 'Vertical';
+                                                            } elseif (stripos($valType, 'horiz') !== false) {
+                                                                $selectedType = 'Horizontal';
+                                                            } else {
+                                                                $selectedType = $valType;
+                                                            }
+                                                        @endphp
+                                                        <select name="type" class="form-control" required>
+                                                            <option value="" disabled>-- Select Type --</option>
+                                                            <option value="Horizontal" {{ $selectedType == 'Horizontal' ? 'selected' : '' }}>Horizontal</option>
+                                                            <option value="Vertical" {{ $selectedType == 'Vertical' ? 'selected' : '' }}>Vertical</option>
+                                                            <option value="Horizontal & Vertical" {{ $selectedType == 'Horizontal & Vertical' ? 'selected' : '' }}>Horizontal & Vertical</option>
+                                                        </select>
                                                         @error('type') <div class="text-danger">{{ $message }}</div> @enderror
                                                     </div>
 

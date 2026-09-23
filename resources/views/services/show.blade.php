@@ -6,6 +6,19 @@
     @php
         $judulText = is_array($service->judul) ? ($service->judul[app()->getLocale()] ?? $service->judul['id'] ?? $service->judul['en'] ?? collect($service->judul)->first() ?? '') : $service->judul;
         $descText = is_array($service->deskripsi) ? ($service->deskripsi[app()->getLocale()] ?? $service->deskripsi['id'] ?? $service->deskripsi['en'] ?? collect($service->deskripsi)->first() ?? '') : $service->deskripsi;
+        $formatCard = function($val) {
+            if (empty($val)) return '-';
+            $str = __((string)$val);
+            if (app()->getLocale() === 'id') {
+                return strtr($str, [
+                    '1 Side' => '1 Sisi',
+                    '2 Side' => '2 Sisi',
+                    '1 side' => '1 Sisi',
+                    '2 side' => '2 Sisi',
+                ]);
+            }
+            return $str;
+        };
     @endphp
     <title>{{ $judulText }} - Tokabe.id</title>
     <meta name="description" content="{{ \Illuminate\Support\Str::limit(strip_tags($descText ?? ''), 150) }}">
@@ -56,16 +69,16 @@
                         </div>
                         <input type="text" name="search" value="{{ request('search') }}" 
                             class="block w-full pl-12 pr-32 py-4 rounded-full border-2 border-transparent bg-white shadow-xl focus:border-[#D4A569] focus:ring-0 text-gray-900 text-lg transition-all" 
-                            placeholder="{{ __('Cari apa saja...') }}">
+                            placeholder="{{ __('Search anything...') }}">
                         <button type="submit" class="absolute inset-y-2 right-2 px-8 bg-gradient-to-r from-[#D4A569] via-[#F0C97A] to-[#D4A569] hover:from-[#F0C97A] hover:to-[#D4A569] text-[#2C1A0E] font-semibold rounded-full shadow-md transform hover:scale-105 transition-all">
-                            {{ __('Cari') }}
+                            {{ __('Search') }}
                         </button>
                     </div>
 
                     @if(in_array($service->id, [1, 2]))
                         <div class="flex flex-row gap-2 sm:gap-3 w-full md:w-auto">
                             @if(isset($allProvinces) && count($allProvinces) > 0)
-                                <div x-data="{ open: false, selected: '{{ request('provinsi', '') }}', selectedLabel: '{{ request('provinsi', __('Semua Provinsi')) }}' }" class="relative flex-1 min-w-0 md:w-56">
+                                <div x-data="{ open: false, selected: '{{ request('provinsi', '') }}', selectedLabel: '{{ request('provinsi') ? addslashes(__(request('provinsi'))) : __('Semua Provinsi') }}' }" class="relative flex-1 min-w-0 md:w-56">
                                     <input type="hidden" name="provinsi" :value="selected">
                                     <button @click="open = !open" @click.outside="open = false" type="button" 
                                         class="w-full text-left flex items-center justify-between py-3 sm:py-4 px-4 sm:px-6 rounded-full border-2 bg-white shadow-xl text-gray-900 text-xs sm:text-sm transition-all focus:outline-none"
@@ -86,11 +99,11 @@
                                                 <svg x-show="selected === ''" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                             </li>
                                             @foreach($allProvinces as $prov)
-                                                <li @click="selected = '{{ $prov }}'; selectedLabel = '{{ $prov }}'; open = false; setTimeout(() => $el.closest('form').submit(), 50)" 
+                                                <li @click="selected = '{{ $prov }}'; selectedLabel = '{{ addslashes(__($prov)) }}'; open = false; setTimeout(() => $el.closest('form').submit(), 50)" 
                                                     class="cursor-pointer px-4 sm:px-6 py-2 sm:py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between text-xs sm:text-sm"
-                                                    :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === '{{ $prov }}'}">
-                                                    <span class="truncate pr-2">{{ $prov }}</span>
-                                                    <svg x-show="selected === '{{ $prov }}'" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                                    :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === '{{ $prov }}' || selected === '{{ __($prov) }}'}">
+                                                    <span class="truncate pr-2">{{ __($prov) }}</span>
+                                                    <svg x-show="selected === '{{ $prov }}' || selected === '{{ __($prov) }}'" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                                 </li>
                                             @endforeach
                                         </ul>
@@ -98,7 +111,7 @@
                                 </div>
                             @endif
 
-                            <div x-data="{ open: false, selected: '{{ request('availability', '') }}', selectedLabel: '{{ request('availability') ?: __('Semua Status') }}' }" class="relative flex-1 min-w-0 md:w-56">
+                            <div x-data="{ open: false, selected: '{{ request('availability', '') }}', selectedLabel: '{{ request('availability') ? addslashes(__(request('availability'))) : __('Semua Status') }}' }" class="relative flex-1 min-w-0 md:w-56">
                                 <input type="hidden" name="availability" :value="selected">
                                 <button @click="open = !open" @click.outside="open = false" type="button" 
                                     class="w-full text-left flex items-center justify-between py-3 sm:py-4 px-4 sm:px-6 rounded-full border-2 bg-white shadow-xl text-gray-900 text-xs sm:text-sm transition-all focus:outline-none"
@@ -118,17 +131,17 @@
                                             <span class="truncate pr-2">{{ __('Semua Status') }}</span>
                                             <svg x-show="selected === ''" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                         </li>
-                                        <li @click="selected = 'Available'; selectedLabel = 'Available'; open = false; setTimeout(() => $el.closest('form').submit(), 50)" 
+                                        <li @click="selected = 'Available'; selectedLabel = '{{ addslashes(__('Available')) }}'; open = false; setTimeout(() => $el.closest('form').submit(), 50)" 
                                             class="cursor-pointer px-4 sm:px-6 py-2 sm:py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between text-xs sm:text-sm"
-                                            :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === 'Available'}">
-                                            <span class="truncate pr-2">Available</span>
-                                            <svg x-show="selected === 'Available'" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                            :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === 'Available' || selected === 'Tersedia'}">
+                                            <span class="truncate pr-2">{{ __('Available') }}</span>
+                                            <svg x-show="selected === 'Available' || selected === 'Tersedia'" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                         </li>
-                                        <li @click="selected = 'Not Available'; selectedLabel = 'Not Available'; open = false; setTimeout(() => $el.closest('form').submit(), 50)" 
+                                        <li @click="selected = 'Not Available'; selectedLabel = '{{ addslashes(__('Not Available')) }}'; open = false; setTimeout(() => $el.closest('form').submit(), 50)" 
                                             class="cursor-pointer px-4 sm:px-6 py-2 sm:py-3 text-gray-700 hover:bg-[#F9F5F0] hover:text-[#C8902A] transition-colors flex items-center justify-between text-xs sm:text-sm"
-                                            :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === 'Not Available'}">
-                                            <span class="truncate pr-2">Not Available</span>
-                                            <svg x-show="selected === 'Not Available'" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                            :class="{'bg-[#F9F5F0] text-[#C8902A] font-semibold': selected === 'Not Available' || selected === 'Tidak Tersedia'}">
+                                            <span class="truncate pr-2">{{ __('Not Available') }}</span>
+                                            <svg x-show="selected === 'Not Available' || selected === 'Tidak Tersedia'" class="h-4 w-4 text-[#C8902A] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                         </li>
                                     </ul>
                                 </div>
@@ -169,7 +182,7 @@
                                 <div class="absolute inset-0 flex items-center justify-center bg-black/40" style="z-index: 10; pointer-events: none;">
                                     <div class="transform -rotate-45 border-2 border-red-600 rounded px-2 py-1 bg-black/50 backdrop-blur-sm text-center whitespace-nowrap">
                                         <span class="text-red-500 font-black text-[10px] sm:text-xs md:text-[10px] lg:text-xs xl:text-sm tracking-widest uppercase" style="text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">
-                                            NOT AVAILABLE
+                                            {{ __('NOT AVAILABLE') }}
                                         </span>
                                     </div>
                                 </div>
@@ -191,11 +204,11 @@
                                     <div class="flex flex-col sm:grid sm:grid-cols-2 gap-1 sm:gap-2 lg:gap-3">
                                         <div class="hidden sm:flex items-center gap-1 sm:gap-2">
                                             <i class="fas fa-layer-group text-[#D4A574] text-[10px] sm:text-xs lg:text-base"></i>
-                                            <span class="line-clamp-2">{{ $item->media ?? 'LED Videotron' }}</span>
+                                            <span class="line-clamp-2">{{ $formatCard($item->media ?? 'LED Videotron') }}</span>
                                         </div>
                                         <div class="flex items-center gap-1 sm:gap-2">
                                             <i class="fas fa-expand-arrows-alt text-[#D4A574] text-[10px] sm:text-xs lg:text-base"></i>
-                                            <span class="line-clamp-2">{{ $item->size ?? '-' }}</span>
+                                            <span class="line-clamp-2">{{ $formatCard($item->size ?? '-') }}</span>
                                         </div>
                                     </div>
                                 </div>

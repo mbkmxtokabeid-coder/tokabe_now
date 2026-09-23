@@ -149,10 +149,18 @@
                                                 </div>
 
                                                 <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">OOH Type</label>
-                                                    <input type="text" name="type" class="form-control" value="{{ old('type', $lokasiooh->type) }}">
-                                                    @error('type') <div class="text-danger small">{{ $message }}</div> @enderror
-                                                </div>
+                                                <label class="form-label">OOH Type</label>
+                                                @php
+                                                    $valType = old('type', $lokasiooh->type);
+                                                    $selectedType = stripos($valType, 'vert') !== false ? 'Vertical' : (stripos($valType, 'horiz') !== false ? 'Horizontal' : $valType);
+                                                @endphp
+                                                <select name="type" class="form-control" required>
+                                                    <option value="" disabled>-- Select OOH Type --</option>
+                                                    <option value="Horizontal" {{ $selectedType == 'Horizontal' ? 'selected' : '' }}>Horizontal</option>
+                                                    <option value="Vertical" {{ $selectedType == 'Vertical' ? 'selected' : '' }}>Vertical</option>
+                                                </select>
+                                                @error('type') <div class="text-danger small">{{ $message }}</div> @enderror
+                                            </div>
 
                                                 <div class="col-lg-4 mb-3">
                                                     <label class="form-label">Motorcycle Traffic</label>
