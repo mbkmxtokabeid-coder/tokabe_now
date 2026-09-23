@@ -60,5 +60,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/clear-cache', function () {
+    \Illuminate\Support\Facades\Artisan::call('cache:clear');
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    return 'Cache Hostinger Berhasil Dibersihkan!';
+});
+
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';

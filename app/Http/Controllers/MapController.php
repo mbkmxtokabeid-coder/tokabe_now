@@ -8,10 +8,9 @@ use Illuminate\Http\Request;
 
 class MapController extends Controller
 {
-    private function formatLocationName(mixed $nama): string
+    private function formatLocationName(mixed $nama, string $locale = 'id'): string
     {
         if (empty($nama)) return '';
-        $locale = app()->getLocale();
 
         if (is_string($nama)) {
             $trimmed = trim($nama);
@@ -63,6 +62,7 @@ class MapController extends Controller
                 ];
             } else {
                 $replacements = [
+                    // Provinces
                     'North Sumatra Province' => 'Provinsi Sumatera Utara',
                     'North Sumatera Province' => 'Provinsi Sumatera Utara',
                     'South Sumatra Province' => 'Provinsi Sumatera Selatan',
@@ -71,34 +71,102 @@ class MapController extends Controller
                     'Jambi Province' => 'Provinsi Jambi',
                     'Bengkulu Province' => 'Provinsi Bengkulu',
                     'Lampung Province' => 'Provinsi Lampung',
+
+                    // Cities & Regencies
                     'Medan City' => 'Kota Medan',
                     'City of Medan' => 'Kota Medan',
-                    'right at the Juanda Monument intersection' => 'tepat di persimpangan Tugu Juanda',
-                    'right at the intersection of' => 'tepat di persimpangan',
-                    'Housing Complex Intersection' => 'Persimpangan Komplek Perumahan',
-                    'Housing Complex' => 'Komplek Perumahan',
-                    'Former NAV Karaoke' => 'Eks NAV Karaoke',
-                    'Former ' => 'Eks ',
-                    ' (Ex ' => ' (Eks ',
-                    ' Ex ' => ' Eks ',
-                    'Ex. ' => 'Eks ',
-                    'Junction ' => 'Simp. ',
-                    'Intersection with' => 'Simp. ',
-                    'intersection' => 'persimpangan',
-                    'Intersection' => 'Persimpangan',
-                    ' Captain Maulana Lubis Street, ' => ' Jl. Kapten Maulana Lubis, ',
+                    'Binjai City' => 'Kota Binjai',
+                    'Padang Sidempuan City' => 'Kota Padang Sidempuan',
+                    'Deli Serdang Regency' => 'Kabupaten Deli Serdang',
+                    'Simalungun Regency' => 'Kabupaten Simalungun',
+
+                    // Specific Locations & Landmarks
                     'Captain Maulana Lubis Street' => 'Jl. Kapten Maulana Lubis',
                     'Juanda Street and Samanhudi Street' => 'Jl. Juanda dan Jl. Samanhudi',
                     'Juanda Street' => 'Jl. Juanda',
                     'Samanhudi Street' => 'Jl. Samanhudi',
                     'Setia Budi St.' => 'Jl. Setia Budi',
                     'KH. Zainul Arifin Street' => 'Jl. KH. Zainul Arifin',
-                    ' Street, ' => 'Jl. ',
-                    ' Street' => 'Jl. ',
-                    ' St. ' => 'Jl. ',
-                    ' St.' => 'Jl.',
-                    ' near ' => ' dekat ',
-                    ' Near ' => ' Dekat ',
+                    'Zainul Arifin St.' => 'Jl. Zainul Arifin',
+                    'Soekarno–Hatta Street' => 'Jl. Soekarno–Hatta',
+                    'Soekarno-Hatta Street' => 'Jl. Soekarno-Hatta',
+                    'Jendral Sudirman Street' => 'Jl. Jendral Sudirman',
+                    'Jend. Sudirman Street' => 'Jl. Jend. Sudirman',
+                    'Sudirman Street' => 'Jl. Sudirman',
+                    'Imam Bonjol Street' => 'Jl. Imam Bonjol',
+                    'Besar Delitua Street' => 'Jl. Besar Delitua',
+                    'Flamboyan Raya Street' => 'Jl. Flamboyan Raya',
+                    'Willem Iskandar Street' => 'Jl. Willem Iskandar',
+                    'Karya Jaya Street' => 'Jl. Karya Jaya',
+                    'Tengku Fachrudin Street' => 'Jl. Tengku Fachrudin',
+                    'MT Haryono Street' => 'Jl. MT Haryono',
+                    'MT. Haryono St.' => 'Jl. MT. Haryono',
+                    'Asahan Street' => 'Jl. Asahan',
+                    'Ahmad Yani Street' => 'Jl. Ahmad Yani',
+                    'Sirao Street' => 'Jl. Sirao',
+                    'Sonigeho Street' => 'Jl. Sonigeho',
+                    'Lotu Street' => 'Jl. Lotu',
+                    'R.A. Kartini Street' => 'Jl. R.A. Kartini',
+                    'Sumatra Highway' => 'Jl. Lintas Sumatera',
+                    'Lintas Sumatera Street' => 'Jl. Lintas Sumatera',
+                    'Sumatera St.' => 'Jl. Sumatera',
+                    'Yos Sudarso St.' => 'Jl. Yos Sudarso',
+                    'Pertempuran St.' => 'Jl. Pertempuran',
+                    'HM. Yamin St.' => 'Jl. HM. Yamin',
+                    'Mabar St.' => 'Jl. Mabar',
+                    'S. Parman St.' => 'Jl. S. Parman',
+                    'Glugur St.' => 'Jl. Glugur',
+                    'Gedung Arca St.' => 'Jl. Gedung Arca',
+                    'HM Joni St.' => 'Jl. HM Joni',
+                    'Ring Road St.' => 'Jl. Ring Road',
+                    'Karya Wisata St.' => 'Jl. Karya Wisata',
+                    'Flamboyan St.' => 'Jl. Flamboyan',
+                    'Bilal St.' => 'Jl. Bilal',
+                    'Jamin Ginting St.' => 'Jl. Jamin Ginting',
+                    'Jamin Ginting Street' => 'Jl. Jamin Ginting',
+                    'SM. Raja Street' => 'Jl. SM. Raja',
+                    'S.M. Raja Street' => 'Jl. S.M. Raja',
+                    'SM Raja Street' => 'Jl. SM Raja',
+
+                    // Intersections & Descriptors
+                    'right at the Juanda Monument intersection' => 'tepat di persimpangan Tugu Juanda',
+                    'right at the intersection of' => 'tepat di persimpangan',
+                    'right at the intersection' => 'tepat di persimpangan',
+                    'at the intersection with' => 'di persimpangan dengan',
+                    'Housing Complex Intersection' => 'Persimpangan Komplek Perumahan',
+                    'Housing Complex' => 'Komplek Perumahan',
+                    'Intersection' => 'Persimpangan',
+                    'intersection' => 'persimpangan',
+                    'Flyover Intersection' => 'Persimpangan Flyover',
+                    'Former NAV Karaoke' => 'Eks NAV Karaoke',
+                    'Former ' => 'Eks ',
+                    'Former' => 'Eks',
+                    'Ex. ' => 'Eks ',
+                    'Ex ' => 'Eks ',
+                    '(Ex ' => '(Eks ',
+                    'Junction ' => 'Simp. ',
+                    'Junction' => 'Simp.',
+                    'In Front of' => 'di depan',
+                    'In front of' => 'di depan',
+                    'in front of' => 'di depan',
+                    'Near' => 'dekat',
+                    'near' => 'dekat',
+                    'Toll Gate' => 'Gerbang Tol',
+                    'Market Area' => 'Pasar',
+                    'Market' => 'Pasar',
+                    'District' => 'Kecamatan',
+                    'Town' => 'Kota',
+                    'Regency' => 'Kabupaten',
+                    'Province' => 'Provinsi',
+                    'Street' => 'Jl.',
+                    ' St.' => ' Jl.',
+                    ' St ' => ' Jl. ',
+                    'Side A' => 'Sisi A',
+                    'Side B' => 'Sisi B',
+                    'Side 1' => 'Sisi 1',
+                    'Side 2' => 'Sisi 2',
+                    'Upper' => 'Atas',
+                    'Lower' => 'Bawah',
                 ];
             }
             $str = strtr($str, $replacements);
@@ -126,9 +194,9 @@ class MapController extends Controller
             app()->setLocale('id');
         }
 
-        $cacheKey = 'sumatra_map_data_' . $locale;
+        $cacheKey = 'sumatra_map_data_v3_' . $locale;
 
-        $result = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () {
+        $result = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($locale) {
             $oohLocations = LocationOoh::all();
             $doohLocations = LocationDooh::all();
 
@@ -157,11 +225,11 @@ class MapController extends Controller
                     'provinsi' => $provinsi ?: 'Sumatera Utara',
                     'billboards' => $oohItems->count(),
                     'videotron' => $doohItems->count(),
-                    'lokasi_ooh' => $oohItems->map(function ($item) {
-                        return $this->formatLocationName($item->nama);
+                    'lokasi_ooh' => $oohItems->map(function ($item) use ($locale) {
+                        return $this->formatLocationName($item->nama, $locale);
                     })->filter()->values()->toArray(),
-                    'lokasi_videotron' => $doohItems->map(function ($item) {
-                        return $this->formatLocationName($item->nama);
+                    'lokasi_videotron' => $doohItems->map(function ($item) use ($locale) {
+                        return $this->formatLocationName($item->nama, $locale);
                     })->filter()->values()->toArray(),
                 ];
             }

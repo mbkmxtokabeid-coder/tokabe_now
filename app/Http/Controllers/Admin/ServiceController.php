@@ -66,7 +66,8 @@ class ServiceController extends Controller
             'en' => $request->deskripsi_en
         ];
         
-
+        // Mengisi endpoint secara otomatis berdasarkan slug judul ID
+        $service->endpoint = \Str::slug($request->judul_id);
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
@@ -128,7 +129,8 @@ class ServiceController extends Controller
             'en' => $request->deskripsi_en
         ];
 
-
+        // Memperbarui endpoint secara otomatis jika judul berubah
+        $service->endpoint = \Str::slug($request->judul_id);
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
@@ -193,9 +195,9 @@ class ServiceController extends Controller
         // Mapping ID baru ke route
         $routes = [
             1 => route('ourLocation', ['billboard' => 'DOOH']),  // Link untuk DOOH
-            2 => route('showwilayah'),                           // Link untuk OOH
-            3 => route('brand'),                                 // Link untuk Event & Brand Activity
-            4 => route('showPhoto')                              // Link untuk Photography
+            2 => route('showwilayah'),                         // Link untuk OOH
+            3 => route('brand'),                                // Link untuk Event & Brand Activity
+            4 => route('showPhoto')                             // Link untuk Photography
         ];
 
         // Ambil link berdasarkan ID, atau gunakan link default
@@ -227,5 +229,4 @@ class ServiceController extends Controller
         }
     return response()->json(['success' => true]);
     }
-
 }
