@@ -188,7 +188,7 @@
                             $isAvailable = ($item->availability ?? 'Available') !== 'Not Available';
                         @endphp
                         <div class="swiper-slide !h-auto flex w-full sm:w-1/2 lg:w-1/3">
-                            <div onclick="window.location.href='{{ route('dooh.detail', $item->id) }}'" 
+                            <div onclick="window.location.href='{{ route('dooh.detail', [$item->provinsi, $item->slug]) }}'" 
                                  class="w-full h-full cursor-pointer bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-xl border border-white/25 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group flex flex-col justify-between">
                     <div>
                         <div class="w-full aspect-[16/10] overflow-hidden bg-[#2C1A0E] relative">
@@ -239,7 +239,7 @@
                     </div>
 
                     <div class="px-6 pb-6 md:px-4 md:pb-4 pt-1">
-                        <a href="{{ route('dooh.detail', $item->id) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 md:gap-1.5 px-6 py-3 md:px-2 md:py-2 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm md:text-[11px] uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
+                        <a href="{{ route('dooh.detail', [$item->provinsi, $item->slug]) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 md:gap-1.5 px-6 py-3 md:px-2 md:py-2 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm md:text-[11px] uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
                             <span>{{ __('View Detail') }}</span>
                             <i class="fas fa-arrow-right text-xs md:text-[10px] transition-transform duration-300 group-hover/btn:translate-x-1"></i>
                         </a>
@@ -274,7 +274,7 @@
                             $isAvailable = ($item->availability ?? 'Available') !== 'Not Available';
                         @endphp
                         <div class="swiper-slide !h-auto flex w-full sm:w-1/2 lg:w-1/3">
-                            <div onclick="window.location.href='{{ route('ooh.detail', $item->id) }}'" 
+                            <div onclick="window.location.href='{{ route('ooh.detail', [\Illuminate\Support\Str::slug($item->wilayah ?? 'lokasi'), $item->slug]) }}'" 
                                  class="w-full h-full cursor-pointer bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-xl border border-white/25 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group flex flex-col justify-between">
                     <div>
                         <div class="w-full aspect-[16/10] overflow-hidden bg-[#2C1A0E] relative">
@@ -325,7 +325,7 @@
                     </div>
 
                     <div class="px-6 pb-6 md:px-4 md:pb-4 pt-1">
-                        <a href="{{ route('ooh.detail', $item->id) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 md:gap-1.5 px-6 py-3 md:px-2 md:py-2 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm md:text-[11px] uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
+                        <a href="{{ route('ooh.detail', [\Illuminate\Support\Str::slug($item->wilayah), $item->slug]) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 md:gap-1.5 px-6 py-3 md:px-2 md:py-2 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm md:text-[11px] uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
                             <span class="whitespace-nowrap">{{ __('View Detail') }}</span>
                             <i class="fas fa-arrow-right text-xs md:text-[10px] transition-transform duration-300 group-hover/btn:translate-x-1"></i>
                         </a>

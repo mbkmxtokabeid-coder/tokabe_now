@@ -104,28 +104,28 @@
         $messageTemplate = $isEn
             ? 'Hello Tokabe.id, I am interested in consulting about advertising needs (Videotron / Billboard / Event Organizer) for my brand/company. Could you provide more details?'
             : 'Halo Tokabe.id, saya tertarik untuk konsultasi kebutuhan periklanan (Videotron / Billboard / Event Organizer) untuk brand/perusahaan saya. Boleh minta info selengkapnya?';
-    } elseif (request()->routeIs('dooh.detail') || str_starts_with($currentPath, 'lokasi/dooh')) {
+    } elseif (request()->routeIs('dooh.detail') || str_starts_with($currentPath, 'periklanan/advertising-dooh')) {
         $pageCategory = 'DOOH Detail';
         $badgeTitle = $isEn ? 'Outdoor Videotron Rental' : 'Sewa Videotron Outdoor';
         $tooltipText = $isEn ? 'Ask about broadcast slot availability & pricing for this Videotron spot!' : 'Tanyakan ketersediaan slot tayang & harga titik Videotron ini!';
         $messageTemplate = $isEn
             ? 'Hello Tokabe.id, I am interested in renting a strategic Outdoor Videotron (DOOH) spot at {ITEM_TITLE}. Are broadcasting slots still available, and could I get a price quote?'
             : 'Halo Tokabe.id, saya tertarik untuk sewa titik Videotron Outdoor (DOOH) strategis di {ITEM_TITLE}. Apakah slot penayangan masih tersedia dan boleh minta penawaran harganya?';
-    } elseif (request()->routeIs('ooh.detail') || str_starts_with($currentPath, 'lokasi/ooh')) {
+    } elseif (request()->routeIs('ooh.detail') || str_starts_with($currentPath, 'periklanan/advertising-ooh')) {
         $pageCategory = 'OOH Detail';
         $badgeTitle = $isEn ? 'OOH Billboard Rental' : 'Sewa Billboard OOH';
         $tooltipText = $isEn ? 'Ask about rental prices & availability period for this Billboard!' : 'Tanyakan harga sewa & periode ketersediaan Billboard ini!';
         $messageTemplate = $isEn
             ? 'Hello Tokabe.id, I am interested in renting Billboard / Baliho (OOH) media at {ITEM_TITLE}. Could I get rate card info and location availability?'
             : 'Halo Tokabe.id, saya tertarik untuk sewa media Billboard / Baliho (OOH) di titik {ITEM_TITLE}. Boleh minta info rate card dan ketersediaan titiknya?';
-    } elseif (str_starts_with($currentPath, 'periklanan/1') || (request()->routeIs('periklanan.show') && request()->route('id') == 1)) {
+    } elseif (str_starts_with($currentPath, 'periklanan/advertising-dooh') || (request()->routeIs('periklanan.show') && request()->route('endpoint') == 'advertising-dooh')) {
         $pageCategory = 'Videotron DOOH Medan';
         $badgeTitle = $isEn ? 'Medan Videotron Rental' : 'Sewa Videotron Medan';
         $tooltipText = $isEn ? 'Looking for strategic outdoor videotron spots in Medan? Ask for availability!' : 'Cari titik videotron outdoor Medan yang strategis? Tanya ketersediaannya!';
         $messageTemplate = $isEn
             ? 'Hello Tokabe.id, I am searching for outdoor videotron rental in Medan at strategic spots. Could I get catalog information of available DOOH spots and rate card?'
             : 'Halo Tokabe.id, saya sedang mencari sewa videotron outdoor Medan di titik strategis. Boleh minta informasi katalog titik DOOH yang ready dan rate card-nya?';
-    } elseif (str_starts_with($currentPath, 'periklanan/2') || (request()->routeIs('periklanan.show') && request()->route('id') == 2)) {
+    } elseif (str_starts_with($currentPath, 'periklanan/advertising-ooh') || (request()->routeIs('periklanan.show') && request()->route('endpoint') == 'advertising-ooh')) {
         $pageCategory = 'Billboard OOH Sumut';
         $badgeTitle = $isEn ? 'Sumut Billboard Vendor' : 'Vendor Billboard Sumut';
         $tooltipText = $isEn ? 'Need a billboard advertising vendor in North Sumatra? Contact us!' : 'Butuh vendor advertising billboard & baliho di Sumatera Utara? Hubungi kami!';

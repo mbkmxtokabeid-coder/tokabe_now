@@ -27,16 +27,9 @@ class HomeController extends Controller
         return view('pages.service.index', compact('services'));
     }
 
-    public function periklananIndex(Request $request, $id)
+    public function periklananLokasi(Request $request, $endpoint)
     {
-        $service = \App\Models\Service::find($id);
-        if (!$service) {
-            $service = (object)[
-                'id' => $id,
-                'judul' => $id == 1 ? 'DOOH / Videotron' : ($id == 2 ? 'OOH / Billboard / Baliho' : 'Services'),
-                'deskripsi' => '',
-            ];
-        }
+        $service = \App\Models\Service::where('endpoint', $endpoint)->firstOrFail();
         $search = $request->query('search');
         $province = $request->query('provinsi');
         $availability = $request->query('availability');
@@ -47,7 +40,7 @@ class HomeController extends Controller
         $items = collect([]);
         $allProvinces = collect();
 
-        if ($id == 1) { // DOOH
+        if ($endpoint == 'advertising-dooh') { // DOOH
             $allProvinces = \App\Models\Lokasi::pluck('provinsi')->filter()->map(function($p) { return str_replace('Sumatra', 'Sumatera', $p); })->unique()->sort()->values();
             
             $query = \App\Models\Lokasi::query();
@@ -102,14 +95,14 @@ class HomeController extends Controller
                     'title'      => $title,
                     'description'=> $desc,
                     'image'      => $i->gambar ? asset('storage/image_lokasi/' . $i->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop',
-                    'detail_url' => route('dooh.detail', $i->id),
+                    'detail_url' => route('dooh.detail', [\Illuminate\Support\Str::slug($i->provinsi), $i->slug]),
                     'kota'       => $i->kota,
                     'media'      => $i->media,
                     'size'       => $i->size,
                     'availability' => $i->availability ?? 'Available',
                 ];
             });
-        } elseif ($id == 2) { // OOH
+        } elseif ($endpoint == 'advertising-ooh') { // OOH
             $allProvinces = \App\Models\Lokasiooh::pluck('provinsi')->filter()->map(function($p) { return str_replace('Sumatra', 'Sumatera', $p); })->unique()->sort()->values();
             
             $query = \App\Models\Lokasiooh::query();
@@ -165,7 +158,7 @@ class HomeController extends Controller
                     'title'      => $title,
                     'description'=> $desc,
                     'image'      => (!empty($imgFile)) ? asset('storage/image_lokasiooh/' . $imgFile) : 'https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=600&auto=format&fit=crop',
-                    'detail_url' => route('ooh.detail', $i->id),
+                    'detail_url' => route('ooh.detail', [\Illuminate\Support\Str::slug($i->wilayah), $i->slug]),
                     'kota'       => $i->wilayah ?? $i->kota,
                     'media'      => $i->tipe ?? $i->type,
                     'size'       => $i->ukuran ?? $i->size,
@@ -177,86 +170,15 @@ class HomeController extends Controller
         return view('services.show', compact('service', 'items', 'search', 'province', 'allProvinces', 'availability'));
     }
 
-    public function showService(Request $request, $id)
+    public function showService(Request $request, $endpoint)
     {
-        $service = \App\Models\Service::find($id);
-        if (!$service) {
-            $service = (object)[
-                'id' => $id,
-                'judul' => $id == 1 ? 'DOOH / Videotron' : ($id == 2 ? 'OOH / Billboard / Baliho' : 'Services'),
-                'deskripsi' => '',
-            ];
-        }
-        $search = $request->query('search');
-        
-        // Detect if user is on a mobile device (excluding tablets if possible) to set pagination limit
+        $service = \App\Models\Service::where('endpoint', $endpoint)->firstorFail();
         $userAgent = $request->userAgent() ?? '';
         $isMobile = preg_match("/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i", $userAgent);
         $limit = 12;
-        
         $items = collect([]);
-
-        // Handle each service data
-        if ($id == 3) { // Photography
-            $query = \App\Models\Photography::query();
-            if ($search) {
-                $query->where('title', 'LIKE', "%{$search}%");
-            }
-            $items = $query->get();
-            
-            if ($items->isEmpty() && !$search) {
-                $items = collect([
-                    (object)[
-                        'id' => 1,
-                        'title' => 'Professional Product Photography',
-                        'description' => 'High-end studio photography tailored for modern product catalogs and advertisements.',
-                        'image' => 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop',
-                    ]
-                ]);
-            } else {
-                $items = $items->map(function($i) {
-                    $title = $this->resolveText($i->title, 'Photography Session');
-                    $desc  = $this->resolveText($i->description, 'Professional photography services by Tokabe.');
-                    return (object)[
-                        'id'         => $i->id,
-                        'title'      => $title,
-                        'description'=> $desc,
-                        'image'      => $i->image_url ? asset('storage/image_photography/' . $i->image_url) : 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop',
-                    ];
-                });
-            }
-        } elseif ($id == 4) { // Event & Brand Activity
-            $query = \App\Models\Brand::query();
-            if ($search) {
-                $query->where('nama', 'LIKE', "%{$search}%");
-            }
-            $items = $query->get();
-            
-            if ($items->isEmpty() && !$search) {
-                $items = collect([
-                    (object)[
-                        'id' => 1,
-                        'title' => 'Participant Arrangement for Marathons',
-                        'description' => 'Comprehensive crowd control, participant tagging, and event synchronization for large-scale outdoor events.',
-                        'image' => 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600&auto=format&fit=crop',
-                    ]
-                ]);
-            } else {
-                $items = $items->map(function($i) {
-                    return (object)[
-                        'id'         => $i->id,
-                        'title'      => $this->resolveText($i->judul),
-                        'description'=> $this->resolveText($i->deskripsi),
-                        'image'      => $i->gambar ? asset('storage/image_brand/' . $i->gambar) : 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600&auto=format&fit=crop',
-                    ];
-                });
-            }
-        } else {
-            // For any other dynamic service, render the detail page
-            
-            // Fetch Categories and Details for this specific service
-            $categories = \App\Models\ServiceCategory::with('serviceDetails')->where('service_id', $service->id)->get();
-            
+        $idServices = $service->id;
+        $categories = \App\Models\ServiceCategory::with('serviceDetails')->where('service_id', $idServices)->get();
             $brands = $categories->map(function($cat) {
                 $firstDetail = $cat->serviceDetails->where('tipe_card', 'main')->first();
                 $otherDetails = $cat->serviceDetails->where('tipe_card', 'sub');
@@ -285,29 +207,140 @@ class HomeController extends Controller
             $portofolios = \App\Models\Portofolio::with('firstImage')->latest()->get();
 
             return view('services.detail', compact('service', 'brands', 'activeTab', 'portofolioCategories', 'portofolios'));
-        }
+        // $service = \App\Models\Service::where('endpoint', $endpoint)->first();
+        // if (!$service) {
+        //     $service = (object)[
+        //         'id' => $id,
+        //         'endpoint' => $endpoint,
+        //         'judul' => $id == 1 ? 'DOOH / Videotron' : ($id == 2 ? 'OOH / Billboard / Baliho' : 'Services'),
+        //         'deskripsi' => '',
+        //     ];
+        // }
+        // $search = $request->query('search');
+        
+        // // Detect if user is on a mobile device (excluding tablets if possible) to set pagination limit
+        // $userAgent = $request->userAgent() ?? '';
+        // $isMobile = preg_match("/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i", $userAgent);
+        // $limit = 12;
+        
+        // $items = collect([]);
 
-        return view('services.show', compact('service', 'items', 'search'));
+        // // Handle each service data
+        // if ($id == 3) { // Photography
+        //     $query = \App\Models\Photography::query();
+        //     if ($search) {
+        //         $query->where('title', 'LIKE', "%{$search}%");
+        //     }
+        //     $items = $query->get();
+            
+        //     if ($items->isEmpty() && !$search) {
+        //         $items = collect([
+        //             (object)[
+        //                 'id' => 1,
+        //                 'title' => 'Professional Product Photography',
+        //                 'description' => 'High-end studio photography tailored for modern product catalogs and advertisements.',
+        //                 'image' => 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop',
+        //             ]
+        //         ]);
+        //     } else {
+        //         $items = $items->map(function($i) {
+        //             $title = $this->resolveText($i->title, 'Photography Session');
+        //             $desc  = $this->resolveText($i->description, 'Professional photography services by Tokabe.');
+        //             return (object)[
+        //                 'id'         => $i->id,
+        //                 'title'      => $title,
+        //                 'description'=> $desc,
+        //                 'image'      => $i->image_url ? asset('storage/image_photography/' . $i->image_url) : 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop',
+        //             ];
+        //         });
+        //     }
+        // } elseif ($id == 4) { // Event & Brand Activity
+        //     $query = \App\Models\Brand::query();
+        //     if ($search) {
+        //         $query->where('nama', 'LIKE', "%{$search}%");
+        //     }
+        //     $items = $query->get();
+            
+        //     if ($items->isEmpty() && !$search) {
+        //         $items = collect([
+        //             (object)[
+        //                 'id' => 1,
+        //                 'title' => 'Participant Arrangement for Marathons',
+        //                 'description' => 'Comprehensive crowd control, participant tagging, and event synchronization for large-scale outdoor events.',
+        //                 'image' => 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600&auto=format&fit=crop',
+        //             ]
+        //         ]);
+        //     } else {
+        //         $items = $items->map(function($i) {
+        //             return (object)[
+        //                 'id'         => $i->id,
+        //                 'title'      => $this->resolveText($i->judul),
+        //                 'description'=> $this->resolveText($i->deskripsi),
+        //                 'image'      => $i->gambar ? asset('storage/image_brand/' . $i->gambar) : 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600&auto=format&fit=crop',
+        //             ];
+        //         });
+        //     }
+        // } else {
+            
+        //     $categories = \App\Models\ServiceCategory::with('serviceDetails')->where('service_id', $service->id)->get();
+            
+        //     $brands = $categories->map(function($cat) {
+        //         $firstDetail = $cat->serviceDetails->where('tipe_card', 'main')->first();
+        //         $otherDetails = $cat->serviceDetails->where('tipe_card', 'sub');
+                
+        //         return (object)[
+        //             'id' => $cat->id,
+        //             'tab_title' => $cat->nama,
+        //             'has_main' => $firstDetail ? true : false,
+        //             'nama_brand' => is_array($cat->nama) ? ($cat->nama['id'] ?? '') : $cat->nama,
+        //             'judul' => $firstDetail ? $firstDetail->judul : '',
+        //             'deskripsi' => $firstDetail ? $firstDetail->deskripsi : '',
+        //             'gambar' => $firstDetail ? ($firstDetail->gambar ? asset('storage/service_details/' . $firstDetail->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=1200&auto=format&fit=crop') : '',
+        //             'detail' => $otherDetails->map(function($d) {
+        //                 return [
+        //                     'title' => $d->judul,
+        //                     'description' => $d->deskripsi,
+        //                     'image_url' => $d->gambar ? asset('storage/service_details/' . $d->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=400&auto=format&fit=crop'
+        //                 ];
+        //             })->toArray()
+        //         ];
+        //     });
+        //     $activeTab = (int) $request->query('tab', 0);
+
+        //     // Get Portfolio Data
+        //     $portofolioCategories = \App\Models\PortofolioCategory::all();
+        //     $portofolios = \App\Models\Portofolio::with('firstImage')->latest()->get();
+
+        //     return view('services.detail', compact('service', 'brands', 'activeTab', 'portofolioCategories', 'portofolios'));
+        // }
+
+        // return view('services.show', compact('service', 'items', 'search'));
     }
 
-    public function showOohDetail($id)
+    public function showOohDetail($wilayah,$slug)
     {
-        $lokasiooh = \App\Models\Lokasiooh::find($id);
-        
-        if (!$lokasiooh) {
-            abort(404);
-        }
-
-        // Ensure translations are handled if needed, though view can also handle it
+        $lokasiooh = \App\Models\Lokasiooh::where('slug', $slug)->firstOrFail();
+    // Handling translasi bahasa
         $lokasiooh->nama = is_array($lokasiooh->nama) ? ($lokasiooh->nama[app()->getLocale()] ?? $lokasiooh->nama['id'] ?? '') : $lokasiooh->nama;
         $lokasiooh->deskripsi_lokasi = is_array($lokasiooh->deskripsi_lokasi) ? ($lokasiooh->deskripsi_lokasi[app()->getLocale()] ?? $lokasiooh->deskripsi_lokasi['id'] ?? '') : $lokasiooh->deskripsi_lokasi;
-
         return view('services.ooh-detail', compact('lokasiooh'));
     }
+        // $lokasiooh = \App\Models\Lokasiooh::find($slug);
+        
+        // if (!$lokasiooh) {
+        //     abort(404);
+        // }
 
-    public function showDoohDetail($id)
+        // // Ensure translations are handled if needed, though view can also handle it
+        // $lokasiooh->nama = is_array($lokasiooh->nama) ? ($lokasiooh->nama[app()->getLocale()] ?? $lokasiooh->nama['id'] ?? '') : $lokasiooh->nama;
+        // $lokasiooh->deskripsi_lokasi = is_array($lokasiooh->deskripsi_lokasi) ? ($lokasiooh->deskripsi_lokasi[app()->getLocale()] ?? $lokasiooh->deskripsi_lokasi['id'] ?? '') : $lokasiooh->deskripsi_lokasi;
+
+        // return view('services.ooh-detail', compact('lokasiooh'));
+    
+
+    public function showDoohDetail($wilayah,$slug)
     {
-        $lokasi = \App\Models\Lokasi::find($id);
+        $lokasi = \App\Models\Lokasi::where('slug', $slug)->firstOrFail();
         
         if (!$lokasi) {
             abort(404);
@@ -392,24 +425,26 @@ class HomeController extends Controller
         return view('pages.portofolio.index', compact('categories'));
     }
 
-    public function portofolioList(Request $request, $id)
+     public function portofolioList(Request $request, $endpoint)
     {
-        $category = \App\Models\PortofolioCategory::findOrFail($id);
+        // 1. Langsung cari berdasarkan kolom endpoint di tabel portofolio_categories
+        // Jika tidak ada di database, otomatis langsung 404!
+        $category = \App\Models\PortofolioCategory::where('endpoint', $endpoint)->firstOrFail();
         
-        $portfolios = \App\Models\Portofolio::where('kategori', $id)
+        $portfolios = \App\Models\Portofolio::where('kategori', $category->id)
             ->with('firstImage')
             ->latest('created_at')
             ->paginate(9);
-
-        // All categories for filter dropdown (if needed elsewhere)
         $allCategories = \App\Models\PortofolioCategory::all();
-
         return view('pages.portofolio.list', compact('category', 'portfolios', 'allCategories'));
     }
 
-    public function portofolioDetail($id)
+    
+    public function portofolioDetail($endpoint,$slug)
     {
-        $event = \App\Models\Portofolio::with(['images', 'category', 'videos'])->findOrFail($id);
+        $event = \App\Models\Portofolio::with(['images', 'category', 'videos'])
+        ->where('slug', $slug)
+        ->firstOrFail();
         $gallery = $event->images;
         $mainImage = $event->images->first();
         return view('pages.portofolio.detail', compact('event', 'gallery', 'mainImage'));

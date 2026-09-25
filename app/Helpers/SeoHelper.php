@@ -25,8 +25,11 @@ class SeoHelper
         $region = $region ? trim(strip_tags((string) $region)) : '';
         
         // Normalize type
-        $type = strtolower(trim($type));
-        
+       
+        if (is_array($type)) {
+            $type = $type[app()->getLocale()] ?? $type['id'] ?? $type['en'] ?? current($type) ?? '';
+        }
+        $type = strtolower(trim(strip_tags((string) $type)));
         // 1. VIDEOTRON / DOOH
         if (str_contains($type, 'videotron') || str_contains($type, 'dooh')) {
             $keywords = [

@@ -215,7 +215,7 @@
                         $date = $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d M Y') : $item->created_at->format('d M Y');
                     @endphp
                     
-                    <a href="{{ route('portofolio.detail', $item->id) }}" class="premium-card group block" data-aos="fade-up" data-aos-delay="{{ ($index % 3) * 100 }}">
+                    <a href="{{ route('portofolio.detail', [$category->endpoint, $item->slug]) }}" class="premium-card group block" data-aos="fade-up" data-aos-delay="{{ ($index % 3) * 100 }}">
                         <div class="premium-card-img-container bg-[#1A0F07]">
                             <div class="img-gradient-overlay pointer-events-none"></div>
                             @if($imgSrc)
@@ -258,7 +258,7 @@
                         </div>
                         <h3 class="text-lg font-bold text-white mb-2">{{ __('Tidak Ada Proyek Ditemukan') }}</h3>
                         <p class="text-gray-400 max-w-sm">{{ __('Maaf, tidak ada proyek yang sesuai dengan pencarian atau filter Anda saat ini.') }}</p>
-                        <a href="{{ route('portofolio.list', $category->id) }}" class="mt-6 text-[#D6A24C] font-semibold hover:underline">
+                        <a href="{{ route('portofolio.list', $category->endpoint) }}" class="mt-6 text-[#D6A24C] font-semibold hover:underline">
                             {{ __('Reset Pencarian') }}
                         </a>
                     </div>

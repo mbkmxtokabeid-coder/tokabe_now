@@ -15,7 +15,7 @@ Route::get('/', function () {
             'lokasiooh' => \App\Models\LocationOoh::all(),
             'partners' => \App\Models\Partner::all(),
             'portofolioCategories' => \App\Models\PortofolioCategory::all(),
-            'portofolios' => \App\Models\Portofolio::with('firstImage')->latest()->take(10)->get(),
+            'portofolios' => \App\Models\Portofolio::with(['firstImage', 'category'])->latest()->take(10)->get(),
             'about' => \App\Models\About::first(),
         ];
     });
@@ -23,23 +23,23 @@ Route::get('/', function () {
     return view('welcome', $data);
 })->name('home');
 
-Route::get('/services', [HomeController::class, 'servicesIndex'])->name('services.index');
-Route::get('/services/{id}', [HomeController::class, 'showService'])->name('services.show');
-Route::get('/periklanan/{id}', [HomeController::class, 'periklananIndex'])->name('periklanan.show');
-
+Route::get('/services/{endpoint}', [HomeController::class, 'showService'])->name('services.show');
+Route::get('/periklanan/{endpoint}', [HomeController::class, 'periklananLokasi'])->name('periklanan.show');
+Route::get('/periklanan/advertising-ooh/{wilayah}/{slug}', [HomeController::class, 'showOohDetail'])->name('ooh.detail');
+Route::get('/periklanan/advertising-dooh/{wilayah}/{slug}', [HomeController::class, 'showDoohDetail'])->name('dooh.detail');
 
 
 // Additional services migrated from old tokabe
-Route::get('/showbrand', [\App\Http\Controllers\HomeController::class, 'showBrand'])->name('brand');
-Route::get('/photo-video', [\App\Http\Controllers\HomeController::class, 'showPhotography'])->name('showPhoto');
 Route::get('/legality', [\App\Http\Controllers\HomeController::class, 'legality'])->name('legalitas');
+
 Route::get('/portofolio', [\App\Http\Controllers\HomeController::class, 'portofolio'])->name('portofolio');
-Route::get('/portofolio/category/{id}', [\App\Http\Controllers\HomeController::class, 'portofolioList'])->name('portofolio.list');
-Route::get('/portofolio/detail/{id}', [\App\Http\Controllers\HomeController::class, 'portofolioDetail'])->name('portofolio.detail');
+Route::get('/portofolio/category/{endpoint}', [\App\Http\Controllers\HomeController::class, 'portofolioList'])->name('portofolio.list');
+Route::get('/portofolio/category/{endpoint}/{slug}', [\App\Http\Controllers\HomeController::class, 'portofolioDetail'])->name('portofolio.detail');
 
 
-Route::get('/lokasi/ooh/{id}', [HomeController::class, 'showOohDetail'])->name('ooh.detail');
-Route::get('/lokasi/dooh/{id}', [HomeController::class, 'showDoohDetail'])->name('dooh.detail');
+
+
+
 Route::get('/discover', [App\Http\Controllers\DiscoverController::class, 'index'])->name('discover');
 
 Route::get('/contact', [\App\Http\Controllers\HomeController::class, 'contact'])->name('contact');

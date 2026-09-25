@@ -40,7 +40,7 @@
                     $cleanDesc = strip_tags($deskripsi);
                     $shortDesc = \Illuminate\Support\Str::limit($cleanDesc, 120, '...');
                 @endphp
-                <a href="{{ route('services.show', $item->id) }}" class="group block h-full" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                <a href="{{ route('services.show', $item->endpoint) }}" class="group block h-full" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
                     <div class="w-full h-full bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-xl border border-white/25 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between">
                         <div>
                             <!-- Image Container -->

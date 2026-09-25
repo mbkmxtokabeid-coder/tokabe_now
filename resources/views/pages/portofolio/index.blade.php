@@ -206,7 +206,7 @@
                         $namaKategori = $namaKatArray;
                     }
                 @endphp
-                <a x-show="activeCategory === 'all' || activeCategory == {{ $item->id }}" href="{{ route('portofolio.list', $item->id) }}" class="group block relative w-full aspect-[4/5] rounded-[1.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500" data-aos="fade-up" data-aos-delay="{{ ($index % 5) * 100 }}">
+                <a x-show="activeCategory === 'all' || activeCategory == {{ $item->endpoint }}" href="{{ route('portofolio.list', $item->endpoint) }}" class="group block relative w-full aspect-[4/5] rounded-[1.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500" data-aos="fade-up" data-aos-delay="{{ ($index % 5) * 100 }}">
                     
                     <!-- Background Image -->
                     <img src="{{ $item->image ? asset('storage/' . $item->image) : asset('images/default-category.jpg') }}" 

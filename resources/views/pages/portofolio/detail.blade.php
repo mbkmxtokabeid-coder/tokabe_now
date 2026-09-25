@@ -177,7 +177,7 @@
 
         <!-- Back Button -->
         <div class="text-center">
-            <a href="{{ route('portofolio.list', $event->kategori) }}" class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#D9A441] to-[#F3C96A] text-[#2C1A0E] font-bold rounded-full transition-all shadow-[0_4px_15px_rgba(217,164,65,0.3)] hover:shadow-[0_8px_25px_rgba(217,164,65,0.5)] transform hover:-translate-y-1">
+            <a href="{{ route('portofolio.list', $event->category->endpoint ?? 'all') }}" class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#D9A441] to-[#F3C96A] text-[#2C1A0E] font-bold rounded-full transition-all shadow-[0_4px_15px_rgba(217,164,65,0.3)] hover:shadow-[0_8px_25px_rgba(217,164,65,0.5)] transform hover:-translate-y-1">
                 <i class="fas fa-arrow-left"></i> {{ __('Back to Projects') }}
             </a>
         </div>

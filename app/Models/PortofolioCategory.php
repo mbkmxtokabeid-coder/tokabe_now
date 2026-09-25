@@ -14,6 +14,7 @@ class PortofolioCategory extends Model
 
     protected $fillable = [
         'nama_kategori',
+        'endpoint',
         'image',
     ];
 

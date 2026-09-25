@@ -113,7 +113,7 @@
                         @php
                             $serviceTitle = is_array($s->judul) ? ($s->judul[app()->getLocale()] ?? $s->judul['id'] ?? collect($s->judul)->first() ?? '') : $s->judul;
                         @endphp
-                        <a href="{{ route('services.show', $s->id) }}">{{ $serviceTitle }}</a>
+                        <a href="{{ route('services.show', $s->endpoint) }}">{{ $serviceTitle }}</a>
                     @endforeach
                 </div>
             </div>
@@ -127,8 +127,8 @@
                     </svg>
                 </button>
                 <div class="dropdown-menu">
-                    <a href="{{ route('periklanan.show', 1) }}">{{ __('DOOH – Digital Out-of-Home') }}</a>
-                    <a href="{{ route('periklanan.show', 2) }}">{{ __('OOH – Out-of-Home') }}</a>
+                    <a href="{{ route('periklanan.show', 'advertising-dooh') }}">{{ __('DOOH – Digital Out-of-Home') }}</a>
+                    <a href="{{ route('periklanan.show', 'advertising-ooh') }}">{{ __('OOH – Out-of-Home') }}</a>
                 </div>
             </div>
 
@@ -198,7 +198,7 @@
                     @php
                         $serviceTitle = is_array($s->judul) ? ($s->judul[app()->getLocale()] ?? $s->judul['id'] ?? collect($s->judul)->first() ?? '') : $s->judul;
                     @endphp
-                    <a href="{{ route('services.show', $s->id) }}" class="text-white/80 hover:text-white text-sm font-medium transition-colors mt-3">
+                    <a href="{{ route('services.show', $s->endpoint) }}" class="text-white/80 hover:text-white text-sm font-medium transition-colors mt-3">
                         {{ $serviceTitle }}
                     </a>
                 @endforeach
@@ -214,10 +214,10 @@
                 </svg>
             </button>
             <div id="mobile-periklanan-menu" class="max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out flex flex-col pl-4 gap-3 mt-0">
-                <a href="{{ route('periklanan.show', 1) }}" class="text-white/80 hover:text-white text-sm font-medium transition-colors mt-3">
+                <a href="{{ route('periklanan.show', 'advertising-dooh') }}" class="text-white/80 hover:text-white text-sm font-medium transition-colors mt-3">
                     {{ __('DOOH – Digital Out-of-Home') }}
                 </a>
-                <a href="{{ route('periklanan.show', 2) }}" class="text-white/80 hover:text-white text-sm font-medium transition-colors">
+                <a href="{{ route('periklanan.show', 'advertising-ooh') }}" class="text-white/80 hover:text-white text-sm font-medium transition-colors">
                     {{ __('OOH – Out-of-Home') }}
                 </a>
             </div>

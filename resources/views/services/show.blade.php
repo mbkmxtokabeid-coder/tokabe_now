@@ -59,7 +59,7 @@
             </p>
 
             <!-- Search Bar -->
-            <form action="{{ in_array($service->id, [1, 2]) ? route('periklanan.show', $service->id) : route('services.show', $service->id) }}" method="GET" class="max-w-4xl mx-auto relative group z-[40]">
+            <form action="{{ in_array($service->endpoint, ['advertising-dooh', 'advertising-ooh']) ? route('periklanan.show', $service->endpoint) : route('services.show', $service->endpoint) }}" method="GET" class="max-w-4xl mx-auto relative group z-[40]">
                 <div class="flex flex-col md:flex-row gap-3">
                     <div class="relative flex-1">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -75,7 +75,7 @@
                         </button>
                     </div>
 
-                    @if(in_array($service->id, [1, 2]))
+                    @if(in_array($service->endpoint, ['advertising-dooh', 'advertising-ooh']))
                         <div class="flex flex-row gap-2 sm:gap-3 w-full md:w-auto">
                             @if(isset($allProvinces) && count($allProvinces) > 0)
                                 <div x-data="{ open: false, selected: '{{ request('provinsi', '') }}', selectedLabel: '{{ request('provinsi') ? addslashes(__(request('provinsi'))) : __('Semua Provinsi') }}' }" class="relative flex-1 min-w-0 md:w-56">
@@ -175,7 +175,7 @@
                                 @endphp
                                 <img src="{{ $item->image }}" 
                                      onload="this.previousElementSibling.style.display='none'"
-                                     alt="{{ \App\Helpers\SeoHelper::getImageAlt($service->judul, $item->title) }}" 
+                                     alt="{{ \App\Helpers\SeoHelper::getImageAlt($service->endpoint, $item->title) }}" 
                                      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2; {{ !$isAvailable ? 'filter: grayscale(100%);' : '' }}" loading="lazy">
                                 
                                 @if(!$isAvailable)
@@ -248,7 +248,7 @@
                 <p class="text-gray-600 text-lg max-w-md mx-auto">
                     {{ __('We couldn\'t find anything matching your search. Try adjusting your keywords.') }}
                 </p>
-                <a href="{{ route('services.show', $service->id) }}" class="inline-block mt-8 px-8 py-3 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-colors">
+                <a href="{{ route('services.show', $service->endpoint) }}" class="inline-block mt-8 px-8 py-3 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-colors">
                     {{ __('Clear Search') }}
                 </a>
             </div>

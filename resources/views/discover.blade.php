@@ -95,7 +95,7 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($lokasiDooh as $item)
-                    <div onclick="window.location.href='{{ route('dooh.detail', $item->id) }}'" class="cursor-pointer bg-[#2C1A0E] rounded-3xl overflow-hidden shadow-xl border border-white/10 hover:border-[#D4A574]/50 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(212,165,116,0.15)] transition-all duration-300 group flex flex-col h-full">
+                    <div onclick="window.location.href='{{ route('dooh.detail', [$item->provinsi, $item->slug]) }}'" class="cursor-pointer bg-[#2C1A0E] rounded-3xl overflow-hidden shadow-xl border border-white/10 hover:border-[#D4A574]/50 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(212,165,116,0.15)] transition-all duration-300 group flex flex-col h-full">
                         <div class="w-full aspect-video overflow-hidden relative bg-black">
                             <img src="{{ $item->gambar ? asset('storage/image_lokasi/' . $item->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop' }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="{{ is_array($item->nama) ? ($item->nama['id'] ?? collect($item->nama)->first()) : $item->nama }}">
                             <span class="absolute top-4 left-4 px-3 py-1.5 bg-black/70 backdrop-blur-md text-[#D4A574] text-xs font-bold uppercase tracking-wider rounded-full shadow-md">
@@ -109,7 +109,7 @@
                             <p class="text-gray-400 line-clamp-3 text-sm mb-6 flex-grow">
                                 {{ strip_tags(is_array($item->deskripsi_lokasi) ? ($item->deskripsi_lokasi[app()->getLocale()] ?? $item->deskripsi_lokasi['id'] ?? $item->deskripsi_lokasi['en'] ?? collect($item->deskripsi_lokasi)->first() ?? '') : $item->deskripsi_lokasi) }}
                             </p>
-                            <a href="{{ route('dooh.detail', $item->id) }}" class="inline-flex items-center text-sm font-bold text-[#D4A574] hover:text-[#F0C97A]">
+                            <a href="{{ route('dooh.detail', [$item->provinsi, $item->slug]) }}" class="inline-flex items-center text-sm font-bold text-[#D4A574] hover:text-[#F0C97A]">
                                 {{ __('Read More') }} <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
                             </a>
                         </div>
@@ -141,7 +141,7 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($lokasiOoh as $item)
-                    <div onclick="window.location.href='{{ route('ooh.detail', $item->id) }}'" class="cursor-pointer bg-[#2C1A0E] rounded-3xl overflow-hidden shadow-xl border border-white/10 hover:border-[#D4A574]/50 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(212,165,116,0.15)] transition-all duration-300 group flex flex-col h-full">
+                    <div onclick="window.location.href='{{ route('ooh.detail', [\Illuminate\Support\Str::slug($item->wilayah), $item->slug]) }}'" class="cursor-pointer bg-[#2C1A0E] rounded-3xl overflow-hidden shadow-xl border border-white/10 hover:border-[#D4A574]/50 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(212,165,116,0.15)] transition-all duration-300 group flex flex-col h-full">
                         <div class="w-full aspect-video overflow-hidden relative bg-black">
                             <img src="{{ $item->gambar ? asset('storage/image_lokasiooh/' . $item->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop' }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="{{ is_array($item->nama) ? ($item->nama['id'] ?? collect($item->nama)->first()) : $item->nama }}">
                             <span class="absolute top-4 left-4 px-3 py-1.5 bg-black/70 backdrop-blur-md text-[#D4A574] text-xs font-bold uppercase tracking-wider rounded-full shadow-md">
@@ -155,7 +155,7 @@
                             <p class="text-gray-400 line-clamp-3 text-sm mb-6 flex-grow">
                                 {{ strip_tags(is_array($item->deskripsi_lokasi) ? ($item->deskripsi_lokasi[app()->getLocale()] ?? $item->deskripsi_lokasi['id'] ?? $item->deskripsi_lokasi['en'] ?? collect($item->deskripsi_lokasi)->first() ?? '') : $item->deskripsi_lokasi) }}
                             </p>
-                            <a href="{{ route('ooh.detail', $item->id) }}" class="inline-flex items-center text-sm font-bold text-[#D4A574] hover:text-[#F0C97A]">
+                            <a href="{{ route('ooh.detail', [\Illuminate\Support\Str::slug($item->wilayah), $item->slug]) }}" class="inline-flex items-center text-sm font-bold text-[#D4A574] hover:text-[#F0C97A]">
                                 {{ __('Read More') }} <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
                             </a>
                         </div>

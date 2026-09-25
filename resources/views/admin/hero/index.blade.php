@@ -85,7 +85,7 @@
                                                 <div class="dt-responsive table-responsive">
 
                                                     <table id="simpletable"
-                                                        class="table table-striped table-bordered nowrap">
+                                                        class="table table-striped table-bordered">
                                                         <thead>
                                                             <tr>
                                                                 <th style="width: 50px;">Order</th>
@@ -106,16 +106,18 @@
                                                                         <i class="feather icon-move" style="font-size: 20px; color: #6c757d;"></i>
                                                                     </td>
                                                                     <td class="align-middle">{{ $loop->iteration }}</td>
-                                                                    <td class="align-middle"
-                                                                        style="white-space: normal; word-wrap: break-word; max-width: 300px;">
+                                                                    <td class="align-middle text-wrap text-break" style="max-width: 300px;">
+                                                                    <!-- <td class="align-middle"
+                                                                        style="white-space: normal; word-wrap: break-word; max-width: 300px;"> -->
                                                                         @php
                                                                             $judul = is_array($item->judul) ? ($item->judul[app()->getLocale()] ?? $item->judul['id'] ?? $item->judul['en'] ?? '') : $item->judul;
                                                                             $deskripsi = is_array($item->deskripsi) ? ($item->deskripsi[app()->getLocale()] ?? $item->deskripsi['id'] ?? $item->deskripsi['en'] ?? '') : $item->deskripsi;
                                                                         @endphp
                                                                         {!! \Illuminate\Support\Str::limit($judul, 50, '...') !!}
                                                                     </td>
-                                                                    <td class="align-middle"
-                                                                        style="white-space: normal; word-wrap: break-word; max-width: 300px;">
+                                                                    <td class="align-middle text-wrap text-break" style="max-width: 300px;">
+                                                                    <!-- <td class="align-middle"
+                                                                        style="white-space: normal; word-wrap: break-word; max-width: 300px;"> -->
                                                                         {{ \Illuminate\Support\Str::limit($deskripsi, 50, '...') }}
                                                                     </td>
                                                                     <td class="align-middle">

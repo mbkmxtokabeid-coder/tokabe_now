@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Portofolio extends Model
 {
@@ -13,6 +14,7 @@ class Portofolio extends Model
 
     protected $fillable = [
         'judul',
+        'slug',
         'deskripsi',
         'kategori', // Kolom ini menyimpan ID Kategori (Foreign Key)
         'tanggal',
@@ -48,6 +50,29 @@ class Portofolio extends Model
 
     protected static function booted()
     {
+        static::saving(function ($portofolio) {
+            // Judul portofolio disimpan dalam bentuk JSON ({"id": "...", "en": "..."})
+            $judulData = $portofolio->judul;
+            if (is_string($judulData)) {
+                $decoded = json_decode($judulData, true);
+                $judulString = is_array($decoded) ? ($decoded['id'] ?? reset($decoded)) : $judulData;
+            } elseif (is_array($judulData)) {
+                $judulString = $judulData['id'] ?? reset($judulData);
+            } else {
+                $judulString = '';
+            }
+            if (!empty($judulString)) {
+                $baseSlug = Str::slug($judulString);
+                $slug = $baseSlug;
+                $count = 1;
+                // Pastikan slug unik jika ada judul yang sama
+                while (static::where('slug', $slug)->where('id', '!=', $portofolio->id ?? 0)->exists()) {
+                    $slug = "{$baseSlug}-{$count}";
+                    $count++;
+                }
+                $portofolio->slug = $slug;
+            }
+        });
         static::saved(function () {
             \Illuminate\Support\Facades\Cache::forget('homepage_data');
         });

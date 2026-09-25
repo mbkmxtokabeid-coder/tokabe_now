@@ -30,10 +30,10 @@
                     $lokasiLink = null;
                     $lokasiText = '';
                     if ($isDooh) {
-                        $lokasiLink = route('periklanan.show', 1);
+                        $lokasiLink = route('periklanan.show', 'advertising-dooh');
                         $lokasiText = __('Lihat Lokasi DOOH');
                     } elseif ($isOoh) {
-                        $lokasiLink = route('periklanan.show', 2);
+                        $lokasiLink = route('periklanan.show', 'advertising-ooh');
                         $lokasiText = __('Lihat Lokasi OOH');
                     }
                 @endphp

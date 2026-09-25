@@ -87,7 +87,7 @@
                         $judulArray = is_string($judulData) && str_starts_with($judulData, '{') ? json_decode($judulData, true) : (is_array($judulData) ? $judulData : null);
                         $rawText = is_array($judulArray) ? ($judulArray[app()->getLocale()] ?? $judulArray['id'] ?? collect($judulArray)->first() ?? '') : $judulData;
                         $judulText = __($rawText);
-                        
+                    
                         $image = '';
                         if($item->gambar) {
                             $image = asset('storage/image_portofolio/' . $item->gambar);
@@ -100,9 +100,9 @@
                         $galleryItems[] = [
                             'image' => $image,
                             'text' => $judulText,
-                            'category' => $item->kategori ?? 'Portofolio',
+                            'category' => '',
                             'date' => $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d M Y') : ($item->created_at ? $item->created_at->format('d M Y') : ''),
-                            'url' => route('portofolio.detail', $item->id)
+                            'url' => route('portofolio.detail', [$item->category->endpoint ?? 'all', $item->slug])
                         ];
                     }
                 @endphp
