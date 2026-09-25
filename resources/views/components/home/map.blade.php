@@ -139,6 +139,79 @@ function initMap() {
         const pathGen = d3.geoPath().projection(projection);
         let fc = null; 
 
+        function translateLocation(str) {
+            if (!str) return '';
+            const currentLang = '{{ app()->getLocale() }}';
+            
+            if (currentLang === 'id') {
+                const replacements = {
+                    'North Sumatra Province': 'Provinsi Sumatera Utara',
+                    'North Sumatera Province': 'Provinsi Sumatera Utara',
+                    'South Sumatra Province': 'Provinsi Sumatera Selatan',
+                    'West Sumatra Province': 'Provinsi Sumatera Barat',
+                    'Riau Province': 'Provinsi Riau',
+                    'Jambi Province': 'Provinsi Jambi',
+                    'Bengkulu Province': 'Provinsi Bengkulu',
+                    'Lampung Province': 'Provinsi Lampung',
+                    'Medan City': 'Kota Medan',
+                    'City of Medan': 'Kota Medan',
+                    'Captain Maulana Lubis Street': 'Jl. Kapten Maulana Lubis',
+                    'Juanda Street and Samanhudi Street': 'Jl. Juanda dan Jl. Samanhudi',
+                    'Juanda Street': 'Jl. Juanda',
+                    'Samanhudi Street': 'Jl. Samanhudi',
+                    'Setia Budi St.': 'Jl. Setia Budi',
+                    'KH. Zainul Arifin Street': 'Jl. KH. Zainul Arifin',
+                    'right at the Juanda Monument intersection': 'tepat di persimpangan Tugu Juanda',
+                    'right at the intersection of': 'tepat di persimpangan',
+                    'right at the intersection': 'tepat di persimpangan',
+                    'Housing Complex Intersection': 'Persimpangan Komplek Perumahan',
+                    'Housing Complex': 'Komplek Perumahan',
+                    'Former NAV Karaoke': 'Eks NAV Karaoke',
+                    'Former ': 'Eks ',
+                    'Former': 'Eks',
+                    'Ex. ': 'Eks ',
+                    'Ex ': 'Eks ',
+                    '(Ex ': '(Eks ',
+                    'Junction ': 'Simp. ',
+                    'In Front of': 'di depan',
+                    'in front of': 'di depan',
+                    'Near': 'dekat',
+                    'near': 'dekat',
+                    'Toll Gate': 'Gerbang Tol',
+                    'Street': 'Jl.',
+                    ' St.': ' Jl.',
+                    ' St ': ' Jl. '
+                };
+                let res = str;
+                for (const [key, val] of Object.entries(replacements)) {
+                    res = res.split(key).join(val);
+                }
+                return res;
+            } else if (currentLang === 'en') {
+                const replacements = {
+                    'Provinsi Sumatera Utara': 'North Sumatra Province',
+                    'Provinsi Sumatera Selatan': 'South Sumatra Province',
+                    'Provinsi Sumatera Barat': 'West Sumatra Province',
+                    'Kota Medan': 'Medan City',
+                    'Jl. Kapten Maulana Lubis': 'Captain Maulana Lubis Street',
+                    'Jl. Juanda dan Jl. Samanhudi': 'Juanda Street and Samanhudi Street',
+                    'tepat di persimpangan Tugu Juanda': 'right at the Juanda Monument intersection',
+                    'Persimpangan Komplek Perumahan': 'Housing Complex Intersection',
+                    'Komplek Perumahan': 'Housing Complex',
+                    'Eks NAV Karaoke': 'Former NAV Karaoke',
+                    'Eks ': 'Former ',
+                    'Jl. Setia Budi': 'Setia Budi St.',
+                    'Jl. KH. Zainul Arifin': 'KH. Zainul Arifin Street',
+                };
+                let res = str;
+                for (const [key, val] of Object.entries(replacements)) {
+                    res = res.split(key).join(val);
+                }
+                return res;
+            }
+            return str;
+        }
+
         function showInfo(props, data) {
             const rawName = props.NAME_1 || props.name || props.provinsi || '';
             const provTranslations = {
@@ -182,7 +255,7 @@ function initMap() {
                                 ${topLocations.map(l => `
                                     <li class="relative pl-5 text-gray-300 text-xs sm:text-sm">
                                         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#D4A574] rounded-full"></span>
-                                        ${l}
+                                        ${translateLocation(l)}
                                     </li>`).join('')}
                             </ul>
                         </div>
