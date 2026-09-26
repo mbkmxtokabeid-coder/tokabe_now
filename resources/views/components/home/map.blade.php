@@ -122,8 +122,8 @@ function initMap() {
 
     loadD3Script(async function() {
         // Use lightweight Sumatra-only GeoJSON (239 KB vs 2.56 MB full ID)
-        const primaryGeoJsonUrl = '{{ asset('geojson/sumatra.json') }}';
-        const fallbackGeoJsonUrl = '{{ asset('geojson/id.json') }}';
+        const primaryGeoJsonUrl = '/geojson/sumatra.json';
+        const fallbackGeoJsonUrl = '/geojson/id.json';
         const apiUrl = '/api/map-data?lang={{ app()->getLocale() }}';
 
         const sumatraProvNames = [

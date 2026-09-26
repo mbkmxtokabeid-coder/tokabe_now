@@ -125,7 +125,7 @@
         <!-- Section Header -->
         <div class="text-center mb-10 flex flex-col items-center">
             <span class="adv-observe adv-element adv-delay-1 text-[#D4A574] font-bold tracking-widest text-sm uppercase mb-2 block">
-                {{ __('PREMIUM INVENTORY') }}
+                {{ __('Premium Inventory') }}
             </span>
             <h2 class="adv-observe adv-element adv-delay-2 text-4xl sm:text-5xl lg:text-[64px] font-black leading-none tracking-tighter text-white mb-6">
                 {{ __('LOKASI PERIKLANAN DI PULAU SUMATERA') }}
