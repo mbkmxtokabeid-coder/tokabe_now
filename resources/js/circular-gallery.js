@@ -29,93 +29,219 @@ function getFontSize(font) {
 function createTextTexture(gl, text, category, date, font = 'bold 30px monospace', color = 'white', showButton = true, buttonText = 'Explore Now') {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    
-    // High-Resolution Power-of-Two size for WebGL mipmaps (Crisp on High DPI)
-    canvas.width = 2048;
-    canvas.height = 2048;
-    
-    const drawW = 1536;
-    const drawH = 2048;
-    
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    
-    const paddingX = 80;
-    
-    let subY;
-    
-    if (showButton) {
-        // 1. Draw Button (bottom-most)
-        const btnHeight = 220; // Increased from 160
-        const btnY = drawH - 80 - btnHeight; 
-        const btnWidth = drawW - (paddingX * 2);
-        
-        context.fillStyle = 'rgba(255, 255, 255, 0.15)'; // Semi-transparent glass
-        context.beginPath();
-        context.roundRect(paddingX, btnY, btnWidth, btnHeight, 45); // Increased border radius
-        context.fill();
-        
+
+    const isMobile = window.innerWidth < 768;
+
+    // =====================================================================
+    // DESKTOP — kode stabil, jangan ubah
+    // =====================================================================
+    if (!isMobile) {
+        canvas.width = 2048;
+        canvas.height = 2048;
+
+        const drawW = 1536;
+        const drawH = 2048;
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        const paddingX = 80;
+
+        let subY;
+
+        if (showButton) {
+            const btnHeight = 220;
+            const btnY = drawH - 80 - btnHeight;
+            const btnWidth = drawW - (paddingX * 2);
+
+            context.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            context.beginPath();
+            context.roundRect(paddingX, btnY, btnWidth, btnHeight, 45);
+            context.fill();
+
+            context.fillStyle = 'white';
+            context.font = 'bold 95px Figtree, sans-serif';
+            context.textAlign = 'left';
+            context.textBaseline = 'middle';
+            context.fillText(buttonText, paddingX + 80, btnY + btnHeight / 2);
+
+            context.font = 'bold 120px Figtree, sans-serif';
+            context.textAlign = 'right';
+            context.fillText('→', paddingX + btnWidth - 80, btnY + btnHeight / 2 - 5);
+
+            subY = btnY - 60;
+        } else {
+            subY = drawH - 120;
+        }
+
+        // Subtitle
+        context.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        context.font = '500 75px Figtree, sans-serif';
+        context.textAlign = 'left';
+        context.textBaseline = 'bottom';
+        const subtext = (category && date) ? `${category} • ${date}` : (category || date || '');
+        context.fillText(subtext, paddingX, subY);
+
+        // Title
         context.fillStyle = 'white';
-        context.font = 'bold 95px Figtree, sans-serif'; // Increased font size
+        context.font = 'bold 140px Figtree, sans-serif';
+        const titleBaseY = subY - 80;
+        const maxTitleWidth = drawW - (paddingX * 2);
+
+        const words = text.split(' ');
+        let line = '';
+        const lines = [];
+        for (let n = 0; n < words.length; n++) {
+            const testLine = line + words[n] + ' ';
+            const metrics = context.measureText(testLine);
+            if (metrics.width > maxTitleWidth && n > 0) {
+                lines.push(line.trim());
+                line = words[n] + ' ';
+            } else {
+                line = testLine;
+            }
+        }
+        lines.push(line.trim());
+
+        const lineHeight = 155;
+        let currentY = titleBaseY;
+        for (let i = lines.length - 1; i >= 0; i--) {
+            context.fillText(lines[i], paddingX, currentY);
+            currentY -= lineHeight;
+        }
+
+        const texture = new Texture(gl, {
+            generateMipmaps: true,
+            premultiplyAlpha: true,
+            minFilter: gl.LINEAR_MIPMAP_LINEAR,
+            magFilter: gl.LINEAR,
+            anisotropy: 16
+        });
+        texture.image = canvas;
+        return { texture, width: canvas.width, height: canvas.height };
+    }
+
+    // =====================================================================
+    // MOBILE — layout terpisah, semua ukuran proporsional ke 1024px
+    // =====================================================================
+    canvas.width = 1024;
+    canvas.height = 1024;
+
+    context.clearRect(0, 0, 1024, 1024);
+
+    // Nilai absolut dalam px (canvas 1024×1024)
+    const M = {
+        paddingX: 50,   // margin kiri & kanan
+        btnH: 88,   // tinggi button
+        btnRadius: 18,
+        btnTextSz: 40,   // "Explore Now"
+        arrowSz: 46,
+        subSz: 32,   // subtitle
+        titleSz: 65,   // title
+        lineH: 80,
+        bottomPad: 48,   // jarak dari bawah canvas ke button
+        gapBS: 18,   // button ↔ subtitle
+        gapST: 40,   // subtitle ↔ title
+        innerPad: 20,   // padding dalam button (kiri label & kanan arrow)
+    };
+
+    // PENTING: shader menggunakan 'vUv.x * 0.75' — hanya 75% kiri canvas yang terlihat.
+    // Sama seperti desktop: drawW=1536 dari canvas 2048 = 75%.
+    // Mobile: drawW = 1024 * 0.75 = 768px adalah batas kanan yang aman.
+    const drawW = Math.round(1024 * 0.75);   // = 768px (visible area)
+    const innerW = drawW - M.paddingX * 2;   // = 768 - 100 = 668px
+
+    let subY;
+
+    if (showButton) {
+        // ── Button ────────────────────────────────────────────────────
+        const btnY = 1024 - M.bottomPad - M.btnH;
+
+        context.fillStyle = 'rgba(255,255,255,0.18)';
+        context.beginPath();
+        context.roundRect(M.paddingX, btnY, innerW, M.btnH, M.btnRadius);
+        context.fill();
+
+        // Label "Explore Now"
+        context.fillStyle = 'white';
+        context.font = `bold ${M.btnTextSz}px Figtree, sans-serif`;
         context.textAlign = 'left';
         context.textBaseline = 'middle';
-        context.fillText(buttonText, paddingX + 80, btnY + btnHeight / 2); // Adjusted padding
-        
-        context.font = 'bold 120px Figtree, sans-serif'; // Increased arrow size
+        context.fillText(buttonText, M.paddingX + M.innerPad, btnY + M.btnH / 2);
+
+        // Arrow — di sisi kanan button, dibatasi dengan textAlign:'right'
+        context.font = `bold ${M.arrowSz}px Figtree, sans-serif`;
         context.textAlign = 'right';
-        context.fillText('→', paddingX + btnWidth - 80, btnY + btnHeight / 2 - 5);
-        
-        subY = btnY - 60;
+        context.fillText('→', M.paddingX + innerW - M.innerPad, btnY + M.btnH / 2);
+
+        subY = btnY - M.gapBS;
     } else {
-        // If no button, push text down to where the button would be
-        subY = drawH - 120;
+        subY = 1024 - M.bottomPad;
     }
-    
-    // 2. Draw Subtitle (above button or bottom)
-    context.fillStyle = 'rgba(255, 255, 255, 0.85)';
-    context.font = '500 75px Figtree, sans-serif';
-    context.textAlign = 'left';
-    context.textBaseline = 'bottom';
+
+    // ── Subtitle ──────────────────────────────────────────────────────
     const subtext = (category && date) ? `${category} • ${date}` : (category || date || '');
-    context.fillText(subtext, paddingX, subY);
-    
-    // 3. Draw Main Title (above subtitle)
+    if (subtext) {
+        context.fillStyle = 'rgba(255,255,255,0.85)';
+        context.font = `500 ${M.subSz}px Figtree, sans-serif`;
+        context.textAlign = 'left';
+        context.textBaseline = 'bottom';
+        // Potong subtitle dengan ellipsis jika masih overflow
+        let sub = subtext;
+        while (sub.length > 1 && context.measureText(sub).width > innerW) {
+            sub = sub.slice(0, -1);
+        }
+        if (sub !== subtext) sub = sub.slice(0, -1) + '…';
+        context.fillText(sub, M.paddingX, subY);
+    }
+
+    // ── Title (maks 2 baris, sisa kata → "...") ───────────────────────
     context.fillStyle = 'white';
-    context.font = 'bold 140px Figtree, sans-serif';
-    const titleBaseY = subY - 80; // Increased gap to prevent overlap with larger subtitle
-    const maxTitleWidth = drawW - (paddingX * 2);
-    
-    const words = text.split(' ');
+    context.font = `bold ${M.titleSz}px Figtree, sans-serif`;
+
+    const MAX_LINES = 2;
+    const allWords = text.split(' ');
     let line = '';
     const lines = [];
-    
-    for (let n = 0; n < words.length; n++) {
-        const testLine = line + words[n] + ' ';
-        const metrics = context.measureText(testLine);
-        if (metrics.width > maxTitleWidth && n > 0) {
+
+    for (let n = 0; n < allWords.length; n++) {
+        const testLine = line + allWords[n] + ' ';
+        if (context.measureText(testLine).width > innerW && n > 0) {
             lines.push(line.trim());
-            line = words[n] + ' ';
+            line = allWords[n] + ' ';
+            // Jika sudah 2 baris, potong sisanya dengan "..."
+            if (lines.length === MAX_LINES - 1 && n < allWords.length - 1) {
+                // Masukkan sisa kata ke baris terakhir, potong dengan "..."
+                let lastLine = line.trim();
+                let remaining = allWords.slice(n + 1).join(' ');
+                let candidate = lastLine + (remaining ? ' ' + remaining : '');
+                // Potong karakter per karakter sampai muat + "..."
+                let truncated = candidate;
+                while (context.measureText(truncated + '...').width > innerW && truncated.length > 0) {
+                    truncated = truncated.slice(0, -1).trimEnd();
+                }
+                lines.push(truncated + '...');
+                line = '';
+                break;
+            }
         } else {
             line = testLine;
         }
     }
-    lines.push(line.trim());
-    
-    // Draw lines from bottom to top
-    const lineHeight = 155;
-    let currentY = titleBaseY;
-    
-    // Draw the title lines
+    if (line.trim()) lines.push(line.trim());
+
+    // Gambar dari bawah ke atas
+    let currentY = subY - M.gapST;
     for (let i = lines.length - 1; i >= 0; i--) {
-        context.fillText(lines[i], paddingX, currentY);
-        currentY -= lineHeight;
+        context.fillText(lines[i], M.paddingX, currentY);
+        currentY -= M.lineH;
     }
-    
-    const texture = new Texture(gl, { 
-        generateMipmaps: true, 
+
+    const texture = new Texture(gl, {
+        generateMipmaps: false,   // mobile: hemat VRAM
         premultiplyAlpha: true,
-        minFilter: gl.LINEAR_MIPMAP_LINEAR,
+        minFilter: gl.LINEAR,
         magFilter: gl.LINEAR,
-        anisotropy: 16
+        anisotropy: 1
     });
     texture.image = canvas;
     return { texture, width: canvas.width, height: canvas.height };
@@ -166,13 +292,14 @@ class Media {
         this.createShader();
         this.createMesh();
         this.onResize();
+
     }
     createShader() {
         const texture = new Texture(this.gl, {
             generateMipmaps: true
         });
         const { texture: tText } = createTextTexture(this.gl, this.text, this.category, this.date, this.font, this.textColor, this.showButton, this.buttonText);
-        
+
         this.program = new Program(this.gl, {
             depthTest: false,
             depthWrite: false,
@@ -279,47 +406,47 @@ class Media {
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = 1024; tempCanvas.height = 1024;
         const ctx = tempCanvas.getContext('2d');
-        
+
         // Draw icon and bar
         const cx = 512, cy = 512, iconSize = 240, barWidth = 180, barHeight = 20;
-        
+
         ctx.save();
-        ctx.translate(cx - iconSize/2, cy - iconSize/2 - 40);
-        
+        ctx.translate(cx - iconSize / 2, cy - iconSize / 2 - 40);
+
         let x = 0, y = 0, w = iconSize, h = iconSize * 0.8, r = 24;
         ctx.beginPath();
         ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
         ctx.lineWidth = 20;
         ctx.strokeStyle = 'rgba(212, 165, 116, 0.3)'; // #D4A574 with 30% opacity
         ctx.stroke();
-        
+
         ctx.beginPath();
         ctx.arc(iconSize * 0.7, iconSize * 0.25, iconSize * 0.12, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(212, 165, 116, 0.3)';
         ctx.fill();
-        
+
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
         ctx.clip();
-        
+
         ctx.beginPath();
-        ctx.moveTo(-iconSize*0.1, iconSize*0.9);
-        ctx.lineTo(iconSize*0.3, iconSize*0.4);
-        ctx.lineTo(iconSize*0.6, iconSize*0.8);
-        ctx.lineTo(iconSize*0.8, iconSize*0.5);
-        ctx.lineTo(iconSize*1.2, iconSize*0.9);
+        ctx.moveTo(-iconSize * 0.1, iconSize * 0.9);
+        ctx.lineTo(iconSize * 0.3, iconSize * 0.4);
+        ctx.lineTo(iconSize * 0.6, iconSize * 0.8);
+        ctx.lineTo(iconSize * 0.8, iconSize * 0.5);
+        ctx.lineTo(iconSize * 1.2, iconSize * 0.9);
         ctx.closePath();
         ctx.fill();
         ctx.restore();
         ctx.restore();
-        
+
         ctx.fillStyle = 'rgba(212, 165, 116, 0.2)'; // #D4A574 with 20% opacity
         ctx.beginPath();
-        x = cx - barWidth/2; y = cy + iconSize/2 + 20; w = barWidth; h = barHeight; r = barHeight/2;
+        x = cx - barWidth / 2; y = cy + iconSize / 2 + 20; w = barWidth; h = barHeight; r = barHeight / 2;
         ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
         ctx.fill();
-        
+
         texture.image = tempCanvas;
 
         const img = new Image();
@@ -408,7 +535,7 @@ class Media {
         this.width = this.plane.scale.x + this.padding;
         this.widthTotal = this.width * this.length;
         this.x = this.width * this.index;
-        
+
         if (this.title && this.title.mesh) {
             this.title.mesh.scale.set(this.plane.scale.x, this.plane.scale.y, 1);
         }
@@ -442,19 +569,34 @@ class CircularGalleryApp {
         this.createMedias(items, bend, textColor, borderRadius, font, showButton, buttonText);
         this.update();
         this.addEventListeners();
-        
+
         // Raycast for clicking
         this.raycast = new Raycast(this.gl);
         this.mouse = new Vec2();
     }
     createRenderer() {
+        const isMobile = window.innerWidth < 768;
+        this.isMobile = isMobile;
         this.renderer = new Renderer({
             alpha: true,
-            antialias: true,
-            dpr: Math.min(window.devicePixelRatio || 1, 2)
+            // Antialias di mobile = overhead besar, matikan
+            antialias: !isMobile,
+            // dpr max 1.5 di mobile agar tidak render terlalu banyak pixel
+            dpr: isMobile ? Math.min(window.devicePixelRatio || 1, 1.5) : Math.min(window.devicePixelRatio || 1, 2)
         });
         this.gl = this.renderer.gl;
         this.gl.clearColor(0, 0, 0, 0);
+
+        this.gl.canvas.addEventListener('webglcontextlost', (e) => {
+            e.preventDefault();
+            console.warn('[Gallery] WebGL context lost, stopping RAF');
+            window.cancelAnimationFrame(this.raf);
+        });
+        this.gl.canvas.addEventListener('webglcontextrestored', () => {
+            console.warn('[Gallery] WebGL context restored');
+            this.update();
+        });
+
         this.container.appendChild(this.gl.canvas);
     }
     createCamera() {
@@ -466,14 +608,16 @@ class CircularGalleryApp {
         this.scene = new Transform();
     }
     createGeometry() {
+        // Mobile: segment lebih sedikit = vertex lebih sedikit = GPU lebih ringan
         this.planeGeometry = new Plane(this.gl, {
-            heightSegments: 50,
-            widthSegments: 100
+            heightSegments: this.isMobile ? 15 : 50,
+            widthSegments: this.isMobile ? 15 : 100
         });
     }
     createMedias(items, bend = 1, textColor, borderRadius, font, showButton = true, buttonText = 'Explore Now') {
         const galleryItems = items && items.length ? items : [];
-        this.mediasImages = galleryItems.concat(galleryItems); // Duplicate for infinite scroll
+        // Mobile: jangan duplikasi items - terlalu banyak object WebGL
+        this.mediasImages = this.isMobile ? galleryItems : galleryItems.concat(galleryItems);
         this.medias = this.mediasImages.map((data, index) => {
             return new Media({
                 geometry: this.planeGeometry,
@@ -510,7 +654,7 @@ class CircularGalleryApp {
         if (!this.isDown) return;
         const x = e.touches ? e.touches[0].clientX : e.clientX;
         const y = e.touches ? e.touches[0].clientY : e.clientY;
-        
+
         if (!this.dragDirectionDetermined) {
             const dx = Math.abs(x - this.start);
             const dy = Math.abs(y - this.startY);
@@ -522,11 +666,11 @@ class CircularGalleryApp {
                 }
             }
         }
-        
+
         if (this.dragDirectionDetermined && e.cancelable) {
             e.preventDefault(); // Prevent page scrolling during horizontal swipe
         }
-        
+
         const sensitivity = window.innerWidth < 768 ? 0.06 : 0.025; // More sensitive on mobile
         const distance = (this.start - x) * (this.scrollSpeed * sensitivity);
         this.scroll.target = this.scroll.position + distance;
@@ -534,12 +678,12 @@ class CircularGalleryApp {
     onTouchUp(e) {
         this.isDown = false;
         this.onCheck();
-        
+
         // Handle click if there wasn't much movement
         const currentX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
         const currentY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
         const distMoved = Math.hypot(currentX - this.clickStart.x, currentY - this.clickStart.y);
-        
+
         if (distMoved < 10) {
             this.handleClick(currentX, currentY);
         }
@@ -550,11 +694,11 @@ class CircularGalleryApp {
             ((clientX - rect.left) / rect.width) * 2 - 1,
             -((clientY - rect.top) / rect.height) * 2 + 1
         );
-        
+
         this.raycast.castMouse(this.camera, this.mouse);
         const planes = this.medias.map(m => m.plane);
         const hits = this.raycast.intersectBounds(planes);
-        
+
         if (hits.length > 0) {
             const hit = hits[0];
             const mesh = hit.mesh || hit;
@@ -631,7 +775,9 @@ class CircularGalleryApp {
         window.addEventListener('mousemove', this.boundOnTouchMove);
         window.addEventListener('mouseup', this.boundOnTouchUp);
         this.container.addEventListener('touchstart', this.boundOnTouchDown, { passive: true });
-        window.addEventListener('touchmove', this.boundOnTouchMove, { passive: false });
+        // passive: false WAJIB di container (bukan window) agar e.preventDefault() bisa dipanggil
+        // Menaruhnya di window membuat SEMUA scroll halaman jadi non-passive → freeze di Android
+        this.container.addEventListener('touchmove', this.boundOnTouchMove, { passive: false });
         window.addEventListener('touchend', this.boundOnTouchUp);
 
         this.container?.addEventListener('keydown', this.boundOnKeyDown);
@@ -644,7 +790,7 @@ class CircularGalleryApp {
         window.removeEventListener('mousemove', this.boundOnTouchMove);
         window.removeEventListener('mouseup', this.boundOnTouchUp);
         this.container.removeEventListener('touchstart', this.boundOnTouchDown);
-        window.removeEventListener('touchmove', this.boundOnTouchMove);
+        this.container.removeEventListener('touchmove', this.boundOnTouchMove);
         window.removeEventListener('touchend', this.boundOnTouchUp);
         if (this.renderer && this.renderer.gl && this.renderer.gl.canvas.parentNode) {
             this.renderer.gl.canvas.parentNode.removeChild(this.renderer.gl.canvas);

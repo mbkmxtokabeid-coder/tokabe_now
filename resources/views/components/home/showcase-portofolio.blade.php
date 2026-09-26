@@ -20,7 +20,10 @@
                     transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
                     visibility 0.5s;
     }
-    
+    #circular-gallery-container,
+    #circular-gallery-legality-container {
+        touch-action: pan-y;
+    }
     .port-tab-content.active {
         position: relative;
         opacity: 1;
@@ -101,6 +104,7 @@
                             'image' => $image,
                             'text' => $judulText,
                             'category' => '',
+                            
                             'date' => $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d M Y') : ($item->created_at ? $item->created_at->format('d M Y') : ''),
                             'url' => route('portofolio.detail', [$item->category->endpoint ?? 'all', $item->slug])
                         ];
@@ -119,10 +123,8 @@
                             const observer = new IntersectionObserver((entries, obs) => {
                                 entries.forEach(async entry => {
                                     if(entry.isIntersecting) {
-                                        // Dynamically import the gallery script only when visible
                                         if(!window.CircularGalleryApp) {
                                             try {
-                                                // We use Vite's dynamic import capabilities
                                                 await import('{{ Vite::asset('resources/js/circular-gallery.js') }}');
                                             } catch (e) {
                                                 console.error("Failed to load 3D gallery module:", e);
@@ -130,8 +132,10 @@
                                         }
                                         
                                         setTimeout(() => {
-                                            if(window.CircularGalleryApp && !window.portofolioApp) {
-                                                window.portofolioApp = new window.CircularGalleryApp(container, {
+                                            // Simpan instance di container (bukan window global)
+                                            // agar tidak konflik saat komponen sama dipakai di beda halaman
+                                            if(window.CircularGalleryApp && !container._galleryApp) {
+                                                container._galleryApp = new window.CircularGalleryApp(container, {
                                                     items: items,
                                                     bend: 2, 
                                                     textColor: '#ffffff',
@@ -139,12 +143,15 @@
                                                     font: 'bold 30px sans-serif',
                                                     buttonText: '{{ __("Explore Now") }}'
                                                 });
+                                                // Tetap simpan di window untuk backward compatibility
+                                                window.portofolioApp = container._galleryApp;
                                             }
                                         }, 100);
                                         obs.unobserve(entry.target);
                                     }
                                 });
-                            }, { rootMargin: '200px' });
+                            // rootMargin 0px: jangan init sebelum benar-benar terlihat (hemat GPU mobile)
+                            }, { rootMargin: '0px' });
                             
                             observer.observe(container);
                         }
@@ -190,7 +197,6 @@
                             const observer = new IntersectionObserver((entries, obs) => {
                                 entries.forEach(async entry => {
                                     if(entry.isIntersecting) {
-                                        // Initialize only when visible
                                         if(!window.CircularGalleryApp) {
                                             try {
                                                 await import('{{ Vite::asset('resources/js/circular-gallery.js') }}');
@@ -199,8 +205,8 @@
                                             }
                                         }
                                         setTimeout(() => {
-                                            if(window.CircularGalleryApp && !window.legalityApp) {
-                                                window.legalityApp = new window.CircularGalleryApp(container, {
+                                            if(window.CircularGalleryApp && !container._galleryApp) {
+                                                container._galleryApp = new window.CircularGalleryApp(container, {
                                                     items: items,
                                                     bend: 2, 
                                                     textColor: '#ffffff',
@@ -208,12 +214,13 @@
                                                     font: 'bold 30px sans-serif',
                                                     showButton: false
                                                 });
+                                                window.legalityApp = container._galleryApp;
                                             }
                                         }, 100);
                                         obs.unobserve(entry.target);
                                     }
                                 });
-                            }, { rootMargin: '200px' });
+                            }, { rootMargin: '0px' });
                             
                             observer.observe(container);
                         }

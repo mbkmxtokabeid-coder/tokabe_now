@@ -11,7 +11,8 @@ export default defineConfig({
     // server: {
     //     host: '0.0.0.0',
     //     hmr: {
-    //         host: '192.168.3.24', // Ganti dengan IP lokal laptopmu
+    //         host: '192.168.3.4', // Ganti dengan IP lokal laptopmu
     //     },
+    //     cors: true
     // },
 });
