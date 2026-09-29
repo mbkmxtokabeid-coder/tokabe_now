@@ -259,7 +259,7 @@ function initMap() {
                                     </li>`).join('')}
                             </ul>
                         </div>
-                        <a href="/discover?region=${encodeURIComponent(name)}" class="inline-flex items-center gap-2 mt-6 px-6 py-2.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-extrabold rounded-full shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-0.5 hover:scale-105 transition-all duration-300">
+                        <a href="/discover?region=${encodeURIComponent(name)}" class="inline-flex items-center gap-2 mt-6 px-6 py-2.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold rounded-full shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-0.5 hover:scale-105 transition-all duration-300">
                             {{ __('Discover More') }} <i class="fas fa-arrow-right text-sm"></i>
                         </a>
                     </div>

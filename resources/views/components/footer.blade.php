@@ -22,11 +22,15 @@
                         @php
                             $email = isset($globalContact) && $globalContact->email ? $globalContact->email : 'info@tokabe.id';
                             $phone = isset($globalContact) && $globalContact->phone ? $globalContact->phone : '628115239999';
+                            $cleanPhoneFooter = preg_replace('/[^0-9]/', '', $phone);
+                            if (str_starts_with($cleanPhoneFooter, '0')) {
+                                $cleanPhoneFooter = '62' . substr($cleanPhoneFooter, 1);
+                            }
                             $location = isset($globalContact) && $globalContact->location ? $globalContact->location : 'Komplek Setia Budi Point No. D-10 Medan, Indonesia';
                         @endphp
-                        <li>{{ __('Email:') }} {{ $email }}</li>
-                        <li>{{ __('Phone:') }} +{{ $phone }}</li>
-                        <li>{{ __('Location:') }} {{ __($location) }}</li>
+                        <li>{{ __('Email:') }} <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $email }}" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">{{ $email }}</a></li>
+                        <li>{{ __('Phone:') }} <a href="https://wa.me/{{ $cleanPhoneFooter }}" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">+{{ $phone }}</a></li>
+                        <li>{{ __('Location:') }} <a href="https://maps.app.goo.gl/m2DKjqNtE15Muzqg6" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">{{ __($location) }}</a></li>
                     </ul>
                 </div>
             </div>

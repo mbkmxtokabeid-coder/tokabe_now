@@ -63,37 +63,50 @@
                             {{ __('Our dedicated customer support team is just a message or call away.') }}
                         </p>
                         
+                        @php
+                            $contactEmail = isset($globalContact) && $globalContact->email ? $globalContact->email : 'info@tokabe.id';
+                            $rawPhone = isset($globalContact) && $globalContact->phone ? $globalContact->phone : '628115239999';
+                            $cleanPhone = preg_replace('/[^0-9]/', '', $rawPhone);
+                            if (str_starts_with($cleanPhone, '0')) {
+                                $cleanPhone = '62' . substr($cleanPhone, 1);
+                            }
+                            $displayPhone = '0811-5239-999';
+                            if (isset($globalContact) && $globalContact->phone && $globalContact->phone !== '628115239999') {
+                                $displayPhone = $globalContact->phone;
+                            }
+                        @endphp
+
                         <div class="flex flex-col gap-6">
                             <!-- Email Details -->
                             <div class="flex items-center gap-4 group">
-                                <div class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300">
+                                <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $contactEmail }}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300">
                                     <i class="fas fa-envelope text-lg"></i>
-                                </div>
+                                </a>
                                 <div>
                                     <span class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Email:') }}</span>
-                                    <a href="mailto:info@tokabe.id" class="text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors">info@tokabe.id</a>
+                                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $contactEmail }}" target="_blank" rel="noopener noreferrer" class="text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors">{{ $contactEmail }}</a>
                                 </div>
                             </div>
                             
                             <!-- Phone Details -->
                             <div class="flex items-center gap-4 group">
-                                <div class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300">
+                                <a href="https://wa.me/{{ $cleanPhone }}" target="_blank" rel="noopener noreferrer" title="{{ __('Hubungi via WhatsApp / Telepon') }}" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300">
                                     <i class="fas fa-phone-alt text-lg"></i>
-                                </div>
+                                </a>
                                 <div>
                                     <span class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Phone:') }}</span>
-                                    <a href="tel:+628115239999" class="text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors">0811-5239-999</a>
+                                    <a href="https://wa.me/{{ $cleanPhone }}" target="_blank" rel="noopener noreferrer" title="{{ __('Hubungi via WhatsApp / Telepon') }}" class="text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors">{{ $displayPhone }}</a>
                                 </div>
                             </div>
                             
                             <!-- Location Details -->
                             <div class="flex items-start gap-4 group">
-                                <div class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300 mt-0.5">
+                                <a href="https://maps.app.goo.gl/m2DKjqNtE15Muzqg6" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300 mt-0.5">
                                     <i class="fas fa-map-marker-alt text-lg"></i>
-                                </div>
+                                </a>
                                 <div>
                                     <span class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Location:') }}</span>
-                                    <a href="https://maps.app.goo.gl/m2DKjqNtE15Muzqg6" target="_blank" class="text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors leading-relaxed whitespace-nowrap">
+                                    <a href="https://maps.app.goo.gl/m2DKjqNtE15Muzqg6" target="_blank" rel="noopener noreferrer" class="text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors leading-relaxed whitespace-nowrap">
                                         {!! __('Komplek Setiabudi Point No. D-10<br>Medan, Indonesia') !!}
                                     </a>
                                 </div>
