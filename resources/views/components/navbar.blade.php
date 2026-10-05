@@ -149,15 +149,15 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-                <div class="dropdown-menu" style="left: auto; right: -24px; min-width: 140px;">
+                <div class="dropdown-menu" style="left: auto; right: 0; min-width: 120px;">
                     <a href="{{ route('lang.switch', 'en') }}" class="{{ app()->getLocale() == 'en' ? 'active-menu-item' : '' }}">English</a>
                     <a href="{{ route('lang.switch', 'id') }}" class="{{ app()->getLocale() == 'id' ? 'active-menu-item' : '' }}">Indonesia</a>
                 </div>
             </div>
 
-            <a href="https://loker.tokabe.id/" target="_blank" class="px-6 py-2.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#2C1A0E] text-sm font-bold tracking-wide btn-cut-corner shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:scale-105 transition-all duration-300 flex items-center gap-2">
+            {{-- <a href="https://loker.tokabe.id/" target="_blank" class="px-6 py-2.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#2C1A0E] text-sm font-bold tracking-wide btn-cut-corner shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:scale-105 transition-all duration-300 flex items-center gap-2">
                 {{ strtoupper(__('Career')) }}
-            </a>
+            </a> --}}
         </div>
 
         <!-- Mobile Hamburger & Lang Switcher -->
@@ -228,9 +228,9 @@
             
             <a href="{{ route('contact') }}" class="text-[#f2ebe2] hover:text-[#D4A574] text-sm font-medium transition-colors">{{ __('Contact') }}</a>
 
-            <a href="https://loker.tokabe.id/" target="_blank" class="bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#2C1A0E] text-sm font-bold btn-cut-corner shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:scale-105 transition-all duration-300 inline-block text-center mt-2 py-2.5">
+            {{-- <a href="https://loker.tokabe.id/" target="_blank" class="bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#2C1A0E] text-sm font-bold btn-cut-corner shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:scale-105 transition-all duration-300 inline-block text-center mt-2 py-2.5">
                 {{ strtoupper(__('Career')) }}
-            </a>
+            </a> --}}
         </div>
     </div>
 </nav>
