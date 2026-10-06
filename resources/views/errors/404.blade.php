@@ -94,17 +94,17 @@
 
             <!-- Action Buttons -->
             <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-                <a href="{{ url('/') }}" 
-                   class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold text-sm bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] rounded-full hover:from-[#F0C97A] hover:to-[#C8902A] shadow-[0_0_25px_rgba(212,165,105,0.6)] hover:shadow-[0_0_40px_rgba(240,201,122,0.8)] transition-all duration-300 transform hover:-translate-y-0.5">
-                    <i class="fa-solid fa-house"></i>
-                    <span id="btn-home">Kembali ke Beranda</span>
-                </a>
-
+            
                 <button onclick="window.history.back()" 
                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium text-sm text-gray-300 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-300">
                     <i class="fa-solid fa-arrow-left"></i>
                     <span id="btn-back">Halaman Sebelumnya</span>
                 </button>
+                <a href="{{ url('/') }}" 
+                   class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold text-sm bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] rounded-full hover:from-[#F0C97A] hover:to-[#C8902A] shadow-[0_0_25px_rgba(212,165,105,0.6)] hover:shadow-[0_0_40px_rgba(240,201,122,0.8)] transition-all duration-300 transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-house"></i>
+                    <span id="btn-home">Kembali ke Beranda</span>
+                </a>
             </div>
 
             <!-- Quick Links -->
