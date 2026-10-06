@@ -135,11 +135,6 @@
                     <x-home.showbrand :brands="$brands" :activeTab="$activeTab ?? 0" />
                 </div>
                 @endif
-                
-                <!-- Showcase Portfolio Section -->
-                <div class="mt-20">
-                    <x-home.showcase-portofolio :categories="$portofolioCategories ?? collect([])" :portofolios="$portofolios ?? collect([])" />
-                </div>
             </div>
         </div>
     </main>

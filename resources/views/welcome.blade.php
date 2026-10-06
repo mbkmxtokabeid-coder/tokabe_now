@@ -99,8 +99,6 @@
 
         <x-home.advertising-sites :lokasi="$lokasi" :lokasiooh="$lokasiooh" />
 
-        <x-home.showcase-portofolio :categories="$portofolioCategories" :portofolios="$portofolios" />
-
         <x-home.cta />
     </main>
 

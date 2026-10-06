@@ -202,11 +202,7 @@ class HomeController extends Controller
             });
             $activeTab = (int) $request->query('tab', 0);
 
-            // Get Portfolio Data
-            $portofolioCategories = \App\Models\PortofolioCategory::all();
-            $portofolios = \App\Models\Portofolio::with('firstImage')->latest()->get();
-
-            return view('services.detail', compact('service', 'brands', 'activeTab', 'portofolioCategories', 'portofolios'));
+            return view('services.detail', compact('service', 'brands', 'activeTab'));
         // $service = \App\Models\Service::where('endpoint', $endpoint)->first();
         // if (!$service) {
         //     $service = (object)[

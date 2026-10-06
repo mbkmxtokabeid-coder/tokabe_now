@@ -51,11 +51,8 @@
         <!-- Bagian Judul -->
         <div class="mb-12 lg:mb-16 text-center flex flex-col items-center">
             <div class="reveal-target-service smooth-element title-delay-1">
-                <span class="text-[#D4A574] font-bold tracking-widest text-sm uppercase mb-2 block">
-                    {{ __('WHAT DO WE DO?') }}
-                </span>
-                <h2 class="text-4xl sm:text-5xl lg:text-[64px] font-black leading-none tracking-tighter text-white mb-6">
-                    {{ __('Get to Know Our Services.') }}
+                <h2 class="text-4xl sm:text-5xl lg:text-[64px] font-black leading-none tracking-tighter text-white mb-6 uppercase">
+                    {{ __('Our Service') }}
                 </h2>
                 <!-- Ornament line with pointed ends -->
                 <div class="smooth-element title-delay-3 flex items-center justify-center mx-auto mt-6 w-full px-8">
@@ -76,7 +73,7 @@
         </div>
 
         <!-- Desktop View (Swiper) -->
-        <div class="relative group/slider hidden md:block">
+        <div class="relative group/slider hidden md:block px-10 lg:px-14 xl:px-16">
             <!-- Container Slider -->
             <div id="services-slider" class="swiper services-swiper w-full !pt-6 !pb-12 !-mt-6 !-mb-12">
                 <div class="swiper-wrapper">
@@ -149,15 +146,13 @@
                 <div class="swiper-pagination"></div>
             </div>
         
-            <!-- Navigation Buttons -->
-            <div class="absolute right-0 -top-8 lg:-top-6 xl:-top-16 z-10 hidden md:flex gap-2 lg:gap-2 xl:gap-3">
-                <button class="services-button-prev bg-[#1F1611] border border-[#D4A574]/30 text-[#D4A574] w-10 h-10 lg:w-9 lg:h-9 xl:w-12 xl:h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-[#D4A574] hover:text-[#1F1611] hover:border-[#D4A574] hover:shadow-[0_0_15px_rgba(212,165,116,0.4)] transition-all duration-300 group">
-                    <i class="fas fa-chevron-left text-xs lg:text-[10px] xl:text-sm group-hover:-translate-x-1 transition-transform duration-300"></i>
-                </button>
-                <button class="services-button-next bg-[#1F1611] border border-[#D4A574]/30 text-[#D4A574] w-10 h-10 lg:w-9 lg:h-9 xl:w-12 xl:h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-[#D4A574] hover:text-[#1F1611] hover:border-[#D4A574] hover:shadow-[0_0_15px_rgba(212,165,116,0.4)] transition-all duration-300 group">
-                    <i class="fas fa-chevron-right text-xs lg:text-[10px] xl:text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
-                </button>
-            </div>
+            <!-- Navigation Buttons (Side Left & Right - Separated from cards) -->
+            <button class="services-button-prev absolute -left-3 lg:-left-4 xl:-left-6 top-[44%] -translate-y-1/2 z-20 bg-[#1F1611]/90 backdrop-blur-md border border-[#D4A574]/40 text-[#D4A574] w-10 h-10 lg:w-12 lg:h-12 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center justify-center hover:bg-[#D4A574] hover:text-[#1F1611] hover:border-[#D4A574] hover:scale-110 hover:shadow-[0_0_20px_rgba(212,165,116,0.6)] transition-all duration-300 cursor-pointer group focus:outline-none" aria-label="Previous">
+                <i class="fas fa-chevron-left text-xs lg:text-sm group-hover:-translate-x-0.5 transition-transform duration-300"></i>
+            </button>
+            <button class="services-button-next absolute -right-3 lg:-right-4 xl:-right-6 top-[44%] -translate-y-1/2 z-20 bg-[#1F1611]/90 backdrop-blur-md border border-[#D4A574]/40 text-[#D4A574] w-10 h-10 lg:w-12 lg:h-12 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center justify-center hover:bg-[#D4A574] hover:text-[#1F1611] hover:border-[#D4A574] hover:scale-110 hover:shadow-[0_0_20px_rgba(212,165,116,0.6)] transition-all duration-300 cursor-pointer group focus:outline-none" aria-label="Next">
+                <i class="fas fa-chevron-right text-xs lg:text-sm group-hover:translate-x-0.5 transition-transform duration-300"></i>
+            </button>
         </div>
 
         <!-- Mobile View (Scroll Stack) -->
@@ -255,6 +250,7 @@
             const swiperConfig = {
                 loop: true,
                 slidesPerView: 1, 
+                slidesPerGroup: 2,
                 spaceBetween: 20,
                 pagination: {
                     el: '.swiper-pagination',
@@ -267,14 +263,17 @@
                 breakpoints: {
                     640: {
                         slidesPerView: 2,
+                        slidesPerGroup: 2,
                         spaceBetween: 24,
                     },
                     768: {
                         slidesPerView: 3,
+                        slidesPerGroup: 2,
                         spaceBetween: 24,
                     },
                     1024: {
                         slidesPerView: 3,
+                        slidesPerGroup: 2,
                         spaceBetween: 40,
                     }
                 }

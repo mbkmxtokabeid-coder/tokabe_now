@@ -14,8 +14,6 @@ Route::get('/', function () {
             'lokasi' => \App\Models\Lokasi::all(),
             'lokasiooh' => \App\Models\LocationOoh::all(),
             'partners' => \App\Models\Partner::all(),
-            'portofolioCategories' => \App\Models\PortofolioCategory::all(),
-            'portofolios' => \App\Models\Portofolio::with(['firstImage', 'category'])->latest()->take(10)->get(),
             'about' => \App\Models\About::first(),
         ];
     });
