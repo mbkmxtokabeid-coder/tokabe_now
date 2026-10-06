@@ -26,6 +26,7 @@
         margin-top: 24px;
     }
     .services-swiper .swiper-pagination-bullet {
+        cursor: pointer;
         width: 12px !important;
         height: 12px !important;
         margin: 0 12px !important;
@@ -36,6 +37,15 @@
         opacity: 0.6;
         transition: all 0.3s ease;
         border-radius: 9999px !important;
+        outline: none !important;
+    }
+    .services-swiper .swiper-pagination-bullet:hover {
+        opacity: 0.9;
+    }
+    .services-swiper .swiper-pagination-bullet:focus,
+    .services-swiper .swiper-pagination-bullet:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
     }
     .services-swiper .swiper-pagination-bullet-active {
         background-color: #D4A574; /* gold */
@@ -77,66 +87,72 @@
             <!-- Container Slider -->
             <div id="services-slider" class="swiper services-swiper w-full !pt-6 !pb-12 !-mt-6 !-mb-12">
                 <div class="swiper-wrapper">
-                    @foreach($services as $index => $item)
-                    <div class="swiper-slide !h-auto flex w-full sm:w-1/2 lg:w-1/3">
-                        @php
-                            // Get title properly handling JSON arrays if any
-                            $judul = is_array($item->judul) ? ($item->judul[app()->getLocale()] ?? $item->judul['id'] ?? $item->judul['en'] ?? collect($item->judul)->first() ?? '') : $item->judul;
-                            
-                            // Get description properly handling JSON arrays if any
-                            $deskripsi = is_array($item->deskripsi) ? ($item->deskripsi[app()->getLocale()] ?? $item->deskripsi['id'] ?? $item->deskripsi['en'] ?? collect($item->deskripsi)->first() ?? '') : $item->deskripsi;
-                            
-                            // Clean description and limit it
-                            $cleanDesc = strip_tags($deskripsi);
-                            $shortDesc = \Illuminate\Support\Str::limit($cleanDesc, 90, '...');
-                        @endphp
-                        <div onclick="window.location.href='{{ route('services.show', $item->endpoint) }}'" class="w-full h-full cursor-pointer bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-xl border border-white/25 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group flex flex-col justify-between">
-                            
-                            <div>
-                                <!-- Bagian Gambar / Media -->
-                                <div class="w-full aspect-[16/10] overflow-hidden bg-[#2C1A0E] relative">
-                                    <!-- Premium Skeleton Loader -->
-                                    <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
-                                        <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
-                                        <div class="relative flex flex-col items-center gap-3 animate-pulse">
-                                            <i class="fas fa-image text-[#D4A574]/30 text-5xl"></i>
-                                            <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
+                    @foreach($services->chunk(3) as $pageIndex => $chunk)
+                    <div class="swiper-slide !h-auto w-full">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 xl:gap-10 w-full h-full items-stretch">
+                            @foreach($chunk as $itemIndex => $item)
+                            @php
+                                // Get title properly handling JSON arrays if any
+                                $judul = is_array($item->judul) ? ($item->judul[app()->getLocale()] ?? $item->judul['id'] ?? $item->judul['en'] ?? collect($item->judul)->first() ?? '') : $item->judul;
+                                
+                                // Get description properly handling JSON arrays if any
+                                $deskripsi = is_array($item->deskripsi) ? ($item->deskripsi[app()->getLocale()] ?? $item->deskripsi['id'] ?? $item->deskripsi['en'] ?? collect($item->deskripsi)->first() ?? '') : $item->deskripsi;
+                                
+                                // Clean description and limit it
+                                $cleanDesc = strip_tags($deskripsi);
+                                $shortDesc = \Illuminate\Support\Str::limit($cleanDesc, 90, '...');
+                            @endphp
+                            <div class="h-full flex flex-col {{ $chunk->count() === 1 ? 'md:col-start-2' : '' }}">
+                                <div onclick="window.location.href='{{ route('services.show', $item->endpoint) }}'" class="w-full h-full cursor-pointer bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-xl border border-white/25 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group flex flex-col justify-between">
+                                    
+                                    <div>
+                                        <!-- Bagian Gambar / Media -->
+                                        <div class="w-full aspect-[16/10] overflow-hidden bg-[#2C1A0E] relative">
+                                            <!-- Premium Skeleton Loader -->
+                                            <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
+                                                <div class="absolute inset-0 bg-black/20 animate-pulse"></div>
+                                                <div class="relative flex flex-col items-center gap-3 animate-pulse">
+                                                    <i class="fas fa-image text-[#D4A574]/30 text-5xl"></i>
+                                                    <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
+                                                </div>
+                                            </div>
+                                            
+                                            @if(Str::endsWith($item->gambar, ['.mp4', '.webm', '.ogg']))
+                                                <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2;" onloadeddata="this.previousElementSibling.style.display='none'">
+                                                    <source src="{{ asset('storage/image_service/' . $item->gambar) }}" type="video/mp4">
+                                                </video>
+                                            @elseif($item->gambar)
+                                                <img src="{{ asset('storage/image_service/' . $item->gambar) }}" onload="this.previousElementSibling.style.display='none'" alt="{{ \App\Helpers\SeoHelper::getImageAlt('service', $judul) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2;" loading="lazy">
+                                            @else
+                                                <div class="w-full h-full flex items-center justify-center bg-[#2C1A0E]">
+                                                    <i class="{{ $item->ikon ?? 'fas fa-desktop' }} text-3xl text-white/50"></i>
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <!-- Bagian Teks -->
+                                        <div class="p-6 lg:p-4 xl:p-6">
+                                            <h3 class="text-lg lg:text-sm xl:text-lg font-bold text-white mb-3 lg:mb-2 xl:mb-3 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
+                                                {{ $judul }}
+                                            </h3>
+                                            
+                                            <div class="border-t border-white/20 pt-4 lg:pt-3 xl:pt-4 text-xs sm:text-sm lg:text-[10px] xl:text-sm text-gray-200">
+                                                <p class="line-clamp-2">
+                                                    {{ $shortDesc }}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                    
-                                    @if(Str::endsWith($item->gambar, ['.mp4', '.webm', '.ogg']))
-                                        <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2;" onloadeddata="this.previousElementSibling.style.display='none'">
-                                            <source src="{{ asset('storage/image_service/' . $item->gambar) }}" type="video/mp4">
-                                        </video>
-                                    @elseif($item->gambar)
-                                        <img src="{{ asset('storage/image_service/' . $item->gambar) }}" onload="this.previousElementSibling.style.display='none'" alt="{{ \App\Helpers\SeoHelper::getImageAlt('service', $judul) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2;" loading="lazy">
-                                    @else
-                                        <div class="w-full h-full flex items-center justify-center bg-[#2C1A0E]">
-                                            <i class="{{ $item->ikon ?? 'fas fa-desktop' }} text-3xl text-white/50"></i>
-                                        </div>
-                                    @endif
-                                </div>
 
-                                <!-- Bagian Teks -->
-                                <div class="p-6 lg:p-4 xl:p-6">
-                                    <h3 class="text-lg lg:text-sm xl:text-lg font-bold text-white mb-3 lg:mb-2 xl:mb-3 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
-                                        {{ $judul }}
-                                    </h3>
-                                    
-                                    <div class="border-t border-white/20 pt-4 lg:pt-3 xl:pt-4 text-xs sm:text-sm lg:text-[10px] xl:text-sm text-gray-200">
-                                        <p class="line-clamp-2">
-                                            {{ $shortDesc }}
-                                        </p>
+                                    <div class="px-6 pb-6 lg:px-4 lg:pb-4 xl:px-6 xl:pb-6 pt-1 mt-auto">
+                                        <a href="{{ route('services.show', $item->endpoint) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 px-6 py-3 lg:px-4 lg:py-2 xl:px-6 xl:py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm lg:text-[10px] xl:text-sm uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
+                                            <span>{{ __('Lihat Detail') }}</span>
+                                            <i class="fas fa-arrow-right text-xs lg:text-[10px] xl:text-xs transition-transform duration-300 group-hover/btn:translate-x-1"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="px-6 pb-6 lg:px-4 lg:pb-4 xl:px-6 xl:pb-6 pt-1 mt-auto">
-                                <a href="{{ route('services.show', $item->endpoint) }}" class="whitespace-nowrap w-full inline-flex items-center justify-center gap-2 px-6 py-3 lg:px-4 lg:py-2 xl:px-6 xl:py-3 bg-gradient-to-r from-[#F5E6C8] to-[#D4A569] text-[#1F1611] font-bold text-sm lg:text-[10px] xl:text-sm uppercase tracking-wider rounded-full hover:from-[#D4A569] hover:to-[#C8902A] hover:scale-105 hover:shadow-lg hover:shadow-[#D4A569]/40 transition-all duration-300 group/btn shadow-sm">
-                                    <span>{{ __('Lihat Detail') }}</span>
-                                    <i class="fas fa-arrow-right text-xs lg:text-[10px] xl:text-xs transition-transform duration-300 group-hover/btn:translate-x-1"></i>
-                                </a>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
                     @endforeach
@@ -245,42 +261,78 @@
             serviceObserver.observe(target);
         });
 
-        // Swiper Logic
+        // Custom Swiper Pagination Click Handler (Mengatasi transisi sirkular loop halaman)
+        const setupCustomPagination = (swiperInstance) => {
+            const paginationEl = document.querySelector('.services-swiper .swiper-pagination');
+            if (!paginationEl) return;
+
+            if (paginationEl._customPaginationHandler) {
+                paginationEl.removeEventListener('click', paginationEl._customPaginationHandler);
+            }
+
+            paginationEl._customPaginationHandler = (e) => {
+                const bullet = e.target.closest('.swiper-pagination-bullet');
+                if (!bullet || !swiperInstance || swiperInstance.animating) return;
+
+                const bullets = Array.from(paginationEl.querySelectorAll('.swiper-pagination-bullet'));
+                const targetIndex = bullets.indexOf(bullet);
+                if (targetIndex === -1) return;
+
+                const activeBullet = paginationEl.querySelector('.swiper-pagination-bullet-active');
+                const currentIndex = activeBullet ? bullets.indexOf(activeBullet) : swiperInstance.realIndex;
+
+                if (targetIndex === currentIndex) return;
+
+                const totalBullets = bullets.length;
+                if (totalBullets <= 1) return;
+
+                // Hitung langkah terpendek pada sirkular loop
+                const forwardSteps = (targetIndex - currentIndex + totalBullets) % totalBullets;
+                const backwardSteps = (currentIndex - targetIndex + totalBullets) % totalBullets;
+
+                if (forwardSteps <= backwardSteps) {
+                    if (forwardSteps === 1) {
+                        swiperInstance.slideNext();
+                    } else {
+                        swiperInstance.slideToLoop(targetIndex);
+                    }
+                } else {
+                    if (backwardSteps === 1) {
+                        swiperInstance.slidePrev();
+                    } else {
+                        swiperInstance.slideToLoop(targetIndex);
+                    }
+                }
+            };
+
+            paginationEl.addEventListener('click', paginationEl._customPaginationHandler);
+        };
+
+        // Swiper Logic (1 Slide = 1 Halaman berisi hingga 3 Card Layanan)
         const initSwiper = () => {
             const swiperConfig = {
                 loop: true,
                 slidesPerView: 1, 
-                slidesPerGroup: 2,
-                spaceBetween: 20,
+                slidesPerGroup: 1,
+                spaceBetween: 32,
+                speed: 600,
                 pagination: {
                     el: '.swiper-pagination',
-                    clickable: true,
+                    clickable: false, // Gunakan custom handler untuk transisi mulus antar halaman
                 },
                 navigation: {
                     nextEl: '.services-button-next',
                     prevEl: '.services-button-prev',
                 },
-                breakpoints: {
-                    640: {
-                        slidesPerView: 2,
-                        slidesPerGroup: 2,
-                        spaceBetween: 24,
-                    },
-                    768: {
-                        slidesPerView: 3,
-                        slidesPerGroup: 2,
-                        spaceBetween: 24,
-                    },
-                    1024: {
-                        slidesPerView: 3,
-                        slidesPerGroup: 2,
-                        spaceBetween: 40,
-                    }
-                }
+            };
+
+            const startSwiper = () => {
+                const swiper = new Swiper('.services-swiper', swiperConfig);
+                setupCustomPagination(swiper);
             };
 
             if (typeof Swiper !== 'undefined') {
-                new Swiper('.services-swiper', swiperConfig);
+                startSwiper();
             } else {
                 const link = document.createElement('link');
                 link.rel = 'stylesheet';
@@ -290,7 +342,7 @@
                 const script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js';
                 script.onload = () => {
-                    new Swiper('.services-swiper', swiperConfig);
+                    startSwiper();
                 };
                 document.body.appendChild(script);
             }
