@@ -63,7 +63,14 @@
     {{-- <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"></noscript> --}}
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Tailwind CSS di-inline agar tidak render-blocking (menghemat 1 round-trip sebelum first paint / LCP).
+         Saat dev server Vite berjalan (public/hot), pakai @vite biasa supaya HMR tetap jalan. --}}
+    @if (! \Illuminate\Support\Facades\Vite::isRunningHot())
+        <style id="app-css-inline">{!! \Illuminate\Support\Facades\Vite::content('resources/css/app.css') !!}</style>
+        @vite('resources/js/app.js')
+    @else
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
 
     <link rel="icon" type="image/jpeg" href="{{ asset('images/LogoTKB.jpg') }}?v=2">
     <link rel="shortcut icon" type="image/jpeg" href="{{ asset('images/LogoTKB.jpg') }}?v=2">

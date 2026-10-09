@@ -31,6 +31,18 @@
     .delay-box-1 { animation-delay: 0.4s; }
     .delay-box-2 { animation-delay: 0.7s; }
     .delay-btn { animation-delay: 1.0s; }
+
+    /* Mobile: teks hero langsung tampil tanpa animasi (opacity/blur menunda LCP).
+       Desktop (>= 768px) tetap memakai animasi reveal di atas. */
+    @media (max-width: 767px) {
+        .reveal-target-left.reveal-left-hidden,
+        .reveal-target-left.reveal-left-active {
+            opacity: 1;
+            animation: none;
+            transform: none;
+            filter: none;
+        }
+    }
 </style>
 
 <section class="relative w-full h-screen min-h-[600px] overflow-hidden bg-[#2C1A0E]">
