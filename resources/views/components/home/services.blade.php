@@ -389,10 +389,11 @@
         const initDesktopSwiper = () => {
             const sliderEl = document.querySelector('#services-slider');
             if (!sliderEl || desktopSwiper) return;
+            const slideCount = sliderEl.querySelectorAll('.swiper-slide').length;
 
             loadSwiper(() => {
                 desktopSwiper = new Swiper('#services-slider', {
-                    loop: true,
+                    loop: slideCount > 1,
                     slidesPerView: 1, 
                     slidesPerGroup: 1,
                     spaceBetween: 32,
@@ -417,10 +418,11 @@
         const initMobileSwiper = () => {
             const mobileEl = document.querySelector('#services-mobile-slider');
             if (!mobileEl || mobileSwiper) return;
+            const mobileSlideCount = mobileEl.querySelectorAll('.swiper-slide').length;
 
             loadSwiper(() => {
                 mobileSwiper = new Swiper('#services-mobile-slider', {
-                    loop: true,
+                    loop: mobileSlideCount >= 4,
                     centeredSlides: true,
                     slidesPerView: 1.15,
                     spaceBetween: 16,

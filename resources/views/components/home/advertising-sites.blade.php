@@ -405,7 +405,7 @@
         // Initialize Swiper for DOOH and OOH tabs
         const initAdvSwiper = () => {
             const swiperConfig = {
-                loop: true,
+                loop: false,
                 slidesPerView: 1, 
                 spaceBetween: 20,
                 breakpoints: {
