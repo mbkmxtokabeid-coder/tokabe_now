@@ -358,13 +358,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }, { root: null, rootMargin: '350px 0px', threshold: 0.01 });
 
         document.querySelectorAll('.reveal-target-map, #sumatraSvg').forEach(el => observerMap.observe(el));
+    } else {
+        initMap();
     }
-
-    // Safety fallback: if user is on desktop or observer doesn't fire, init within 2.5s anyway
-    setTimeout(function() {
-        if (!mapInitialized) {
-            initMap();
-        }
-    }, 2500);
 });
 </script>

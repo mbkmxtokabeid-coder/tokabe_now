@@ -48,6 +48,7 @@
     .rolling-counter {
         font-variant-numeric: tabular-nums;
         display: inline-block;
+        min-width: 1.5ch;
     }
 </style>
 
@@ -102,7 +103,7 @@
                                         <i class="fas fa-tv"></i>
                                     </div>
                                     <div class="flex items-baseline justify-center text-white mb-2">
-                                        <span class="rolling-counter text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->dooh_count }}">0</span>
+                                        <span class="rolling-counter text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->dooh_count }}">{{ $index === 0 ? $hero->dooh_count : '0' }}</span>
                                         <span class="text-xl font-black text-[#D4A574] ml-1">+</span>
                                     </div>
                                     <h2 class="text-xs font-bold text-gray-200 uppercase tracking-widest group-hover:text-white mt-auto">DOOH / VIDEOTRON</h2>
@@ -115,7 +116,7 @@
                                         <i class="fas fa-layer-group"></i>
                                     </div>
                                     <div class="flex items-baseline justify-center text-white mb-2">
-                                        <span class="rolling-counter text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->ooh_count }}">0</span>
+                                        <span class="rolling-counter text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->ooh_count }}">{{ $index === 0 ? $hero->ooh_count : '0' }}</span>
                                         <span class="text-xl font-black text-[#D4A574] ml-1">+</span>
                                     </div>
                                     <h2 class="text-xs font-bold text-gray-200 uppercase tracking-widest group-hover:text-white mt-auto">OOH / BILLBOARD</h2>
@@ -203,7 +204,9 @@
                     activeSlide.querySelectorAll('.reveal-target-left').forEach(el => el.classList.add('reveal-left-active'));
                     activeSlide.querySelectorAll('.reveal-target-right').forEach(el => el.classList.add('reveal-right-active'));
                     
-                    setTimeout(() => startCounting(activeSlide), 500); 
+                    if (slideIndex > 0) {
+                        setTimeout(() => startCounting(activeSlide), 500); 
+                    }
                 }, 100);
             };
 
