@@ -7,13 +7,13 @@
     <meta name="description" content="{{ __('Tokabe.id adalah agensi periklanan terbaik di Medan, Sumatera. Kami menyediakan layanan sewa Videotron (DOOH), Billboard (OOH), Event Organizer, dan Brand Activation.') }}">
     <meta name="keywords" content="Sewa videotron Medan, Billboard Sumatera, Event organizer Medan, Advertising agency Sumatera, Jasa OOH Medan">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ url('/') }}">
+    <link rel="canonical" href="{{ \App\Helpers\SeoHelper::getCanonicalUrl('/') }}">
     
     <meta property="og:title" content="{{ __('Tokabe.id - Advertising Agency Solutions in Medan, Sumatera') }}">
     <meta property="og:description" content="{{ __('Tokabe.id adalah agensi periklanan terbaik di Medan, Sumatera. Kami menyediakan layanan sewa Videotron (DOOH), Billboard (OOH), Event Organizer, dan Brand Activation.') }}">
     <meta property="og:image" content="{{ asset('images/LogoTKB.jpg') }}">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:url" content="{{ \App\Helpers\SeoHelper::getCanonicalUrl('/') }}">
 
     <!-- JSON-LD Schema Markup -->
     <script type="application/ld+json">
@@ -22,8 +22,8 @@
       "@type": "AdvertisingAgency",
       "name": "Tokabe.id",
       "image": "{{ asset('images/LogoTKB.jpg') }}",
-      "@id": "{{ url('/') }}",
-      "url": "{{ url('/') }}",
+      "@id": "{{ \App\Helpers\SeoHelper::getCanonicalUrl('/') }}",
+      "url": "{{ \App\Helpers\SeoHelper::getCanonicalUrl('/') }}",
       "description": "Tokabe.id Videotron DOOH, OOH, Event Organizer, Brand Activity, Sponsor Agency.",
       "address": {
         "@type": "PostalAddress",

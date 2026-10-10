@@ -30,8 +30,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (config('app.env') === 'production' || env('FORCE_HTTPS', false)) {
+        if (config('app.env') === 'production' || env('FORCE_HTTPS', false) || !app()->isLocal()) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
+
+            $appUrl = config('app.url');
+            if ($appUrl) {
+                if (str_starts_with($appUrl, '//')) {
+                    $appUrl = 'https:' . $appUrl;
+                } elseif (!str_starts_with($appUrl, 'http://') && !str_starts_with($appUrl, 'https://')) {
+                    $appUrl = 'https://' . ltrim($appUrl, '/');
+                }
+                config(['app.url' => $appUrl]);
+                \Illuminate\Support\Facades\URL::forceRootUrl($appUrl);
+            }
         }
 
         try {

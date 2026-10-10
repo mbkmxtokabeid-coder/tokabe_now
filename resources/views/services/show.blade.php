@@ -27,8 +27,8 @@
     <meta property="og:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($descText ?? ''), 150) }}">
     <meta property="og:image" content="{{ asset('images/LogoTKB.jpg') }}">
     <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <link rel="canonical" href="{{ url()->current() }}">
+    <meta property="og:url" content="{{ \App\Helpers\SeoHelper::getCanonicalUrl() }}">
+    <link rel="canonical" href="{{ \App\Helpers\SeoHelper::getCanonicalUrl() }}">
     <meta name="robots" content="index, follow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

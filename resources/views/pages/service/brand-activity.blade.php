@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -10,8 +10,8 @@
     <meta property="og:description" content="{{ __('Layanan Brand Activation dari Tokabe.id: The Show Must Go On. Kami merancang aktivitas brand yang memukau audiens Anda di Sumatera.') }}">
     <meta property="og:image" content="https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1200&auto=format&fit=crop">
     <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <link rel="canonical" href="{{ url()->current() }}">
+    <meta property="og:url" content="{{ \App\Helpers\SeoHelper::getCanonicalUrl() }}">
+    <link rel="canonical" href="{{ \App\Helpers\SeoHelper::getCanonicalUrl() }}">
     <meta name="robots" content="index, follow">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
