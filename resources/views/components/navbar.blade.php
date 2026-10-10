@@ -254,27 +254,32 @@
         const mobileMenu = document.getElementById('mobile-menu');
         
         // Logika Navbar Scroll
+        let ticking = false;
         const handleScroll = function() {
-            requestAnimationFrame(() => {
-                const isDarkTheme = navbar.getAttribute('data-theme') === 'dark';
-                const isMobileMenuOpen = !mobileMenu.classList.contains('max-h-0');
-                
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                    navbar.style.background = '';
-                } else {
-                    if (isDarkTheme || isMobileMenuOpen) {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const isDarkTheme = navbar.getAttribute('data-theme') === 'dark';
+                    const isMobileMenuOpen = !mobileMenu.classList.contains('max-h-0');
+                    
+                    if (window.scrollY > 50) {
                         navbar.classList.add('scrolled');
                         navbar.style.background = '';
                     } else {
-                        navbar.classList.remove('scrolled');
-                        navbar.style.background = 'transparent';
+                        if (isDarkTheme || isMobileMenuOpen) {
+                            navbar.classList.add('scrolled');
+                            navbar.style.background = '';
+                        } else {
+                            navbar.classList.remove('scrolled');
+                            navbar.style.background = 'transparent';
+                        }
                     }
-                }
-            });
+                    ticking = false;
+                });
+                ticking = true;
+            }
         };
 
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         // Panggil sekali saat dimuat untuk mengatur status awal
         handleScroll();
 

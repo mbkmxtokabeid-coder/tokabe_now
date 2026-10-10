@@ -279,7 +279,7 @@
             let detectedTitle = '';
             const h1Element = document.querySelector('h1');
             if (h1Element) {
-                detectedTitle = h1Element.innerText.replace(/\s+/g, ' ').trim();
+                detectedTitle = h1Element.textContent.replace(/\s+/g, ' ').trim();
             }
 
             if (!detectedTitle) {
@@ -352,11 +352,11 @@
                 }
                 if (dynamicBadge && tooltip) {
                     const badgeEl = tooltip.querySelector('.uppercase');
-                    if (badgeEl) badgeEl.innerText = dynamicBadge;
+                    if (badgeEl) badgeEl.textContent = dynamicBadge;
                 }
                 if (dynamicTooltip) {
                     const tooltipTextEl = document.getElementById('tokabe-wa-tooltip-text');
-                    if (tooltipTextEl) tooltipTextEl.innerText = dynamicTooltip;
+                    if (tooltipTextEl) tooltipTextEl.textContent = dynamicTooltip;
                 }
             } else if (resolvedMessage.includes('{ITEM_TITLE}')) {
                 // For DOOH detail, OOH detail, Portfolio detail

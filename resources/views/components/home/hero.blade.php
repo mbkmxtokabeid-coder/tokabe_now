@@ -165,13 +165,13 @@
                     const duration = 2500; 
                     const countPerFrame = target / (duration / 16); 
                     let current = 0;
-                    counter.innerText = '0'; // reset
+                    counter.textContent = '0'; // reset (use textContent to prevent forced reflow)
                     const updateCounter = () => {
                         current += countPerFrame;
                         if (current >= target) { 
-                            counter.innerText = target; 
+                            counter.textContent = target; 
                         } else { 
-                            counter.innerText = Math.floor(current); 
+                            counter.textContent = Math.floor(current); 
                             requestAnimationFrame(updateCounter); 
                         }
                     };

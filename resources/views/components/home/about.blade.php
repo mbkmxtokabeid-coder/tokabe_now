@@ -84,7 +84,8 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const counters = document.querySelectorAll('.rolling-counter');
+        const aboutSection = document.getElementById('about');
+        const counters = aboutSection ? aboutSection.querySelectorAll('.rolling-counter') : [];
         const startCounting = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -95,8 +96,8 @@
                     let current = 0;
                     const updateCounter = () => {
                         current += countPerFrame;
-                        if (current >= target) { counter.innerText = target; } 
-                        else { counter.innerText = Math.floor(current); requestAnimationFrame(updateCounter); }
+                        if (current >= target) { counter.textContent = target; } 
+                        else { counter.textContent = Math.floor(current); requestAnimationFrame(updateCounter); }
                     };
                     requestAnimationFrame(updateCounter);
                     observer.unobserve(counter); 

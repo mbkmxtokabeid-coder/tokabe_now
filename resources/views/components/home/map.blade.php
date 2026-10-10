@@ -282,19 +282,19 @@ function initMap() {
 
             fc = { type: 'FeatureCollection', features };
 
-            function renderMap() {
+            function renderMap(explicitW, explicitH) {
                 if (!fc || !svg.node()) return;
-                const container = svg.node().getBoundingClientRect();
-                const w = container.width > 0 ? container.width : 500;
-                const h = container.height > 100 ? container.height : 450;
+                const node = svg.node();
+                const w = explicitW || (node.clientWidth > 0 ? node.clientWidth : 500);
+                const h = explicitH || (node.clientHeight > 100 ? node.clientHeight : 450);
                 projection.fitSize([w, h], fc);
                 g.selectAll('path').attr('d', pathGen);
             }
 
             // Initial projection sizing
-            const initialBbox = svg.node().getBoundingClientRect();
-            const initialW = initialBbox.width > 0 ? initialBbox.width : 500;
-            const initialH = initialBbox.height > 100 ? initialBbox.height : 450;
+            const svgEl = svg.node();
+            const initialW = svgEl ? (svgEl.clientWidth > 0 ? svgEl.clientWidth : 500) : 500;
+            const initialH = svgEl ? (svgEl.clientHeight > 100 ? svgEl.clientHeight : 450) : 450;
             projection.fitSize([initialW, initialH], fc);
 
             // Render path elements immediately with d attribute
@@ -345,15 +345,21 @@ function initMap() {
                 showInfo(fc.features[0].properties, apiData);
             }
 
-            // Resize listeners
-            setTimeout(renderMap, 100);
-            window.addEventListener('resize', renderMap);
+            // Resize listeners using RAF to prevent forced synchronous reflow
+            let resizeRaf = null;
+            const debouncedRenderMap = () => {
+                if (resizeRaf) cancelAnimationFrame(resizeRaf);
+                resizeRaf = requestAnimationFrame(() => renderMap());
+            };
+
             if (window.ResizeObserver) {
                 const containerParent = document.getElementById('mapInfo')?.parentElement;
                 if (containerParent) {
-                    const observer = new ResizeObserver(() => renderMap());
+                    const observer = new ResizeObserver(() => debouncedRenderMap());
                     observer.observe(containerParent);
                 }
+            } else {
+                window.addEventListener('resize', debouncedRenderMap, { passive: true });
             }
 
         } catch (error) {
