@@ -344,6 +344,65 @@
 </section>
 
 <script>
+    let doohSwiper = null;
+    let oohSwiper = null;
+    let advSwiperConfig = null;
+
+    function getAdvSwiperConfig() {
+        if (!advSwiperConfig) {
+            advSwiperConfig = {
+                loop: false,
+                slidesPerView: 1, 
+                spaceBetween: 20,
+                breakpoints: {
+                    640: {
+                        slidesPerView: 2,
+                        spaceBetween: 24,
+                    },
+                    768: {
+                        slidesPerView: 3,
+                        spaceBetween: 24,
+                    },
+                    1024: {
+                        slidesPerView: 3,
+                        spaceBetween: 40,
+                    }
+                }
+            };
+        }
+        return { ...advSwiperConfig };
+    }
+
+    function initAdvSwiper() {
+        const doohEl = document.querySelector('.adv-swiper-dooh');
+        if (!doohEl || doohSwiper) return;
+
+        const loadScript = (cb) => {
+            if (typeof Swiper !== 'undefined') { cb(); return; }
+            if (!document.querySelector('link[href*="swiper-bundle"]')) {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css';
+                document.head.appendChild(link);
+            }
+            const existingScript = document.querySelector('script[src*="swiper-bundle"]');
+            if (existingScript) {
+                existingScript.addEventListener('load', cb);
+            } else {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js';
+                script.onload = cb;
+                document.body.appendChild(script);
+            }
+        };
+
+        loadScript(() => {
+            const cfg = getAdvSwiperConfig();
+            cfg.pagination = { el: '.dooh-pagination', clickable: true };
+            doohSwiper = new Swiper('.adv-swiper-dooh', cfg);
+        });
+    }
+
     function switchTab(type) {
         const btnDooh = document.getElementById('btn-dooh');
         const btnOoh = document.getElementById('btn-ooh');
@@ -363,6 +422,7 @@
 
             contentOoh.classList.remove('active');
             contentDooh.classList.add('active');
+            if (doohSwiper) doohSwiper.update();
         } else {
             btnOoh.classList.remove('text-white/80', 'hover:text-white');
             btnOoh.classList.add('text-[#2C1A0E]');
@@ -375,6 +435,15 @@
 
             contentDooh.classList.remove('active');
             contentOoh.classList.add('active');
+
+            // Initialize or update OOH swiper only when tab becomes visible (avoids hidden container reflow)
+            if (!oohSwiper && typeof Swiper !== 'undefined') {
+                const cfg = getAdvSwiperConfig();
+                cfg.pagination = { el: '.ooh-pagination', clickable: true };
+                oohSwiper = new Swiper('.adv-swiper-ooh', cfg);
+            } else if (oohSwiper) {
+                oohSwiper.update();
+            }
         }
     }
 
@@ -402,54 +471,18 @@
             advObserver.observe(target);
         });
 
-        // Initialize Swiper for DOOH and OOH tabs
-        const initAdvSwiper = () => {
-            const swiperConfig = {
-                loop: false,
-                slidesPerView: 1, 
-                spaceBetween: 20,
-                breakpoints: {
-                    640: {
-                        slidesPerView: 2,
-                        spaceBetween: 24,
-                    },
-                    768: {
-                        slidesPerView: 3,
-                        spaceBetween: 24,
-                    },
-                    1024: {
-                        slidesPerView: 3,
-                        spaceBetween: 40,
-                    }
+        // Lazy initialize Swiper when section is near viewport
+        const advSection = document.getElementById('advertising-inventory');
+        if (advSection && 'IntersectionObserver' in window) {
+            const advInitObserver = new IntersectionObserver((entries, obs) => {
+                if (entries[0].isIntersecting) {
+                    initAdvSwiper();
+                    obs.disconnect();
                 }
-            };
-
-            if (typeof Swiper !== 'undefined') {
-                swiperConfig.pagination = { el: '.dooh-pagination', clickable: true };
-                new Swiper('.adv-swiper-dooh', swiperConfig);
-                
-                swiperConfig.pagination = { el: '.ooh-pagination', clickable: true };
-                new Swiper('.adv-swiper-ooh', swiperConfig);
-            } else {
-                // If Swiper isn't loaded globally, load it (fallback)
-                const link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css';
-                document.head.appendChild(link);
-
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js';
-                script.onload = () => {
-                    swiperConfig.pagination = { el: '.dooh-pagination', clickable: true };
-                    new Swiper('.adv-swiper-dooh', swiperConfig);
-                    
-                    swiperConfig.pagination = { el: '.ooh-pagination', clickable: true };
-                    new Swiper('.adv-swiper-ooh', swiperConfig);
-                };
-                document.body.appendChild(script);
-            }
-        };
-
-        initAdvSwiper();
+            }, { rootMargin: '300px 0px' });
+            advInitObserver.observe(advSection);
+        } else {
+            initAdvSwiper();
+        }
     });
 </script>

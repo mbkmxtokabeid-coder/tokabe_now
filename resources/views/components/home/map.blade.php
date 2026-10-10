@@ -79,7 +79,7 @@
                 </div>
 
                 <div class="w-full flex-grow relative min-h-[400px] lg:min-h-[450px]">
-                    <svg id="sumatraSvg" class="w-full h-full absolute inset-0 block rounded-xl"></svg>
+                    <svg id="sumatraSvg" viewBox="0 0 800 550" preserveAspectRatio="xMidYMid meet" class="w-full h-full absolute inset-0 block rounded-xl"></svg>
                 </div>
             </div>
 
@@ -282,20 +282,8 @@ function initMap() {
 
             fc = { type: 'FeatureCollection', features };
 
-            function renderMap(explicitW, explicitH) {
-                if (!fc || !svg.node()) return;
-                const node = svg.node();
-                const w = explicitW || (node.clientWidth > 0 ? node.clientWidth : 500);
-                const h = explicitH || (node.clientHeight > 100 ? node.clientHeight : 450);
-                projection.fitSize([w, h], fc);
-                g.selectAll('path').attr('d', pathGen);
-            }
-
-            // Initial projection sizing
-            const svgEl = svg.node();
-            const initialW = svgEl ? (svgEl.clientWidth > 0 ? svgEl.clientWidth : 500) : 500;
-            const initialH = svgEl ? (svgEl.clientHeight > 100 ? svgEl.clientHeight : 450) : 450;
-            projection.fitSize([initialW, initialH], fc);
+            // Fit Sumatra projection into fixed 800x550 viewBox coordinates (Native SVG handles responsiveness with zero reflow)
+            projection.fitSize([800, 550], fc);
 
             // Render path elements immediately with d attribute
             const paths = g.selectAll('path')
@@ -343,23 +331,6 @@ function initMap() {
                 // Fallback select first feature
                 paths.filter((d, i) => i === 0).attr('stroke', '#5C3317').attr('stroke-width', 2.5).attr('fill', '#D4A574').attr('data-selected', 'true');
                 showInfo(fc.features[0].properties, apiData);
-            }
-
-            // Resize listeners using RAF to prevent forced synchronous reflow
-            let resizeRaf = null;
-            const debouncedRenderMap = () => {
-                if (resizeRaf) cancelAnimationFrame(resizeRaf);
-                resizeRaf = requestAnimationFrame(() => renderMap());
-            };
-
-            if (window.ResizeObserver) {
-                const containerParent = document.getElementById('mapInfo')?.parentElement;
-                if (containerParent) {
-                    const observer = new ResizeObserver(() => debouncedRenderMap());
-                    observer.observe(containerParent);
-                }
-            } else {
-                window.addEventListener('resize', debouncedRenderMap, { passive: true });
             }
 
         } catch (error) {

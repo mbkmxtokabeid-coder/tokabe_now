@@ -94,10 +94,18 @@
                     const duration = 2000; 
                     const countPerFrame = target / (duration / 16); 
                     let current = 0;
+                    let lastVal = 0;
                     const updateCounter = () => {
                         current += countPerFrame;
                         if (current >= target) { counter.textContent = target; } 
-                        else { counter.textContent = Math.floor(current); requestAnimationFrame(updateCounter); }
+                        else { 
+                            const nextVal = Math.floor(current);
+                            if (nextVal !== lastVal) {
+                                counter.textContent = nextVal;
+                                lastVal = nextVal;
+                            }
+                            requestAnimationFrame(updateCounter); 
+                        }
                     };
                     requestAnimationFrame(updateCounter);
                     observer.unobserve(counter); 

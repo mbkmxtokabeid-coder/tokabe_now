@@ -452,11 +452,26 @@
             });
         };
 
-        // Initialize based on screen size
-        if (window.innerWidth >= 768) {
-            initDesktopSwiper();
+        // Initialize based on screen size when section approaches viewport
+        const startServices = () => {
+            if (window.innerWidth >= 768) {
+                initDesktopSwiper();
+            } else {
+                initMobileSwiper();
+            }
+        };
+
+        const servicesSection = document.getElementById('services');
+        if (servicesSection && 'IntersectionObserver' in window) {
+            const svcObserver = new IntersectionObserver((entries, obs) => {
+                if (entries[0].isIntersecting) {
+                    startServices();
+                    obs.disconnect();
+                }
+            }, { rootMargin: '300px 0px' });
+            svcObserver.observe(servicesSection);
         } else {
-            initMobileSwiper();
+            startServices();
         }
 
         // Handle resize events
@@ -472,6 +487,6 @@
                     if (mobileSwiper) mobileSwiper.update();
                 }
             }, 200);
-        });
+        }, { passive: true });
     });
 </script>

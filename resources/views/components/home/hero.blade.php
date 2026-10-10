@@ -43,6 +43,12 @@
             filter: none;
         }
     }
+
+    /* Stabilize digits width during count-up to prevent layout shift */
+    .rolling-counter {
+        font-variant-numeric: tabular-nums;
+        display: inline-block;
+    }
 </style>
 
 <section class="relative w-full h-screen min-h-[600px] overflow-hidden bg-[#2C1A0E]">
@@ -165,13 +171,18 @@
                     const duration = 2500; 
                     const countPerFrame = target / (duration / 16); 
                     let current = 0;
+                    let lastVal = 0;
                     counter.textContent = '0'; // reset (use textContent to prevent forced reflow)
                     const updateCounter = () => {
                         current += countPerFrame;
                         if (current >= target) { 
                             counter.textContent = target; 
                         } else { 
-                            counter.textContent = Math.floor(current); 
+                            const nextVal = Math.floor(current);
+                            if (nextVal !== lastVal) {
+                                counter.textContent = nextVal;
+                                lastVal = nextVal;
+                            }
                             requestAnimationFrame(updateCounter); 
                         }
                     };
