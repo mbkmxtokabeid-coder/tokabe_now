@@ -255,23 +255,18 @@
         
         // Logika Navbar Scroll
         let ticking = false;
+        let isScrolled = navbar.classList.contains('scrolled');
+        const isDarkTheme = navbar.getAttribute('data-theme') === 'dark';
+
         const handleScroll = function() {
             if (!ticking) {
                 window.requestAnimationFrame(() => {
-                    const isDarkTheme = navbar.getAttribute('data-theme') === 'dark';
                     const isMobileMenuOpen = !mobileMenu.classList.contains('max-h-0');
+                    const shouldBeScrolled = (window.pageYOffset || window.scrollY) > 50 || isDarkTheme || isMobileMenuOpen;
                     
-                    if (window.scrollY > 50) {
-                        navbar.classList.add('scrolled');
-                        navbar.style.background = '';
-                    } else {
-                        if (isDarkTheme || isMobileMenuOpen) {
-                            navbar.classList.add('scrolled');
-                            navbar.style.background = '';
-                        } else {
-                            navbar.classList.remove('scrolled');
-                            navbar.style.background = 'transparent';
-                        }
+                    if (shouldBeScrolled !== isScrolled) {
+                        navbar.classList.toggle('scrolled', shouldBeScrolled);
+                        isScrolled = shouldBeScrolled;
                     }
                     ticking = false;
                 });
@@ -280,8 +275,6 @@
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
-        // Panggil sekali saat dimuat untuk mengatur status awal
-        handleScroll();
 
         const dropdownContainers = document.querySelectorAll('.dropdown-container');
         dropdownContainers.forEach(container => {

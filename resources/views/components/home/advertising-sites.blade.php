@@ -202,7 +202,7 @@
                             </div>
                             
                             <img src="{{ $item->gambar ? (Str::startsWith($item->gambar, 'http') ? $item->gambar : asset('storage/image_lokasi/' . $item->gambar)) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop' }}" 
-                                 onload="this.previousElementSibling.style.display='none'"
+                                 onload="this.previousElementSibling.style.opacity='0'"
                                  alt="{{ \App\Helpers\SeoHelper::getImageAlt('dooh', $namaDOOH, $item->kota ?? 'Medan') }}" 
                                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2; {{ !$isAvailable ? 'filter: grayscale(100%);' : '' }}" loading="lazy">
                             
@@ -288,7 +288,7 @@
                             </div>
                             
                             <img src="{{ Str::startsWith($item->gambar, 'http') ? $item->gambar : asset('storage/image_lokasiooh/' . $item->gambar) }}" 
-                                 onload="this.previousElementSibling.style.display='none'"
+                                 onload="this.previousElementSibling.style.opacity='0'"
                                  alt="{{ \App\Helpers\SeoHelper::getImageAlt('ooh', $namaOOH, $item->kota ?? 'Medan') }}" 
                                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2; {{ !$isAvailable ? 'filter: grayscale(100%);' : '' }}" loading="lazy">
                             

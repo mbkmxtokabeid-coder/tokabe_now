@@ -60,7 +60,7 @@
                     </div>
                     <img src="{{ Str::startsWith($brand->gambar, 'http') ? $brand->gambar : asset('storage/image_brand/' . $brand->gambar) }}" 
                         alt="{{ \App\Helpers\SeoHelper::getImageAlt('brand', $brand->judul ?? $brand->nama_brand ?? 'Brand Activity') }}"
-                        class="w-full h-full object-cover transition-transform duration-700 hover:scale-110 relative" style="z-index: 2;" onload="this.previousElementSibling.style.display='none'" loading="lazy">
+                        class="w-full h-full object-cover transition-transform duration-700 hover:scale-110 relative" style="z-index: 2;" onload="this.previousElementSibling.style.opacity='0'" loading="lazy">
                 </div>
                 <!-- Text -->
                 <div class="p-8 md:p-12 flex flex-col justify-center">
@@ -112,7 +112,7 @@
                             <img src="{{ Str::startsWith($d['image_url'], 'http') ? $d['image_url'] : asset('storage/image_brand_details/' . $d['image_url']) }}" 
                                 class="w-full h-full object-cover transition-transform duration-700 relative" style="z-index: 2;"
                                 :class="expanded ? 'scale-110' : ''"
-                                onload="this.previousElementSibling.style.display='none'" loading="lazy"
+                                onload="this.previousElementSibling.style.opacity='0'" loading="lazy"
                                 alt="{{ \App\Helpers\SeoHelper::getImageAlt('brand', $d['title'] ?? 'Brand Activity Detail') }}">
                             <div class="absolute inset-0 transition-colors" style="z-index: 3;" :class="expanded ? 'bg-black/0' : 'bg-black/20'"></div>
                         </div>
@@ -159,7 +159,7 @@
                             <img src="{{ Str::startsWith($d['image_url'], 'http') ? $d['image_url'] : asset('storage/image_brand_details/' . $d['image_url']) }}" 
                                 class="w-full h-full object-cover transition-transform duration-700 relative" style="z-index: 2;"
                                 :class="expanded ? 'scale-110' : ''"
-                                onload="this.previousElementSibling.style.display='none'" loading="lazy"
+                                onload="this.previousElementSibling.style.opacity='0'" loading="lazy"
                                 alt="{{ \App\Helpers\SeoHelper::getImageAlt('brand', $d['title'] ?? 'Brand Activity Detail') }}">
                             <div class="absolute inset-0 transition-colors" style="z-index: 3;" :class="expanded ? 'bg-black/0' : 'bg-black/20'"></div>
                         </div>

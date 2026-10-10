@@ -164,11 +164,11 @@
                                             </div>
                                             
                                             @if(Str::endsWith($item->gambar, ['.mp4', '.webm', '.ogg']))
-                                                <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2;" onloadeddata="this.previousElementSibling.style.display='none'">
+                                                <video autoplay loop muted playsinline class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2;" onloadeddata="this.previousElementSibling.style.opacity='0'">
                                                     <source src="{{ asset('storage/image_service/' . $item->gambar) }}" type="video/mp4">
                                                 </video>
                                             @elseif($item->gambar)
-                                                <img src="{{ asset('storage/image_service/' . $item->gambar) }}" onload="this.previousElementSibling.style.display='none'" alt="{{ \App\Helpers\SeoHelper::getImageAlt('service', $judul) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2;" loading="lazy">
+                                                <img src="{{ asset('storage/image_service/' . $item->gambar) }}" onload="this.previousElementSibling.style.opacity='0'" alt="{{ \App\Helpers\SeoHelper::getImageAlt('service', $judul) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 relative" style="z-index: 2;" loading="lazy">
                                             @else
                                                 <div class="w-full h-full flex items-center justify-center bg-[#2C1A0E]">
                                                     <i class="{{ $item->ikon ?? 'fas fa-desktop' }} text-3xl text-white/50"></i>
@@ -244,11 +244,11 @@
                                     </div>
                                     
                                     @if(Str::endsWith($item->gambar, ['.mp4', '.webm', '.ogg']))
-                                        <video autoplay loop muted playsinline class="w-full h-full object-cover relative" style="z-index: 2;" onloadeddata="this.previousElementSibling.style.display='none'">
+                                        <video autoplay loop muted playsinline class="w-full h-full object-cover relative" style="z-index: 2;" onloadeddata="this.previousElementSibling.style.opacity='0'">
                                             <source src="{{ asset('storage/image_service/' . $item->gambar) }}" type="video/mp4">
                                         </video>
                                     @elseif($item->gambar)
-                                        <img src="{{ asset('storage/image_service/' . $item->gambar) }}" onload="this.previousElementSibling.style.display='none'" alt="{{ \App\Helpers\SeoHelper::getImageAlt('service', $judul) }}" class="w-full h-full object-cover relative" style="z-index: 2;" loading="lazy">
+                                        <img src="{{ asset('storage/image_service/' . $item->gambar) }}" onload="this.previousElementSibling.style.opacity='0'" alt="{{ \App\Helpers\SeoHelper::getImageAlt('service', $judul) }}" class="w-full h-full object-cover relative" style="z-index: 2;" loading="lazy">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center bg-[#2C1A0E]">
                                             <i class="{{ $item->ikon ?? 'fas fa-desktop' }} text-3xl text-white/50"></i>

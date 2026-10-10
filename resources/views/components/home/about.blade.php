@@ -33,7 +33,7 @@
                                 <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
                             </div>
                         </div>
-                        <img src="{{ $about && $about->image_dooh ? (filter_var($about->image_dooh, FILTER_VALIDATE_URL) ? $about->image_dooh : asset('storage/image_about/' . $about->image_dooh)) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop' }}" alt="DOOH Advertising" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700 relative" style="z-index: 2;" onload="this.previousElementSibling.style.display='none'" loading="lazy">
+                        <img src="{{ $about && $about->image_dooh ? (filter_var($about->image_dooh, FILTER_VALIDATE_URL) ? $about->image_dooh : asset('storage/image_about/' . $about->image_dooh)) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=600&auto=format&fit=crop' }}" alt="DOOH Advertising" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700 relative" style="z-index: 2;" onload="this.previousElementSibling.style.opacity='0'" loading="lazy">
                     </div>
                     <!-- Card 1 -->
                     <div class="bg-[#3D2514] rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-4 xl:p-8 border border-white/10 shadow-lg flex flex-col justify-center items-start group hover:-translate-y-2 transition-transform duration-300 aspect-[67/72]">
@@ -73,7 +73,7 @@
                                 <div class="h-2 w-24 bg-[#D4A574]/20 rounded-full"></div>
                             </div>
                         </div>
-                        <img src="{{ $about && $about->image_ooh ? (filter_var($about->image_ooh, FILTER_VALIDATE_URL) ? $about->image_ooh : asset('storage/image_about/' . $about->image_ooh)) : 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600&auto=format&fit=crop' }}" alt="OOH Advertising" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700 relative" style="z-index: 2;" onload="this.previousElementSibling.style.display='none'" loading="lazy">
+                        <img src="{{ $about && $about->image_ooh ? (filter_var($about->image_ooh, FILTER_VALIDATE_URL) ? $about->image_ooh : asset('storage/image_about/' . $about->image_ooh)) : 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600&auto=format&fit=crop' }}" alt="OOH Advertising" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700 relative" style="z-index: 2;" onload="this.previousElementSibling.style.opacity='0'" loading="lazy">
                     </div>
                 </div>
             </div>
