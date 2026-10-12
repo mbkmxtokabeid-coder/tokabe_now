@@ -1,4 +1,4 @@
-<footer class="w-full bg-[#1A0F07] text-white py-12">
+<footer class="w-full bg-[#1A0F07] text-white pt-12 pb-24 sm:pb-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
@@ -35,7 +35,7 @@
                 </div>
             </div>
         </div>
-        <div class="border-t border-white/10 mt-10 pt-6 text-sm text-gray-400 flex flex-col sm:flex-row justify-between gap-4">
+        <div class="border-t border-white/10 mt-10 pt-6 text-sm text-gray-400 flex flex-col items-center justify-center text-center gap-1.5 sm:gap-2">
             <span>© {{ date('Y') }} Tokabe.id. {{ __('All Rights Reserved.') }}</span>
             <span>{{ __('Designed for Indonesian advertising clients.') }}</span>
         </div>
