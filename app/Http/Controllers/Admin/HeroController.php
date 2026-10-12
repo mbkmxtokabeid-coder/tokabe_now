@@ -77,11 +77,11 @@ class HeroController extends Controller
             $manager = new ImageManager(new Driver());
             $image = $manager->read($file->getRealPath());
             
-            // Resize jika lebar lebih dari 1920px (mencegah gambar raksasa)
-            $image->scaleDown(width: 1920);
+            // Resize jika lebar lebih dari 1440px (optimal untuk desktop & mobile PageSpeed)
+            $image->scaleDown(width: 1440);
             
-            // Convert ke WebP dengan kualitas 80%
-            $encoded = $image->toWebp(80);
+            // Convert ke WebP dengan kualitas 70% (ukuran file ringan, kualitas visual tetap tajam)
+            $encoded = $image->toWebp(70);
             
             // Simpan file ke storage/app/public/image_hero
             Storage::disk('public')->put('image_hero/' . $fileName, (string) $encoded);
@@ -143,11 +143,11 @@ class HeroController extends Controller
             $manager = new ImageManager(new Driver());
             $image = $manager->read($file->getRealPath());
             
-            // Resize jika lebar lebih dari 1920px
-            $image->scaleDown(width: 1920);
+            // Resize jika lebar lebih dari 1440px (optimal untuk desktop & mobile PageSpeed)
+            $image->scaleDown(width: 1440);
             
-            // Convert ke WebP dengan kualitas 80%
-            $encoded = $image->toWebp(80);
+            // Convert ke WebP dengan kualitas 70% (ukuran file ringan, kualitas visual tetap tajam)
+            $encoded = $image->toWebp(70);
             
             // Simpan file ke storage/app/public/image_hero
             Storage::disk('public')->put('image_hero/' . $fileName, (string) $encoded);

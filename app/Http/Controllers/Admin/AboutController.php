@@ -75,8 +75,8 @@ class AboutController extends Controller
             }
             $manager = new ImageManager(new Driver());
             $image = $manager->read($request->file('image_dooh')->getRealPath());
-            $image->scaleDown(width: 1200);
-            $encoded = $image->toWebp(70);
+            $image->scaleDown(width: 600);
+            $encoded = $image->toWebp(75);
             
             $filename = time() . '_dooh.webp';
             Storage::disk('public')->put('image_about/' . $filename, (string) $encoded);
@@ -89,8 +89,8 @@ class AboutController extends Controller
             }
             $manager = new ImageManager(new Driver());
             $image = $manager->read($request->file('image_ooh')->getRealPath());
-            $image->scaleDown(width: 1200);
-            $encoded = $image->toWebp(70);
+            $image->scaleDown(width: 600);
+            $encoded = $image->toWebp(75);
 
             $filename = time() . '_ooh.webp';
             Storage::disk('public')->put('image_about/' . $filename, (string) $encoded);

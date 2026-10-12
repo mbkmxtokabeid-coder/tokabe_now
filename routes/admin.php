@@ -21,6 +21,12 @@ use App\Http\Controllers\Admin\PortofolioCategoryController;
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [DashboardController::class, 'index'])->name('admin');
 
+    // One-click PageSpeed Image Optimization
+    Route::get('/admin/optimize-images', function () {
+        \Illuminate\Support\Facades\Artisan::call('optimize:images');
+        return redirect()->route('admin')->with('success', 'Optimasi gambar PageSpeed berhasil! Semua gambar di storage telah dikompres secara in-place.');
+    })->name('admin.optimize.images');
+
     // About Us
     Route::get('/admin/about', [\App\Http\Controllers\Admin\AboutController::class, 'index'])->name('admin.about.index');
     Route::get('/admin/about/edit/{id}', [\App\Http\Controllers\Admin\AboutController::class, 'edit'])->name('admin.about.edit');

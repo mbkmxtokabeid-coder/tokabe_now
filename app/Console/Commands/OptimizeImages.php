@@ -3,10 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Partner;
-use App\Models\Heroe;
-use App\Models\Service;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -25,163 +21,146 @@ class OptimizeImages extends Command
      *
      * @var string
      */
-    protected $description = 'Optimize existing partner images and the main logo for better performance';
+    protected $description = 'Optimize and compress existing storage images for maximum PageSpeed performance';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $this->info('Starting image optimization...');
+        ini_set('memory_limit', '512M');
+        $this->info('Starting PageSpeed image optimization...');
 
         $manager = new ImageManager(new Driver());
-        $partners = Partner::all();
-        $optimizedCount = 0;
+        $totalFiles = 0;
+        $totalBytesSaved = 0;
 
-        foreach ($partners as $partner) {
-            $oldFilename = $partner->gambar;
-            if (!$oldFilename) {
-                continue;
-            }
+        // 1. Hero images (Target: max 1440px width, quality 70)
+        $this->info('Optimizing Hero Images...');
+        $res = $this->optimizeDirectory($manager, 'image_hero', 1440, 70);
+        $totalFiles += $res['count'];
+        $totalBytesSaved += $res['saved'];
 
-            $oldPath = storage_path('app/public/image_partner/' . $oldFilename);
-            if (!file_exists($oldPath)) {
-                $this->warn("File not found for partner ID {$partner->id}: {$oldFilename}");
-                continue;
-            }
+        // 2. About images (Target: max 600px width, quality 75)
+        $this->info('Optimizing About Images...');
+        $res = $this->optimizeDirectory($manager, 'image_about', 600, 75);
+        $totalFiles += $res['count'];
+        $totalBytesSaved += $res['saved'];
 
-            // Prevent re-optimizing if already webp and maybe already optimized? 
-            // It's safer to just re-optimize and save with a new name or the same webp name.
-            try {
-                $image = $manager->read($oldPath);
-                
-                // If it's wider than 400, scale it down
-                if ($image->width() > 100) {
-                    $image->scaleDown(width: 100);
-                }
+        // 3. Service images (Target: max 600px width, quality 75)
+        $this->info('Optimizing Service Images...');
+        $res = $this->optimizeDirectory($manager, 'image_service', 600, 75);
+        $totalFiles += $res['count'];
+        $totalBytesSaved += $res['saved'];
 
-                $encoded = $image->toWebp(75);
-                
-                $newFilename = uniqid() . '.webp';
-                
-                // Save new image
-                Storage::disk('public')->put('image_partner/' . $newFilename, (string) $encoded);
-                
-                // Update DB
-                $partner->gambar = $newFilename;
-                $partner->save();
+        // 4. Partner logos (Target: max 200px width, quality 75)
+        $this->info('Optimizing Partner Logos...');
+        $res = $this->optimizeDirectory($manager, 'image_partner', 200, 75);
+        $totalFiles += $res['count'];
+        $totalBytesSaved += $res['saved'];
 
-                // Delete old image only if it's not the same filename (though uniqid ensures it's different)
-                if ($oldFilename !== $newFilename && Storage::disk('public')->exists('image_partner/' . $oldFilename)) {
-                    Storage::disk('public')->delete('image_partner/' . $oldFilename);
-                }
-                
-                $this->info("Optimized partner ID {$partner->id}: {$oldFilename} -> {$newFilename}");
-                $optimizedCount++;
+        // 5. Locations DOOH / OOH (Target: max 800px width, quality 75)
+        $this->info('Optimizing Location DOOH & OOH Images...');
+        $res = $this->optimizeDirectory($manager, 'image_lokasi', 800, 75);
+        $totalFiles += $res['count'];
+        $totalBytesSaved += $res['saved'];
 
-            } catch (\Exception $e) {
-                $this->error("Failed to optimize partner ID {$partner->id}: " . $e->getMessage());
-            }
-        }
+        $res = $this->optimizeDirectory($manager, 'image_lokasiooh', 800, 75);
+        $totalFiles += $res['count'];
+        $totalBytesSaved += $res['saved'];
 
-        // Optimize the main logo
+        // 6. Main logo in public/images
         $logoPath = public_path('images/logo-tokabe.png');
         if (file_exists($logoPath)) {
             try {
-                $image = $manager->read($logoPath);
-                
-                if ($image->width() > 450) {
-                    $image->scaleDown(width: 450);
-                    // Save it back as PNG to preserve exact transparency format expected by the site
-                    $image->save($logoPath);
-                    $this->info("Optimized main logo: {$logoPath}");
-                } else {
-                    $this->info("Main logo is already small enough.");
+                $origSize = filesize($logoPath);
+                $img = $manager->read($logoPath);
+                if ($img->width() > 450) {
+                    $img->scaleDown(width: 450);
+                    $img->save($logoPath);
+                    $newSize = filesize($logoPath);
+                    if ($newSize < $origSize) {
+                        $saved = $origSize - $newSize;
+                        $totalBytesSaved += $saved;
+                        $totalFiles++;
+                        $this->line("  ✓ public/images/logo-tokabe.png: " . round($origSize / 1024, 1) . " KB -> " . round($newSize / 1024, 1) . " KB");
+                    }
                 }
             } catch (\Exception $e) {
-                $this->error("Failed to optimize main logo: " . $e->getMessage());
+                // Ignore
             }
         }
 
-        // Optimize Hero images
-        $heroes = Heroe::all();
-        $heroOptimizedCount = 0;
+        $savedKb = round($totalBytesSaved / 1024, 1);
+        $savedMb = round($totalBytesSaved / (1024 * 1024), 2);
 
-        foreach ($heroes as $hero) {
-            $oldFilename = $hero->gambar;
-            if (!$oldFilename) continue;
+        $this->info("==========================================");
+        $this->info("Image optimization completed successfully!");
+        $this->info("Total images optimized: {$totalFiles}");
+        $this->info("Total bandwidth saved: {$savedKb} KB ({$savedMb} MB)");
+        $this->info("==========================================");
 
-            $oldPath = storage_path('app/public/image_hero/' . $oldFilename);
-            if (!file_exists($oldPath)) continue;
+        return Command::SUCCESS;
+    }
+
+    /**
+     * Optimize all images in a storage subdirectory in-place.
+     */
+    protected function optimizeDirectory(ImageManager $manager, string $subDir, int $maxWidth, int $quality): array
+    {
+        $dirPath = storage_path('app/public/' . $subDir);
+        if (!is_dir($dirPath)) {
+            return ['count' => 0, 'saved' => 0];
+        }
+
+        $files = scandir($dirPath);
+        $count = 0;
+        $totalSaved = 0;
+
+        foreach ($files as $file) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+
+            // Skip videos, gifs, or non-image extensions
+            if (Str::endsWith(strtolower($file), ['.gif', '.mp4', '.webm', '.ogg', '.gitkeep', '.gitignore'])) {
+                continue;
+            }
+
+            $filePath = $dirPath . '/' . $file;
+            if (!is_file($filePath)) {
+                continue;
+            }
 
             try {
-                $image = $manager->read($oldPath);
-                
-                // Scale down hero images to max 1280px to save space
-                if ($image->width() > 1280) {
-                    $image->scaleDown(width: 1280);
+                $originalSize = filesize($filePath);
+                $image = $manager->read($filePath);
+
+                $modified = false;
+                if ($image->width() > $maxWidth) {
+                    $image->scaleDown(width: $maxWidth);
+                    $modified = true;
                 }
 
-                // Compress heavily for hero background
-                $encoded = $image->toWebp(70);
-                
-                $newFilename = uniqid() . '.webp';
-                
-                Storage::disk('public')->put('image_hero/' . $newFilename, (string) $encoded);
-                
-                $hero->gambar = $newFilename;
-                $hero->save();
+                $encoded = (string) $image->toWebp($quality);
+                $newSize = strlen($encoded);
 
-                if ($oldFilename !== $newFilename && Storage::disk('public')->exists('image_hero/' . $oldFilename)) {
-                    Storage::disk('public')->delete('image_hero/' . $oldFilename);
+                // Save in-place if size was reduced or resolution was scaled down
+                if ($newSize < $originalSize || $modified) {
+                    file_put_contents($filePath, $encoded);
+                    $saved = max(0, $originalSize - $newSize);
+                    $totalSaved += $saved;
+                    $count++;
+                    $this->line("  ✓ {$subDir}/{$file}: " . round($originalSize / 1024, 1) . " KB -> " . round($newSize / 1024, 1) . " KB (Saved " . round($saved / 1024, 1) . " KB)");
                 }
-                
-                $this->info("Optimized hero ID {$hero->id}: {$oldFilename} -> {$newFilename}");
-                $heroOptimizedCount++;
+
+                unset($image, $encoded);
+                gc_collect_cycles();
             } catch (\Exception $e) {
-                $this->error("Failed to optimize hero ID {$hero->id}: " . $e->getMessage());
+                // Ignore files that cannot be processed by image driver
             }
         }
 
-        // Optimize Service images
-        $services = Service::all();
-        $serviceOptimizedCount = 0;
-
-        foreach ($services as $service) {
-            $oldFilename = $service->gambar;
-            if (!$oldFilename || Str::endsWith($oldFilename, ['.mp4', '.webm', '.ogg'])) continue;
-
-            $oldPath = storage_path('app/public/image_service/' . $oldFilename);
-            if (!file_exists($oldPath)) continue;
-
-            try {
-                $image = $manager->read($oldPath);
-                
-                // Scale down service images to max 600px
-                if ($image->width() > 600) {
-                    $image->scaleDown(width: 600);
-                }
-
-                $encoded = $image->toWebp(75);
-                
-                $newFilename = uniqid() . '.webp';
-                
-                Storage::disk('public')->put('image_service/' . $newFilename, (string) $encoded);
-                
-                $service->gambar = $newFilename;
-                $service->save();
-
-                if ($oldFilename !== $newFilename && Storage::disk('public')->exists('image_service/' . $oldFilename)) {
-                    Storage::disk('public')->delete('image_service/' . $oldFilename);
-                }
-                
-                $this->info("Optimized service ID {$service->id}: {$oldFilename} -> {$newFilename}");
-                $serviceOptimizedCount++;
-            } catch (\Exception $e) {
-                $this->error("Failed to optimize service ID {$service->id}: " . $e->getMessage());
-            }
-        }
-
-        $this->info("Image optimization completed. Total partners: {$optimizedCount}, Heroes: {$heroOptimizedCount}, Services: {$serviceOptimizedCount}");
+        return ['count' => $count, 'saved' => $totalSaved];
     }
 }
