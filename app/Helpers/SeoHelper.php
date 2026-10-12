@@ -120,40 +120,32 @@ class SeoHelper
     }
 
     /**
-     * Get a guaranteed absolute canonical URL.
-     * Always ensures https:// scheme and absolute URL for search engine compliance.
+     * Get a guaranteed absolute canonical URL on the public domain.
+     * Always ensures https://tokabe.id for search engine and public sitemap compliance.
      *
      * @param string|null $path
      * @return string
      */
     public static function getCanonicalUrl($path = null)
     {
-        $url = $path ? url($path) : url()->current();
+        $domain = 'https://tokabe.id';
 
-        // If protocol-relative like //tokabe.id
-        if (str_starts_with($url, '//')) {
-            $url = 'https:' . $url;
-        } elseif (!str_starts_with($url, 'http://') && !str_starts_with($url, 'https://')) {
-            $url = 'https://' . ltrim($url, '/');
+        if (empty($path)) {
+            $url = url()->current();
+        } elseif (filter_var($path, FILTER_VALIDATE_URL) || str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            $url = $path;
+        } else {
+            $url = '/' . ltrim($path, '/');
         }
 
-        // Clean and normalize
         $parsed = parse_url($url);
-        $host = $parsed['host'] ?? 'tokabe.id';
-        $scheme = $parsed['scheme'] ?? 'https';
-
-        // Always enforce https for public domain (tokabe.id)
-        if (!in_array($host, ['localhost', '127.0.0.1'])) {
-            $scheme = 'https';
-        }
-
         $p = $parsed['path'] ?? '/';
         $query = isset($parsed['query']) ? '?' . $parsed['query'] : '';
 
         if ($p === '' || $p === '/') {
-            return "{$scheme}://{$host}/";
+            return "{$domain}/";
         }
 
-        return "{$scheme}://{$host}" . rtrim($p, '/') . $query;
+        return "{$domain}" . rtrim($p, '/') . $query;
     }
 }
