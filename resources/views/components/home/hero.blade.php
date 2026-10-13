@@ -84,7 +84,7 @@
                                 @php
                                     $deskripsi = is_array($hero->deskripsi) ? ($hero->deskripsi[app()->getLocale()] ?? $hero->deskripsi['id'] ?? $hero->deskripsi['en'] ?? collect($hero->deskripsi)->first() ?? '') : $hero->deskripsi;
                                 @endphp
-                                <h2 class="text-4xl md:text-5xl lg:text-6xl font-semibold text-white leading-snug uppercase tracking-tight drop-shadow-2xl">
+                                <h1 class="text-4xl md:text-5xl lg:text-6xl font-semibold text-white leading-snug uppercase tracking-tight drop-shadow-2xl">
                                     {!! $judul !!}
                                 </h2>
                                 @if($deskripsi)
