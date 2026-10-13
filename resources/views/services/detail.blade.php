@@ -55,28 +55,28 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-[#1F1611] via-[#2C1A0E]/80 to-transparent" style="z-index: 3;"></div>
                     
                     <!-- Content Over Image -->
-                    <div class="relative z-10 p-8 md:p-12 w-full">
-                        <div class="flex flex-row items-end justify-between gap-8">
+                    <div class="relative z-10 p-6 md:p-10 lg:p-12 w-full">
+                        <div class="flex flex-col xl:flex-row items-start xl:items-end justify-between gap-6 lg:gap-8">
                             
                             <!-- Title & Description -->
-                            <div class="flex-1">
-                                <h1 class="text-4xl lg:text-6xl font-black text-white mb-4 drop-shadow-lg leading-tight">
+                            <div class="flex-1 max-w-3xl">
+                                <h1 class="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white mb-3 md:mb-4 drop-shadow-lg leading-tight">
                                     {{ is_array($service->judul) ? ($service->judul[app()->getLocale()] ?? $service->judul['id'] ?? $service->judul['en'] ?? '') : $service->judul }}
                                 </h1>
-                                <div class="prose prose-lg prose-invert text-gray-200 max-w-3xl drop-shadow-md leading-relaxed">
+                                <div class="prose prose-base md:prose-lg prose-invert text-gray-200 drop-shadow-md leading-relaxed">
                                     {!! is_array($service->deskripsi) ? ($service->deskripsi[app()->getLocale()] ?? $service->deskripsi['id'] ?? $service->deskripsi['en'] ?? '') : $service->deskripsi !!}
                                 </div>
                             </div>
                             
                             <!-- CTA Buttons -->
-                            <div class="shrink-0 flex flex-col gap-4 min-w-[200px]">
-                                <a href="{{ $waUrl }}" target="_blank" class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#1F1611] border-0 text-base font-semibold rounded-full shadow-[0_0_20px_rgba(212,165,105,0.5)] hover:shadow-[0_0_35px_rgba(240,201,122,0.7)] hover:-translate-y-1 transform transition-all duration-300 w-full whitespace-nowrap">
-                                    <i class="fa-brands fa-whatsapp mr-3 text-xl"></i>
+                            <div class="shrink-0 flex flex-col sm:flex-row xl:flex-col gap-3.5 sm:gap-4 w-full sm:w-auto xl:w-auto xl:min-w-[300px]">
+                                <a href="{{ $waUrl }}" target="_blank" class="inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#1F1611] border-0 text-sm sm:text-base font-semibold rounded-full shadow-[0_0_20px_rgba(212,165,105,0.5)] hover:shadow-[0_0_35px_rgba(240,201,122,0.7)] hover:-translate-y-1 transform transition-all duration-300 w-full sm:w-auto xl:w-full whitespace-nowrap">
+                                    <i class="fa-brands fa-whatsapp mr-2.5 sm:mr-3 text-lg sm:text-xl"></i>
                                     {{ __('Call Astronaut') }} : {{ $svcPhone }}
                                 </a>
                                 @if($lokasiLink)
-                                <a href="{{ $lokasiLink }}" class="inline-flex items-center justify-center px-8 py-4 bg-[#1F1611]/80 backdrop-blur hover:bg-[#5C3317] text-[#F0C97A] border border-[#C8902A]/50 text-base font-semibold rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(212,165,105,0.4)] transform hover:-translate-y-1 transition-all duration-300 w-full whitespace-nowrap">
-                                    <i class="fa-solid fa-map-location-dot mr-3 text-xl"></i>
+                                <a href="{{ $lokasiLink }}" class="inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 bg-[#1F1611]/80 backdrop-blur hover:bg-[#5C3317] text-[#F0C97A] border border-[#C8902A]/50 text-sm sm:text-base font-semibold rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(212,165,105,0.4)] transform hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto xl:w-full whitespace-nowrap">
+                                    <i class="fa-solid fa-map-location-dot mr-2.5 sm:mr-3 text-lg sm:text-xl"></i>
                                     {{ $lokasiText }}
                                 </a>
                                 @endif
@@ -115,14 +115,14 @@
                         
                         <!-- CTA Buttons -->
                         <div class="flex flex-col gap-3">
-                            <a href="{{ $waUrl }}" target="_blank" class="inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#1F1611] border-0 text-sm font-semibold rounded-full shadow-[0_0_20px_rgba(212,165,105,0.4)] w-full">
-                                <i class="fa-brands fa-whatsapp mr-3 text-lg"></i>
-                                {{ __('Call Astronaut') }} : {{ $svcPhone }}
+                            <a href="{{ $waUrl }}" target="_blank" class="inline-flex items-center justify-center px-4 sm:px-6 py-3.5 sm:py-4 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#1F1611] border-0 text-xs sm:text-sm font-semibold rounded-full shadow-[0_0_20px_rgba(212,165,105,0.4)] w-full text-center">
+                                <i class="fa-brands fa-whatsapp mr-2.5 text-base sm:text-lg flex-shrink-0"></i>
+                                <span>{{ __('Call Astronaut') }} : {{ $svcPhone }}</span>
                             </a>
                             @if($lokasiLink)
-                            <a href="{{ $lokasiLink }}" class="inline-flex items-center justify-center px-6 py-4 bg-[#1F1611]/80 backdrop-blur hover:bg-[#5C3317] text-[#F0C97A] border border-[#C8902A]/50 text-sm font-semibold rounded-full shadow-lg transition-all duration-300 w-full">
-                                <i class="fa-solid fa-map-location-dot mr-3 text-lg"></i>
-                                {{ $lokasiText }}
+                            <a href="{{ $lokasiLink }}" class="inline-flex items-center justify-center px-4 sm:px-6 py-3.5 sm:py-4 bg-[#1F1611]/80 backdrop-blur hover:bg-[#5C3317] text-[#F0C97A] border border-[#C8902A]/50 text-xs sm:text-sm font-semibold rounded-full shadow-lg transition-all duration-300 w-full text-center">
+                                <i class="fa-solid fa-map-location-dot mr-2.5 text-base sm:text-lg flex-shrink-0"></i>
+                                <span>{{ $lokasiText }}</span>
                             </a>
                             @endif
                         </div>

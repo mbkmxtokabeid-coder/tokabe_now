@@ -31,13 +31,13 @@
         <div class="max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-12">
             
             <!-- Header Section -->
-            <div class="bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl p-8 md:p-12 shadow-xl border border-white/10 mb-12">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div class="md:w-1/2">
-                        <span class="text-[#F0C97A] font-bold tracking-widest text-sm uppercase mb-3 block">
+            <div class="bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-xl border border-white/10 mb-12 overflow-hidden">
+                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8 min-w-0">
+                    <div class="w-full xl:w-7/12 min-w-0">
+                        <span class="text-[#F0C97A] font-bold tracking-widest text-xs sm:text-sm uppercase mb-3 block">
                             {{ $countOoh }} OOH & {{ $countDooh }} DOOH
                         </span>
-                        <h1 class="text-4xl md:text-5xl font-black text-white leading-tight">
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
                             @if($countDooh > 0 && $countOoh > 0)
                                 {{ __('Discover Our DOOH & OOH Locations') }}
                             @elseif($countDooh > 0)
@@ -49,7 +49,7 @@
                                 <span class="text-[#F0C97A]">{{ __('in') }} {{ __($region) }}</span>
                             @endif
                         </h1>
-                        <p class="text-gray-300 mt-6 text-lg">
+                        <p class="text-gray-300 mt-4 sm:mt-6 text-sm sm:text-base md:text-lg leading-relaxed">
                             @if($countDooh > 0 && $countOoh > 0)
                                 {{ __('Explore our digital and static outdoor advertising locations across provinces to reach audiences with dynamic and engaging visual advertising.') }}
                             @elseif($countDooh > 0)
@@ -61,24 +61,38 @@
                     </div>
 
                     <!-- Search Form -->
-                    <div class="md:w-1/2 w-full">
-                        <form method="GET" action="{{ route('discover') }}" class="bg-[#1F1611]/60 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
-                            <h3 class="text-xl font-bold mb-4 text-white">{{ __('Search Strategic Location') }}</h3>
-                            <div class="flex flex-col sm:flex-row gap-3">
-                                <select name="region" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">
-                                    <option value="">{{ __('Semua Provinsi') }}</option>
-                                    @foreach($allProvinces as $prov)
-                                        <option value="{{ $prov }}" {{ (request('region') === $prov || __(request('region')) === __($prov) || str_replace('Sumatra', 'Sumatera', request('region')) === $prov) ? 'selected' : '' }}>{{ __($prov) }}</option>
-                                    @endforeach
-                                </select>
-                                <select name="type" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">
-                                    <option value="" {{ !request('type') ? 'selected' : '' }}>{{ __('Semua Tipe') }}</option>
-                                    <option value="DOOH" {{ request('type') === 'DOOH' ? 'selected' : '' }}>DOOH</option>
-                                    <option value="OOH" {{ request('type') === 'OOH' ? 'selected' : '' }}>OOH</option>
-                                </select>
-                                <button type="submit" class="bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold py-2 px-6 rounded-xl shadow-[0_0_15px_rgba(212,165,105,0.4)] hover:shadow-[0_0_25px_rgba(240,201,122,0.6)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-0.5 hover:scale-105 transition-all duration-300 whitespace-nowrap">
-                                    {{ __('Search') }}
-                                </button>
+                    <div class="w-full xl:w-5/12 2xl:w-4/12 max-w-xl min-w-0">
+                        <form method="GET" action="{{ route('discover') }}" class="bg-[#1F1611]/80 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-white/10 shadow-lg w-full box-border">
+                            <h3 class="text-lg sm:text-xl font-bold mb-4 text-white flex items-center gap-2">
+                                <i class="fa-solid fa-magnifying-glass text-[#F0C97A] text-sm"></i>
+                                <span>{{ __('Search Strategic Location') }}</span>
+                            </h3>
+                            <div class="flex flex-col gap-3 min-w-0">
+                                <!-- Row 1: Dropdown Provinsi (Full width) -->
+                                <div class="w-full min-w-0">
+                                    <select name="region" class="form-select w-full rounded-xl border border-white/20 bg-black/40 text-white text-sm py-2.5 px-3.5 shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574]/30 focus:outline-none [&>option]:text-black truncate">
+                                        <option value="">{{ __('Semua Provinsi') }}</option>
+                                        @foreach($allProvinces as $prov)
+                                            <option value="{{ $prov }}" {{ (request('region') === $prov || __(request('region')) === __($prov) || str_replace('Sumatra', 'Sumatera', request('region')) === $prov) ? 'selected' : '' }}>{{ __($prov) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <!-- Row 2: Dropdown Tipe & Tombol Cari -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-3 min-w-0">
+                                    <div class="w-full min-w-0">
+                                        <select name="type" class="form-select w-full rounded-xl border border-white/20 bg-black/40 text-white text-sm py-2.5 px-3.5 shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574]/30 focus:outline-none [&>option]:text-black truncate">
+                                            <option value="" {{ !request('type') ? 'selected' : '' }}>{{ __('Semua Tipe') }}</option>
+                                            <option value="DOOH" {{ request('type') === 'DOOH' ? 'selected' : '' }}>DOOH</option>
+                                            <option value="OOH" {{ request('type') === 'OOH' ? 'selected' : '' }}>OOH</option>
+                                        </select>
+                                    </div>
+                                    <div class="w-full min-w-0">
+                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold py-2.5 px-4 rounded-xl shadow-[0_0_15px_rgba(212,165,105,0.4)] hover:shadow-[0_0_25px_rgba(240,201,122,0.6)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-0.5 active:scale-95 transition-all duration-300 text-sm whitespace-nowrap">
+                                            <i class="fa-solid fa-search text-xs"></i>
+                                            <span>{{ __('Search') }}</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>

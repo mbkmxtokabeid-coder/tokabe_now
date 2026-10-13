@@ -117,14 +117,39 @@
                     <!-- Right Column: Form Card -->
                     <div class="lg:col-span-7 lg:mt-14" data-aos="fade-left" data-aos-duration="1000">
                         <div class="bg-[#5C3317]/30 backdrop-blur-md rounded-[2rem] p-6 sm:p-8 lg:p-10 shadow-lg border border-[#8B5E3C]/30">
-                            
-                            @if(session('success'))
-                                <div class="mb-6 p-4 bg-green-500/20 text-green-300 rounded-2xl border border-green-500/30 text-sm">
-                                    <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-                                </div>
-                            @endif
+                            <!-- Keterangan Transparan Pengiriman via WhatsApp -->
+                            <div class="mb-6 flex items-start gap-3 p-3.5 bg-[#D4A574]/10 border border-[#D4A574]/30 rounded-2xl text-xs text-[#F5EFE7]">
+                                <i class="fa-brands fa-whatsapp text-lg text-[#F0C97A] mt-0.5 flex-shrink-0"></i>
+                                <span class="leading-relaxed">
+                                    {{ app()->getLocale() == 'en' ? 'Inquiries submitted through this form will directly open a WhatsApp chat with Tokabe Customer Support.' : 'Pesan yang Anda kirimkan melalui formulir ini akan langsung diarahkan ke chat WhatsApp Customer Support Tokabe.' }}
+                                </span>
+                            </div>
 
-                            <form id="contact-form">
+                            <!-- Alert Fallback / Popup Gagal Terbuka (Tautan Manual) -->
+                            <div id="wa-fallback-alert" class="hidden mb-6 p-4 bg-amber-500/15 border border-amber-500/40 rounded-2xl text-amber-200 text-xs sm:text-sm animate-fade-in">
+                                <div class="flex items-start gap-3">
+                                    <i class="fa-solid fa-triangle-exclamation text-amber-400 text-lg mt-0.5 flex-shrink-0"></i>
+                                    <div class="flex-1">
+                                        <h4 class="font-bold text-amber-300 text-sm mb-1">
+                                            {{ app()->getLocale() == 'en' ? 'Popup Blocked by Browser' : 'Popup Otomatis Diblokir Peramban' }}
+                                        </h4>
+                                        <p class="text-xs text-amber-200/90 leading-relaxed mb-3">
+                                            {{ app()->getLocale() == 'en' ? 'Your browser prevented opening WhatsApp automatically. Please use the manual link below:' : 'Browser Anda memblokir pembukaan tab otomatis. Silakan klik tombol di bawah untuk membuka WhatsApp secara manual:' }}
+                                        </p>
+                                        <a id="wa-manual-link" href="#" target="_blank" rel="noopener noreferrer"
+                                           class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#2C1A0E] font-bold text-xs uppercase tracking-wider rounded-xl shadow-[0_0_15px_rgba(212,165,105,0.4)] hover:shadow-[0_0_25px_rgba(240,201,122,0.6)] transition-all transform hover:scale-105">
+                                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                                            <span>{{ app()->getLocale() == 'en' ? 'Open WhatsApp Manually' : 'Buka WhatsApp Secara Manual' }}</span>
+                                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                        </a>
+                                    </div>
+                                    <button type="button" id="close-wa-fallback" class="text-amber-400/80 hover:text-amber-200 p-1 text-base leading-none">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <form id="contact-form" data-phone="{{ $cleanPhone }}">
                                 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                                     <div>
@@ -139,21 +164,15 @@
                                     </div>
                                 </div>
                                 
-
-
-                                
                                 <div class="mb-6">
                                     <label for="message" class="block text-xs font-bold text-gray-200 mb-1.5 uppercase tracking-wide">{{ __('Message*') }}</label>
                                     <textarea name="message" id="message" required rows="4" placeholder="{{ __('Enter a question, feedback, or suggestions...') }}" 
-                                        class="w-full px-4 py-3 bg-[#1A0F07]/50 border border-[#8B5E3C]/30 rounded-xl focus:ring-2 focus:ring-[#D4A574]/30 focus:border-[#D4A574] outline-none transition-all placeholder-gray-500 text-[#F5EFE7] text-sm font-medium resize-none leading-relaxed">{{ old('message') }}</textarea>
-                                    @error('message')
-                                        <p class="text-red-400 text-xs mt-1.5 ml-1">{{ $message }}</p>
-                                    @enderror
+                                        class="w-full px-4 py-3 bg-[#1A0F07]/50 border border-[#8B5E3C]/30 rounded-xl focus:ring-2 focus:ring-[#D4A574]/30 focus:border-[#D4A574] outline-none transition-all placeholder-gray-500 text-[#F5EFE7] text-sm font-medium resize-none leading-relaxed"></textarea>
                                 </div>
 
-                                
-                                <button type="submit" class="w-full md:w-auto px-8 py-3.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#2C1A0E] font-bold rounded-xl shadow-[0_0_15px_rgba(212,165,105,0.4)] hover:shadow-[0_0_25px_rgba(240,201,122,0.6)] transform hover:scale-105 transition-all duration-300 uppercase tracking-wider text-xs sm:text-sm">
-                                    {{ __('Submit') }}
+                                <button type="submit" id="submit-btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#2C1A0E] font-bold rounded-xl shadow-[0_0_15px_rgba(212,165,105,0.4)] hover:shadow-[0_0_25px_rgba(240,201,122,0.6)] transform hover:scale-105 active:scale-95 transition-all duration-300 uppercase tracking-wider text-xs sm:text-sm disabled:opacity-70 disabled:cursor-not-allowed">
+                                    <span id="btn-icon"><i class="fa-brands fa-whatsapp text-lg"></i></span>
+                                    <span id="btn-text">{{ app()->getLocale() == 'en' ? 'Send via WhatsApp' : 'Kirim via WhatsApp' }}</span>
                                 </button>
                             </form>
                             
@@ -218,23 +237,85 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Form logic to WhatsApp
+            // Form logic to WhatsApp with loading state and popup blocker fallback
             const form = document.getElementById('contact-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnIcon = document.getElementById('btn-icon');
+            const btnText = document.getElementById('btn-text');
+            const fallbackAlert = document.getElementById('wa-fallback-alert');
+            const manualLink = document.getElementById('wa-manual-link');
+            const closeFallback = document.getElementById('close-wa-fallback');
+
+            if (closeFallback && fallbackAlert) {
+                closeFallback.addEventListener('click', function() {
+                    fallbackAlert.classList.add('hidden');
+                });
+            }
+
             if (form) {
+                const targetPhone = form.getAttribute('data-phone') || '628115239999';
+                const originalText = btnText ? btnText.innerText : 'Kirim via WhatsApp';
+                const originalIcon = btnIcon ? btnIcon.innerHTML : '<i class="fa-brands fa-whatsapp text-lg"></i>';
+
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
+                    
                     const name = document.getElementById('name').value.trim();
                     const company = document.getElementById('company').value.trim();
                     const message = document.getElementById('message').value.trim();
-                    
+
+                    if (!name || !company || !message) {
+                        return;
+                    }
+
+                    // 1. Loading State
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        if (btnIcon) btnIcon.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-lg"></i>';
+                        if (btnText) btnText.innerText = '{{ app()->getLocale() == "en" ? "Opening WhatsApp..." : "Membuka WhatsApp..." }}';
+                    }
+
                     let text = `Halo Admin Tokabe,\n\n`;
                     text += `Saya ingin mengirimkan pesan dari halaman kontak website.\n\n`;
                     text += `*Nama:* ${name}\n`;
                     text += `*Perusahaan:* ${company}\n`;
                     text += `*Pesan:* ${message}`;
                     
-                    const waUrl = `https://api.whatsapp.com/send?phone=628115239999&text=${encodeURIComponent(text)}`;
-                    window.open(waUrl, '_blank');
+                    const waUrl = `https://api.whatsapp.com/send?phone=${encodeURIComponent(targetPhone)}&text=${encodeURIComponent(text)}`;
+                    
+                    // 2. Open WhatsApp window & detect popup blocker
+                    let popupWindow = null;
+                    try {
+                        popupWindow = window.open(waUrl, '_blank');
+                    } catch (err) {
+                        popupWindow = null;
+                    }
+
+                    // 3. Fallback check & reset button state
+                    setTimeout(function() {
+                        const isBlocked = !popupWindow || popupWindow.closed || typeof popupWindow.closed === 'undefined';
+                        
+                        if (isBlocked) {
+                            if (manualLink) {
+                                manualLink.href = waUrl;
+                            }
+                            if (fallbackAlert) {
+                                fallbackAlert.classList.remove('hidden');
+                                fallbackAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            }
+                        } else {
+                            if (fallbackAlert) {
+                                fallbackAlert.classList.add('hidden');
+                            }
+                        }
+
+                        // Restore button state
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            if (btnIcon) btnIcon.innerHTML = originalIcon;
+                            if (btnText) btnText.innerText = originalText;
+                        }
+                    }, 650);
                 });
             }
 
