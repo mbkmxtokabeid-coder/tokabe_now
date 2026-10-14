@@ -3,20 +3,86 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ __('Tokabe.id adalah agensi periklanan terbaik di Medan, Sumatera. Kami menyediakan layanan sewa Videotron (DOOH), Billboard (OOH), Event Organizer, dan Brand Activation.') }}">
+    <meta name="keywords" content="Sewa videotron Medan, Billboard Sumatera, Event organizer Medan, Advertising agency Sumatera, Jasa OOH Medan">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="{{ __('Tokabe.id - Discover Location') }}">
+    <meta property="og:description" content="{{ __('Tokabe.id adalah agensi periklanan terbaik di Medan, Sumatera. Kami menyediakan layanan sewa Videotron (DOOH), Billboard (OOH), Event Organizer, dan Brand Activation.') }}">
+    <meta property="og:image" content="{{ asset('images/LogoTKB.jpg') }}">
+    <meta property="og:url" content="{{ \App\Helpers\SeoHelper::getCanonicalUrl() }}">    
     <title>{{ __('Tokabe.id - Discover Location') }}</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    {{-- <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'"> --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <link rel="icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
-    <link rel="shortcut icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
+    <link rel="icon" type="image/jpeg" href="{{ asset('images/LogoTKB.jpg') }}?v=2">
+    <link rel="shortcut icon" type="image/jpeg" href="{{ asset('images/LogoTKB.jpg') }}?v=2">
 
     <style>
+        /* Inlined Poppins font-face to eliminate render-blocking external Google Fonts request */
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 300;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1xlFQ.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecg.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1xlFQ.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
         body { font-family: 'Poppins', sans-serif; }
+        
+        /* Font Awesome font-display: swap override to prevent text blocking (LCP) */
+        @font-face {
+            font-family: 'Font Awesome 6 Free';
+            font-style: normal;
+            font-weight: 900;
+            font-display: swap;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2") format("woff2");
+        }
+        @font-face {
+            font-family: 'Font Awesome 6 Brands';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-brands-400.woff2") format("woff2");
+        }
     </style>
+    
 </head>
 <body class="bg-[#1F1611] antialiased text-[#E5D5C5] flex flex-col min-h-screen">
 
@@ -61,38 +127,24 @@
                     </div>
 
                     <!-- Search Form -->
-                    <div class="w-full xl:w-5/12 2xl:w-4/12 max-w-xl min-w-0">
-                        <form method="GET" action="{{ route('discover') }}" class="bg-[#1F1611]/80 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-white/10 shadow-lg w-full box-border">
-                            <h3 class="text-lg sm:text-xl font-bold mb-4 text-white flex items-center gap-2">
-                                <i class="fa-solid fa-magnifying-glass text-[#F0C97A] text-sm"></i>
-                                <span>{{ __('Search Strategic Location') }}</span>
-                            </h3>
-                            <div class="flex flex-col gap-3 min-w-0">
-                                <!-- Row 1: Dropdown Provinsi (Full width) -->
-                                <div class="w-full min-w-0">
-                                    <select name="region" class="form-select w-full rounded-xl border border-white/20 bg-black/40 text-white text-sm py-2.5 px-3.5 shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574]/30 focus:outline-none [&>option]:text-black truncate">
-                                        <option value="">{{ __('Semua Provinsi') }}</option>
-                                        @foreach($allProvinces as $prov)
-                                            <option value="{{ $prov }}" {{ (request('region') === $prov || __(request('region')) === __($prov) || str_replace('Sumatra', 'Sumatera', request('region')) === $prov) ? 'selected' : '' }}>{{ __($prov) }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <!-- Row 2: Dropdown Tipe & Tombol Cari -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-3 min-w-0">
-                                    <div class="w-full min-w-0">
-                                        <select name="type" class="form-select w-full rounded-xl border border-white/20 bg-black/40 text-white text-sm py-2.5 px-3.5 shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574]/30 focus:outline-none [&>option]:text-black truncate">
-                                            <option value="" {{ !request('type') ? 'selected' : '' }}>{{ __('Semua Tipe') }}</option>
-                                            <option value="DOOH" {{ request('type') === 'DOOH' ? 'selected' : '' }}>DOOH</option>
-                                            <option value="OOH" {{ request('type') === 'OOH' ? 'selected' : '' }}>OOH</option>
-                                        </select>
-                                    </div>
-                                    <div class="w-full min-w-0">
-                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold py-2.5 px-4 rounded-xl shadow-[0_0_15px_rgba(212,165,105,0.4)] hover:shadow-[0_0_25px_rgba(240,201,122,0.6)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-0.5 active:scale-95 transition-all duration-300 text-sm whitespace-nowrap">
-                                            <i class="fa-solid fa-search text-xs"></i>
-                                            <span>{{ __('Search') }}</span>
-                                        </button>
-                                    </div>
-                                </div>
+                    <div class="md:w-1/2 w-full">
+                        <form method="GET" action="{{ route('discover') }}" class="bg-[#1F1611]/60 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
+                            <h3 class="text-xl font-bold mb-4 text-white">{{ __('Search Strategic Location') }}</h3>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <select name="region" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">
+                                    <option value="">{{ __('Semua Provinsi') }}</option>
+                                    @foreach($allProvinces as $prov)
+                                        <option value="{{ $prov }}" {{ (request('region') === $prov || __(request('region')) === __($prov) || str_replace('Sumatra', 'Sumatera', request('region')) === $prov) ? 'selected' : '' }}>{{ __($prov) }}</option>
+                                    @endforeach
+                                </select>
+                                <select name="type" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">
+                                    <option value="" {{ !request('type') ? 'selected' : '' }}>{{ __('Semua Tipe') }}</option>
+                                    <option value="DOOH" {{ request('type') === 'DOOH' ? 'selected' : '' }}>DOOH</option>
+                                    <option value="OOH" {{ request('type') === 'OOH' ? 'selected' : '' }}>OOH</option>
+                                </select>
+                                <button type="submit" class="bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold py-2 px-6 rounded-xl shadow-[0_0_15px_rgba(212,165,105,0.4)] hover:shadow-[0_0_25px_rgba(240,201,122,0.6)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-0.5 hover:scale-105 transition-all duration-300 whitespace-nowrap">
+                                    {{ __('Search') }}
+                                </button>
                             </div>
                         </form>
                     </div>
