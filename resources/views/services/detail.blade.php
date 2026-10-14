@@ -22,6 +22,9 @@
     @else
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
+
+    <link rel="icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
     <style>
         /* Inlined Poppins font-face to eliminate render-blocking external Google Fonts request */
         @font-face {

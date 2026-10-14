@@ -38,6 +38,9 @@
     @else
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
+
+    <link rel="icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #2C1A0E; color: #F5EFE7; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', sans-serif; }

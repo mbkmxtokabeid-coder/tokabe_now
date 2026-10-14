@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -25,6 +25,9 @@
     @else
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
+
+    <link rel="icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
     <style>
         /* Inlined Poppins font-face to eliminate render-blocking external Google Fonts request */
         @font-face {

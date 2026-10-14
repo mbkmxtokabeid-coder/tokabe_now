@@ -6,6 +6,8 @@
     <title>Single Detail Lokasi - Dummy - Tokabe.id</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
 </head>
 <body class="bg-white antialiased text-gray-900 font-sans">
     <x-navbar />
