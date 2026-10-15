@@ -13,7 +13,11 @@
     <meta property="og:url" content="{{ \App\Helpers\SeoHelper::getCanonicalUrl() }}">    
     <title>{{ __('Tokabe.id - Legality') }}</title>
 
-    
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T6SH8FXD');</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
     <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecg.woff2" crossorigin>
@@ -91,6 +95,9 @@
     </style>
 </head>
 <body class="bg-[#2C1A0E] antialiased text-[#F5EFE7] font-sans">
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T6SH8FXD"
+        height="0" width="0" style="display:none;visibility:hidden">
+    </iframe></noscript>
     <x-navbar />
     <main>
         <!-- Header Hero Section -->
