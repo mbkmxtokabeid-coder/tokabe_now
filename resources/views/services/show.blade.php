@@ -207,9 +207,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             </div>
 
                             <div class="p-3 sm:p-4 lg:p-6">
-                                <h3 class="text-xs sm:text-sm lg:text-base font-bold text-white mb-2 sm:mb-3 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
+                                <h2 class="text-xs sm:text-sm lg:text-base font-bold text-white mb-2 sm:mb-3 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
                                     {{ $item->title }}
-                                </h3>
+                                </h2>
                                 @if(!empty($item->media) || !empty($item->size))
                                 <div class="border-t border-white/20 pt-2 sm:pt-3 lg:pt-4 text-[10px] sm:text-xs lg:text-sm text-gray-200">
                                     <div class="flex flex-col sm:grid sm:grid-cols-2 gap-1 sm:gap-2 lg:gap-3">
