@@ -2,14 +2,14 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-                <h3 class="text-2xl font-semibold mb-4">Tokabe.id</h3>
+                <p class="text-2xl font-semibold mb-4">Tokabe.id</p>
                 <p class="text-gray-300 leading-relaxed max-w-xl">
                     {{ __('We help your brand stand out with professional DOOH, OOH, video, and photography advertising solutions.') }}
                 </p>
             </div>
             <div class="grid grid-cols-2 gap-6 text-gray-300">
                 <div>
-                    <h4 class="font-semibold mb-3">{{ __('Company') }}</h4>
+                    <p class="font-semibold mb-3">{{ __('Company') }}</p>
                     <ul class="space-y-2 text-sm">
                         <li><a href="{{ route('home') }}#services" class="hover:text-white">{{ __('Services') }}</a></li>
                         <li><a href="{{ route('home') }}#partners" class="hover:text-white">{{ __('Partners') }}</a></li>
@@ -17,7 +17,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-semibold mb-3">{{ __('Contact') }}</h4>
+                    <p class="font-semibold mb-3">{{ __('Contact') }}</p>
                     <ul class="space-y-2 text-sm">
                         @php
                             $email = isset($globalContact) && $globalContact->email ? $globalContact->email : 'info@tokabe.id';

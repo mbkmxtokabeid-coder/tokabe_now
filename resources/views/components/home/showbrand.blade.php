@@ -64,9 +64,9 @@
                 </div>
                 <!-- Text -->
                 <div class="p-8 md:p-12 flex flex-col justify-center">
-                    <h3 class="text-3xl font-black text-white mb-6 uppercase tracking-tight">
+                    <h2 class="text-3xl font-black text-white mb-6 uppercase tracking-tight">
                         {{ $judul }}
-                    </h3>
+                    </h2>
                     <div class="prose prose-lg prose-invert text-gray-300 font-light leading-relaxed mb-8">
                         {!! $deskripsi !!}
                     </div>
@@ -117,7 +117,11 @@
                             <div class="absolute inset-0 transition-colors" style="z-index: 3;" :class="expanded ? 'bg-black/0' : 'bg-black/20'"></div>
                         </div>
                         <div class="p-6 text-center flex flex-col flex-1">
-                            <h4 class="text-xl font-bold text-white mb-2 uppercase tracking-tight transition-all duration-300">{{ $dTitle }}</h4>
+                            @if($hasMain)
+                                <h3 class="text-xl font-bold text-white mb-2 uppercase tracking-tight transition-all duration-300">{{ $dTitle }}</h3>
+                            @else
+                                <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-tight transition-all duration-300">{{ $dTitle }}</h2>
+                            @endif
                             <div class="relative overflow-hidden transition-all duration-1000 ease-in-out" 
                                  :class="expanded ? 'max-h-[250px]' : 'max-h-[4.5rem]'"
                                  :style="expanded ? '' : '-webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%); mask-image: linear-gradient(to bottom, black 50%, transparent 100%);'">
@@ -164,7 +168,11 @@
                             <div class="absolute inset-0 transition-colors" style="z-index: 3;" :class="expanded ? 'bg-black/0' : 'bg-black/20'"></div>
                         </div>
                         <div class="p-6 text-center flex flex-col flex-1">
-                            <h4 class="text-xl font-bold text-white mb-2 uppercase tracking-tight transition-all duration-300">{{ $dTitle }}</h4>
+                            @if($hasMain)
+                                <h3 class="text-xl font-bold text-white mb-2 uppercase tracking-tight transition-all duration-300">{{ $dTitle }}</h3>
+                            @else
+                                <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-tight transition-all duration-300">{{ $dTitle }}</h2>
+                            @endif
                             <div class="relative overflow-hidden transition-all duration-1000 ease-in-out" 
                                  :class="expanded ? 'max-h-[250px]' : 'max-h-[4.5rem]'"
                                  :style="expanded ? '' : '-webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%); mask-image: linear-gradient(to bottom, black 50%, transparent 100%);'">
