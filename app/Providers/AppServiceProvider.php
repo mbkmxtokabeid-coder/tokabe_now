@@ -30,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Pagination\Paginator::defaultView('vendor.pagination.custom');
+
         if (config('app.env') === 'production' || env('FORCE_HTTPS', false) || !app()->isLocal()) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
 

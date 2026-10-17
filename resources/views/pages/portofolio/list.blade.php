@@ -115,32 +115,6 @@
             border-color: #D6A24C;
             box-shadow: 0 0 0 3px rgba(214, 162, 76, 0.15);
         }
-        
-        /* Pagination Styling */
-        nav[role="navigation"] p {
-            display: none;
-        }
-        .pagination-container .relative.z-0.inline-flex.rounded-md.shadow-sm {
-            background: #1A0F07;
-            border-radius: 999px;
-            padding: 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .pagination-container a, .pagination-container span[aria-disabled="true"] {
-            border: none !important;
-            border-radius: 999px !important;
-            margin: 0 2px;
-            color: #9CA3AF;
-            font-weight: 500;
-        }
-        .pagination-container span[aria-current="page"] > span {
-            background: linear-gradient(90deg, #D9A441, #F3C96A) !important;
-            color: #2C1A0E !important;
-            border: none !important;
-            border-radius: 999px !important;
-            box-shadow: 0 4px 10px rgba(217, 164, 65, 0.3);
-        }
         @font-face {
             font-family: 'Poppins';
             font-style: normal;
@@ -346,7 +320,7 @@
             <!-- Pagination -->
             @if($portfolios->hasPages())
                 <div class="mt-16 flex justify-center pagination-container">
-                    {{ $portfolios->links() }}
+                    {{ $portfolios->appends(request()->query())->links('vendor.pagination.custom') }}
                 </div>
             @endif
             
