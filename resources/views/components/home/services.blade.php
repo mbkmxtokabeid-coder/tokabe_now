@@ -233,7 +233,7 @@
                         <div onclick="window.location.href='{{ route('services.show', $item->endpoint) }}'" class="w-full max-w-[320px] h-full cursor-pointer bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-xl border border-white/20 active:scale-[0.98] transition-transform duration-200 flex flex-col justify-between">
                             <div>
                                 <!-- Bagian Gambar / Media -->
-                                <div class="w-full aspect-[16/10] overflow-hidden bg-[#2C1A0E] relative">
+                                <div class="w-full aspect-video overflow-hidden bg-[#2C1A0E] relative">
                                     <!-- Premium Skeleton Loader -->
                                     <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
                                         <div class="absolute inset-0 bg-black/20 animate-pulse"></div>

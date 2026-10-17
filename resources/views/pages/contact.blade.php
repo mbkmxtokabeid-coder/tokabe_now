@@ -28,7 +28,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
 </head>
-<body class="bg-[#2C1A0E] antialiased text-[#F5EFE7] font-sans">
+<body class="bg-[#2C1A0E] antialiased text-[#F5EFE7] font-sans overflow-x-hidden">
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T6SH8FXD"
         height="0" width="0" style="display:none;visibility:hidden">
     </iframe></noscript>
@@ -36,16 +36,16 @@
 
     <main class="min-h-screen pb-20 bg-[#2C1A0E]">
         <!-- Header Hero Section -->
-        <div class="bg-gradient-to-br from-[#1A0F07] via-[#2C1A0E] to-[#5C3317] pt-40 pb-24 text-center relative overflow-hidden">
+        <div class="bg-gradient-to-br from-[#1A0F07] via-[#2C1A0E] to-[#5C3317] pt-28 sm:pt-36 md:pt-40 pb-12 sm:pb-16 md:pb-24 text-center relative overflow-hidden">
             <!-- Decorative subtle glowing blur circles -->
             <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-white opacity-5 blur-3xl"></div>
             <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-[#D4A574] opacity-10 blur-3xl"></div>
             
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" data-aos="fade-up" data-aos-duration="1000">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight mb-4 drop-shadow-md">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight mb-3 sm:mb-4 drop-shadow-md">
                     {!! __('Contact Us') !!}
                 </h1>
-                <p class="text-base sm:text-lg lg:text-xl text-[#F5EFE7] max-w-3xl mx-auto mb-0 font-light leading-relaxed drop-shadow-sm">
+                <p class="text-sm sm:text-lg lg:text-xl text-[#F5EFE7] max-w-3xl mx-auto mb-0 font-light leading-relaxed drop-shadow-sm">
                     {{ __('Get in touch with our team for any inquiries about advertising solutions in Medan and Sumatera.') }}
                 </p>
             </div>
@@ -89,9 +89,9 @@
                                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $contactEmail }}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300">
                                     <i class="fas fa-envelope text-lg"></i>
                                 </a>
-                                <div>
+                                <div class="min-w-0 flex-1">
                                     <span class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Email:') }}</span>
-                                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $contactEmail }}" target="_blank" rel="noopener noreferrer" class="text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors">{{ $contactEmail }}</a>
+                                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $contactEmail }}" target="_blank" rel="noopener noreferrer" class="block text-sm sm:text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors break-all">{{ $contactEmail }}</a>
                                 </div>
                             </div>
                             
@@ -100,9 +100,9 @@
                                 <a href="https://wa.me/{{ $cleanPhone }}" target="_blank" rel="noopener noreferrer" title="{{ __('Hubungi via WhatsApp / Telepon') }}" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300">
                                     <i class="fas fa-phone-alt text-lg"></i>
                                 </a>
-                                <div>
+                                <div class="min-w-0 flex-1">
                                     <span class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Phone:') }}</span>
-                                    <a href="https://wa.me/{{ $cleanPhone }}" target="_blank" rel="noopener noreferrer" title="{{ __('Hubungi via WhatsApp / Telepon') }}" class="text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors">{{ $displayPhone }}</a>
+                                    <a href="https://wa.me/{{ $cleanPhone }}" target="_blank" rel="noopener noreferrer" title="{{ __('Hubungi via WhatsApp / Telepon') }}" class="block text-sm sm:text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors">{{ $displayPhone }}</a>
                                 </div>
                             </div>
                             
@@ -111,10 +111,10 @@
                                 <a href="https://maps.app.goo.gl/m2DKjqNtE15Muzqg6" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300 mt-0.5">
                                     <i class="fas fa-map-marker-alt text-lg"></i>
                                 </a>
-                                <div>
+                                <div class="min-w-0 flex-1">
                                     <span class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Location:') }}</span>
-                                    <a href="https://maps.app.goo.gl/m2DKjqNtE15Muzqg6" target="_blank" rel="noopener noreferrer" class="text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors leading-relaxed whitespace-nowrap">
-                                        {!! __('Komplek Setiabudi Point No. D-10<br>Medan, Indonesia') !!}
+                                    <a href="https://maps.app.goo.gl/m2DKjqNtE15Muzqg6" target="_blank" rel="noopener noreferrer" class="block text-sm sm:text-base lg:text-sm xl:text-base font-bold text-[#F5EFE7] hover:text-[#D4A574] transition-colors leading-snug sm:leading-relaxed break-words">
+                                        {!! __('Komplek Setiabudi Point<br>No. D-10 Medan, Indonesia') !!}
                                     </a>
                                 </div>
                             </div>

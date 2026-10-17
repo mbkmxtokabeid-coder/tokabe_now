@@ -22,12 +22,12 @@
         ? 'Hello Tokabe.id, I visited Tokabe website and would like to consult regarding advertising/event needs for my company. Could you provide more details?'
         : 'Halo Tokabe.id, saya berkunjung ke website Tokabe dan ingin berkonsultasi mengenai kebutuhan periklanan/event untuk perusahaan saya. Boleh info selengkapnya?';
 
-    // Check service detail route: /services/{id}
-    $serviceId = request()->route('id');
-    if (!$serviceId && preg_match('#^services/(\d+)#', $currentPath, $sMatches)) {
-        $serviceId = $sMatches[1];
+    // Check service detail route: /services/{endpoint}
+    $serviceEndpoint = request()->route('endpoint') ?? request()->route('id');
+    if (!$serviceEndpoint && preg_match('#^services/([^/]+)#', $currentPath, $sMatches)) {
+        $serviceEndpoint = $sMatches[1];
     }
-    $isServiceDetail = (request()->routeIs('services.show') && $serviceId) || (str_starts_with($currentPath, 'services/') && !empty($serviceId));
+    $isServiceDetail = request()->routeIs('services.show') || (str_starts_with($currentPath, 'services/') && !empty($serviceEndpoint));
     $isServiceIndex = request()->routeIs('services.index') || $currentPath === 'services';
 
     // Page-specific detection
@@ -35,8 +35,8 @@
         $svcObj = null;
         if (isset($service) && is_object($service) && isset($service->judul)) {
             $svcObj = $service;
-        } elseif ($serviceId) {
-            $svcObj = \App\Models\Service::find($serviceId);
+        } elseif ($serviceEndpoint) {
+            $svcObj = \App\Models\Service::where('endpoint', $serviceEndpoint)->orWhere('id', $serviceEndpoint)->first();
         }
 
         $svcTitle = '';
@@ -183,12 +183,12 @@
             : 'Halo Tokabe.id, saya ingin konsultasi mengenai aspek legalitas dan perizinan resmi pemasangan media reklame/billboard di Sumatera Utara.';
     }
 
-    $initialWaUrl = "https://api.whatsapp.com/send?phone={$cleanPhone}&text=" . urlencode($messageTemplate);
+    $initialWaUrl = "https://wa.me/{$cleanPhone}?text=" . urlencode($messageTemplate);
 @endphp
 
 <!-- FLOATING WHATSAPP WIDGET (TOKABE INTERACTIVE CTA) -->
 <div id="tokabe-floating-wa-container" 
-     class="fixed bottom-6 right-5 sm:right-6 z-50 flex flex-col items-end pointer-events-none select-none"
+     class="fixed bottom-4 right-3.5 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end pointer-events-none select-none"
      data-phone="{{ $cleanPhone }}"
      data-raw-template="{{ $messageTemplate }}"
      data-page-category="{{ $pageCategory }}"
@@ -196,7 +196,7 @@
 
     <!-- Interactive Chat Bubble / Tooltip -->
     <div id="tokabe-wa-tooltip" 
-         class="pointer-events-none opacity-0 translate-y-3 transition-all duration-500 ease-out mb-3 max-w-[270px] sm:max-w-[300px] bg-[#1F140D]/95 backdrop-blur-md text-[#F5EFE7] rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.6)] border border-[#D4A574]/40 relative group cursor-pointer hover:border-[#F0C97A] hover:shadow-[0_12px_40px_rgba(212,165,105,0.25)]">
+         class="pointer-events-none opacity-0 translate-y-3 transition-all duration-500 ease-out mb-2.5 sm:mb-3 max-w-[240px] xs:max-w-[270px] sm:max-w-[300px] bg-[#1F140D]/95 backdrop-blur-md text-[#F5EFE7] rounded-2xl p-3 sm:p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.6)] border border-[#D4A574]/40 relative group cursor-pointer hover:border-[#F0C97A] hover:shadow-[0_12px_40px_rgba(212,165,105,0.25)]">
         
         <!-- Close button -->
         <button type="button" 
@@ -221,7 +221,7 @@
         </div>
 
         <!-- Body text -->
-        <p id="tokabe-wa-tooltip-text" class="text-xs text-gray-200 font-medium leading-relaxed m-0">
+        <p id="tokabe-wa-tooltip-text" class="text-[11px] sm:text-xs text-gray-200 font-medium leading-snug sm:leading-relaxed m-0">
             {{ $tooltipText }}
         </p>
 
@@ -241,7 +241,7 @@
        target="_blank" 
        rel="noopener noreferrer"
        aria-label="Chat WhatsApp Tokabe.id"
-       class="pointer-events-auto relative flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-[#1EBE5D] via-[#25D366] to-[#4ADE80] text-white shadow-[0_8px_25px_rgba(37,211,102,0.45)] hover:shadow-[0_12px_35px_rgba(37,211,102,0.7)] ring-2 ring-[#D4A574]/50 ring-offset-2 ring-offset-[#1A0F07] transform hover:scale-110 active:scale-95 transition-all duration-300 group"
+       class="pointer-events-auto relative flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-gradient-to-tr from-[#1EBE5D] via-[#25D366] to-[#4ADE80] text-white shadow-[0_8px_25px_rgba(37,211,102,0.45)] hover:shadow-[0_12px_35px_rgba(37,211,102,0.7)] ring-2 ring-[#D4A574]/50 ring-offset-2 ring-offset-[#1A0F07] transform hover:scale-110 active:scale-95 transition-all duration-300 group"
        data-gtm-event="whatsapp_click"
        data-event-category="Conversion"
        data-event-action="Click Floating WhatsApp"
@@ -251,10 +251,10 @@
         <span class="absolute -inset-1 rounded-full bg-[#25D366] opacity-35 animate-ping pointer-events-none"></span>
 
         <!-- Online Badge Indicator -->
-        <span class="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-[#22c55e] border-2 border-[#1A0F07] rounded-full shadow-sm"></span>
+        <span class="absolute top-0.5 right-0.5 w-3 h-3 sm:w-3.5 sm:h-3.5 bg-[#22c55e] border-2 border-[#1A0F07] rounded-full shadow-sm"></span>
 
         <!-- WhatsApp Icon (SVG for maximum crispness and zero loading delay) -->
-        <svg class="w-8 h-8 sm:w-9 sm:h-9 fill-current drop-shadow-md transform group-hover:rotate-12 transition-transform duration-300" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg class="w-6 h-6 sm:w-8 sm:h-8 lg:w-9 lg:h-9 fill-current drop-shadow-md transform group-hover:rotate-12 transition-transform duration-300" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.83a8.18 8.18 0 0 1-5.82 2.41c-1.47 0-2.93-.39-4.21-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.64c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.07-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.39-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.49-.4-.42-.56-.43h-.47c-.17 0-.43.06-.66.31-.22.25-.86.84-.86 2.05s.88 2.38 1 2.54c.12.17 1.73 2.64 4.2 3.7 2.46 1.07 2.46.71 2.91.67.44-.05 1.47-.6 1.67-1.18.21-.59.21-1.09.15-1.19-.06-.1-.23-.16-.48-.28z"/>
         </svg>
     </a>
@@ -368,17 +368,17 @@
             }
 
             // Update the WhatsApp link with the final encoded message
-            const finalWaUrl = 'https://api.whatsapp.com/send?phone=' + encodeURIComponent(phone) + '&text=' + encodeURIComponent(resolvedMessage);
+            const finalWaUrl = 'https://wa.me/' + encodeURIComponent(phone) + '?text=' + encodeURIComponent(resolvedMessage);
             waBtn.setAttribute('href', finalWaUrl);
             waBtn.setAttribute('data-event-label', pageCategory);
 
-            // 2. Animate Tooltip appearance after short delay (1.2s)
+            // 2. Animate Tooltip appearance after short delay (1s)
             const isDismissed = sessionStorage.getItem('tokabe_wa_dismissed');
             if (!isDismissed && tooltip) {
                 setTimeout(function() {
                     tooltip.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
                     tooltip.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
-                }, 1200);
+                }, 1000);
             }
 
             // Close button click

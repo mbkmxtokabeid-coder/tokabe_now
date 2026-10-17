@@ -8,8 +8,14 @@
     #main-navbar.scrolled { 
         background: rgba(46,30,16,0.97) !important; 
         box-shadow: 0 2px 32px rgba(0,0,0,0.35); 
-        padding-top: 1.2rem; 
-        padding-bottom: 1.2rem; 
+        padding-top: 0.75rem !important; 
+        padding-bottom: 0.75rem !important; 
+    }
+    @media (min-width: 1024px) {
+        #main-navbar.scrolled { 
+            padding-top: 1.2rem !important; 
+            padding-bottom: 1.2rem !important; 
+        }
     }
 
     /* Dropdown CSS for Desktop */
@@ -77,18 +83,18 @@
     }
 </style>
 
-<nav id="main-navbar" class="fixed top-0 left-0 right-0 w-full z-50 px-6 py-7 transition-all duration-300 {{ $theme == 'dark' ? 'scrolled' : '' }}" data-theme="{{ $theme }}">
-    <div class="max-w-[1600px] mx-auto flex items-center justify-between gap-4 sm:gap-8">
+<nav id="main-navbar" class="fixed top-0 left-0 right-0 w-full z-50 px-5 sm:px-6 lg:px-8 py-3 sm:py-5 lg:py-7 transition-all duration-300 {{ $theme == 'dark' ? 'scrolled' : '' }}" data-theme="{{ $theme }}">
+    <div class="max-w-[1600px] mx-auto flex items-center justify-between gap-2 sm:gap-6 lg:gap-8">
         
         <!-- Logo -->
         <a href="/" class="flex-shrink-0 flex items-center group">
             <img src="{{ asset('images/Logo-TOKABE.png') }}" 
                  alt="{{ \App\Helpers\SeoHelper::getImageAlt('logo', 'Logo Tokabe.id') }}" 
                  width="171" height="48" decoding="async"
-                 class="h-12 w-auto object-contain filter drop-shadow-md onError-fallback"
+                 class="h-8 sm:h-10 lg:h-12 w-auto object-contain filter drop-shadow-md onError-fallback transition-all duration-300"
                  style="aspect-ratio: 171 / 48;"
                  onerror="this.style.display='none'; document.getElementById('logo-text-fallback').style.display='block';">
-            <span id="logo-text-fallback" class="hidden text-xl font-bold text-white tracking-tight drop-shadow-md">
+            <span id="logo-text-fallback" class="hidden text-lg sm:text-xl font-bold text-white tracking-tight drop-shadow-md">
                 Tokabe<span class="text-[#D4A574]">.id</span>
             </span>
         </a>
@@ -175,19 +181,19 @@
         </div>
 
         <!-- Mobile Hamburger & Lang Switcher -->
-        <div class="xl:hidden flex items-center gap-3.5">
-            <div class="flex items-center text-[13px] font-semibold text-white bg-white/10 backdrop-blur-md py-1 px-3 rounded-full border border-white/10 shadow-sm">
+        <div class="xl:hidden flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <div class="flex items-center text-xs sm:text-[13px] font-semibold text-white bg-white/10 backdrop-blur-md py-1 px-2.5 sm:px-3 rounded-full border border-white/10 shadow-sm">
                 <a href="{{ route('lang.switch', 'en') }}" class="transition-colors {{ app()->getLocale() == 'en' ? 'text-[#D4A574] font-bold' : 'text-white/70 hover:text-[#D4A574]' }}">EN</a>
-                <span class="mx-1.5 text-white/20">|</span>
+                <span class="mx-1 text-white/20">|</span>
                 <a href="{{ route('lang.switch', 'id') }}" class="transition-colors {{ app()->getLocale() == 'id' ? 'text-[#D4A574] font-bold' : 'text-white/70 hover:text-[#D4A574]' }}">ID</a>
             </div>
 
-            <button id="mobile-menu-button" type="button" aria-label="Buka menu navigasi" class="p-2 text-[#f2ebe2] hover:text-[#D4A574] transition-colors focus:outline-none" aria-expanded="false">
-                <svg id="hamburger-icon" class="w-6 h-6 block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            <button id="mobile-menu-button" type="button" aria-label="Buka menu navigasi" class="flex items-center justify-center w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 border border-white/15 text-[#f2ebe2] hover:text-[#D4A574] transition-all duration-200 focus:outline-none flex-shrink-0 shadow-sm" aria-expanded="false">
+                <svg id="hamburger-icon" class="w-4 h-4 block" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M2.5 4h11M2.5 8h11M2.5 12h11"></path>
                 </svg>
-                <svg id="close-icon" class="w-6 h-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                <svg id="close-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3.5 3.5l9 9M12.5 3.5l-9 9"></path>
                 </svg>
             </button>
         </div>
@@ -202,10 +208,12 @@
         <!-- Mobile Dropdown for Layanan -->
         <div class="flex flex-col">
             <button id="mobile-layanan-btn" class="flex justify-between items-center text-[#f2ebe2] hover:text-[#D4A574] text-sm font-medium transition-colors w-full text-left focus:outline-none">
-                {{ __('Layanan') }}
-                <svg id="mobile-layanan-arrow" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
+                <span>{{ __('Layanan') }}</span>
+                <span class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                    <svg id="mobile-layanan-arrow" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </span>
             </button>
             <div id="mobile-layanan-menu" class="max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out flex flex-col pl-4 gap-3 mt-0">
                 @foreach($layananServices as $s)
@@ -222,10 +230,12 @@
         <!-- Mobile Dropdown for Periklanan -->
         <div class="flex flex-col">
             <button id="mobile-periklanan-btn" class="flex justify-between items-center text-[#f2ebe2] hover:text-[#D4A574] text-sm font-medium transition-colors w-full text-left focus:outline-none">
-                {{ __('Periklanan') }}
-                <svg id="mobile-periklanan-arrow" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
+                <span>{{ __('Periklanan') }}</span>
+                <span class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                    <svg id="mobile-periklanan-arrow" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </span>
             </button>
             <div id="mobile-periklanan-menu" class="max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out flex flex-col pl-4 gap-3 mt-0">
                 <a href="{{ route('periklanan.show', 'advertising-dooh') }}" class="text-white/80 hover:text-white text-sm font-medium transition-colors mt-3">

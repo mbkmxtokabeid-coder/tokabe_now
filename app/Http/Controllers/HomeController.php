@@ -29,7 +29,13 @@ class HomeController extends Controller
 
     public function periklananLokasi(Request $request, $endpoint)
     {
-        $service = \App\Models\Service::where('endpoint', $endpoint)->firstOrFail();
+        if ($endpoint === 'advertising-dooh') {
+            $service = \App\Models\Service::where('endpoint', 'periklanan-videotron-dooh')->orWhere('endpoint', 'advertising-dooh')->firstOrFail();
+        } elseif ($endpoint === 'advertising-ooh') {
+            $service = \App\Models\Service::where('endpoint', 'advertising-ooh')->firstOrFail();
+        } else {
+            $service = \App\Models\Service::where('endpoint', $endpoint)->firstOrFail();
+        }
         $search = $request->query('search');
         $province = $request->query('provinsi');
         $availability = $request->query('availability');
@@ -40,7 +46,7 @@ class HomeController extends Controller
         $items = collect([]);
         $allProvinces = collect();
 
-        if ($endpoint == 'advertising-dooh') { // DOOH
+        if ($endpoint == 'advertising-dooh' || $endpoint == 'periklanan-videotron-dooh') { // DOOH
             $allProvinces = \App\Models\Lokasi::pluck('provinsi')->filter()->map(function($p) { return str_replace('Sumatra', 'Sumatera', $p); })->unique()->sort()->values();
             
             $query = \App\Models\Lokasi::query();

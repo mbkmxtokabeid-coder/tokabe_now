@@ -171,7 +171,7 @@
                 <!-- Mobile View (Stacked Layout) -->
                 <div class="flex flex-col md:hidden gap-6">
                     <!-- Image Card (No Gradient) -->
-                    <div class="w-full rounded-3xl overflow-hidden shadow-lg aspect-square sm:aspect-video relative bg-[#2C1A0E]">
+                    <div class="w-full rounded-3xl overflow-hidden shadow-xl aspect-video relative bg-[#2C1A0E] border border-white/10">
                         <!-- Premium Skeleton Loader -->
                         <div class="absolute inset-0 bg-gradient-to-br from-[#3E2718] to-[#2C1A0E] flex items-center justify-center skeleton-loader" style="z-index: 1;">
                             <div class="absolute inset-0 bg-black/20 animate-pulse"></div>

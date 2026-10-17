@@ -129,7 +129,7 @@
         }
     </style>
 </head>
-<body class="bg-[#2C1A0E] antialiased text-gray-900">
+<body class="bg-[#2C1A0E] antialiased text-gray-900 overflow-x-hidden">
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T6SH8FXD"
         height="0" width="0" style="display:none;visibility:hidden">
     </iframe></noscript>

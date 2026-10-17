@@ -36,23 +36,23 @@
     <x-navbar />
     <main>
         <!-- Header Hero Section -->
-        <div class="bg-gradient-to-br from-[#1A0F07] via-[#2C1A0E] to-[#5C3317] pt-40 pb-24 text-center relative overflow-hidden">
+        <div class="bg-gradient-to-br from-[#1A0F07] via-[#2C1A0E] to-[#5C3317] pt-28 sm:pt-36 md:pt-40 pb-12 sm:pb-16 md:pb-24 text-center relative overflow-hidden">
             <!-- Decorative subtle glowing blur circles -->
             <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-white opacity-5 blur-3xl"></div>
             <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-[#D4A574] opacity-10 blur-3xl"></div>
             
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" data-aos="fade-up" data-aos-duration="1000">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight mb-4 drop-shadow-md">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight mb-3 sm:mb-4 drop-shadow-md">
                     {!! nl2br(__('Explore Our Portfolio')) !!}
                 </h1>
-                <p class="text-base sm:text-lg lg:text-xl text-[#F5EFE7] max-w-3xl mx-auto font-light leading-relaxed drop-shadow-sm">
+                <p class="text-sm sm:text-lg lg:text-xl text-[#F5EFE7] max-w-3xl mx-auto font-light leading-relaxed drop-shadow-sm">
                     {{ __('Showcasing Videotron Advertising Installations and Experiential Brand Activation Across Sumatra') }}
                 </p>
             </div>
         </div>
 
         <div class="py-12 sm:py-16">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ activeCategory: 'all', open: false }">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ activeCategory: 'all', activeCategoryName: '{{ __('Semua') }}', open: false }">
                 
                 <!-- Filter UI -->
                 <div class="relative mb-10" data-aos="fade-up" data-aos-delay="100">
@@ -60,7 +60,7 @@
                     <!-- Desktop Filter (Only on Extra Large Screens) -->
                     <div class="hidden xl:flex flex-wrap items-center justify-center gap-4">
                         <button 
-                            @click="activeCategory = 'all'" 
+                            @click="activeCategory = 'all'; activeCategoryName = '{{ __('Semua') }}'" 
                             :class="activeCategory === 'all' 
                                 ? 'bg-[#D4A574] text-[#1A0F07] shadow-[0_0_15px_rgba(212,165,116,0.3)] font-bold' 
                                 : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 backdrop-blur-sm font-medium'" 
@@ -82,7 +82,7 @@
                                 }
                             @endphp
                             <button 
-                                @click="activeCategory = {{ $cat->id }}" 
+                                @click="activeCategory = {{ $cat->id }}; activeCategoryName = '{{ addslashes($catTitle) }}'" 
                                 :class="activeCategory == {{ $cat->id }} 
                                     ? 'bg-[#D4A574] text-[#1A0F07] shadow-[0_0_15px_rgba(212,165,116,0.3)] font-bold' 
                                     : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 backdrop-blur-sm font-medium'" 
@@ -95,14 +95,17 @@
                     <!-- Mobile & Tablet & Laptop Filter (Hidden on XL Desktop) -->
                     <div class="xl:hidden relative z-30 h-12 w-full px-2 mb-6">
                         <!-- Active Filter Text (Mobile) / Scrollable Menu (Tablet/Laptop) -->
-                        <div class="absolute top-0 left-0 h-12 flex items-center z-40 transition-all duration-300 pl-2 w-[calc(100%-56px)]" :class="open ? 'opacity-0 pointer-events-none' : 'opacity-100'">
-                            <!-- Mobile Text -->
-                            <span class="md:hidden text-[#F5EFE7] font-semibold text-sm">Semua</span>
+                        <div class="absolute top-0 left-0 h-12 flex items-center z-40 transition-all duration-300 pl-2 w-[calc(100%-56px)]">
+                            <!-- Mobile Active Category Display -->
+                            <div class="md:hidden flex items-center gap-2 overflow-hidden pr-2">
+                                <span class="text-xs text-white/50 uppercase tracking-wider font-medium flex-shrink-0">{{ __('Kategori') }}:</span>
+                                <span class="text-[#D4A574] font-bold text-sm tracking-wide truncate" x-text="activeCategoryName"></span>
+                            </div>
                             
                             <!-- Tablet/Laptop Scrollable Buttons -->
                             <div class="hidden md:flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full gap-3 pr-4 items-center">
                                 <button 
-                                    @click="activeCategory = 'all'" 
+                                    @click="activeCategory = 'all'; activeCategoryName = '{{ __('Semua') }}'" 
                                     :class="activeCategory === 'all' 
                                         ? 'bg-[#D4A574] text-[#1A0F07] shadow-[0_0_15px_rgba(212,165,116,0.3)] font-bold' 
                                         : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 backdrop-blur-sm font-medium'" 
@@ -124,7 +127,7 @@
                                         }
                                     @endphp
                                     <button 
-                                        @click="activeCategory = {{ $cat->id }}" 
+                                        @click="activeCategory = {{ $cat->id }}; activeCategoryName = '{{ addslashes($catTitle) }}'" 
                                         :class="activeCategory == {{ $cat->id }} 
                                             ? 'bg-[#D4A574] text-[#1A0F07] shadow-[0_0_15px_rgba(212,165,116,0.3)] font-bold' 
                                             : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white hover:border-[#D4A574]/50 backdrop-blur-sm font-medium'" 
@@ -135,70 +138,89 @@
                             </div>
                         </div>
 
-                        <!-- Morphing Container -->
-                        <div 
-                            class="w-12 h-12 rounded-3xl p-0 cursor-pointer hover:bg-[#5C3317]/70 absolute top-0 right-0 bg-[#2C1A0E]/85 border border-[#8B5E3C]/40 backdrop-blur-md shadow-2xl transition-all duration-300 overflow-hidden flex flex-col z-50"
-                            style="transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);"
-                            :class="open ? 'w-[calc(100vw-48px)] sm:w-[400px] h-[430px] rounded-3xl p-5 cursor-default' : 'w-12 h-12 rounded-3xl p-0 cursor-pointer hover:bg-[#5C3317]/70'"
-                            @click="if(!open) open = true"
-                            @click.away="open = false"
-                        >
-                            <!-- Icon when closed -->
-                            <div 
-                                class="absolute top-0 right-0 w-12 h-12 flex items-center justify-center transition-all duration-200"
-                                :class="open ? 'opacity-0 scale-50 pointer-events-none' : 'opacity-100 scale-100'"
+                        <!-- Filter Popover Container -->
+                        <div class="absolute top-0 right-0 z-50" @click.away="open = false">
+                            <!-- Filter Toggle Button (Clean & Stable 48px circle) -->
+                            <button 
+                                type="button"
+                                @click="open = !open" 
+                                aria-label="{{ __('Filter Kategori') }}"
+                                class="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none shadow-lg border"
+                                :class="open 
+                                    ? 'bg-[#D4A574] text-[#1A0F07] border-[#D4A574] shadow-[0_0_20px_rgba(212,165,116,0.45)]' 
+                                    : 'bg-[#2C1A0E]/90 text-[#D4A574] border-[#8B5E3C]/40 hover:bg-[#5C3317]/80 hover:border-[#D4A574]/60 hover:shadow-[0_0_15px_rgba(212,165,116,0.25)]'"
                             >
-                                <i class="fas fa-filter text-[#D4A574] text-lg"></i>
-                            </div>
-                            
-                            <!-- Content when open -->
+                                <!-- Filter Icon (when closed) -->
+                                <svg x-show="!open" class="w-5 h-5 transition-transform duration-200" viewBox="0 0 24 24" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3.75 4.5A.75.75 0 0 1 4.5 3.75h15a.75.75 0 0 1 .75.75v1.25a.75.75 0 0 1-.22.53L14 12.31V19a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-6.69L3.97 6.28A.75.75 0 0 1 3.75 5.75V4.5z" clip-rule="evenodd" />
+                                </svg>
+                                <!-- Close Icon (when open) -->
+                                <svg x-show="open" x-cloak class="w-5 h-5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+
+                            <!-- Clean & Tidy Dropdown Menu -->
                             <div 
-                                class="flex flex-col w-full h-full"
                                 x-show="open"
-                                style="display: none;"
-                                x-transition:enter="transition ease-out duration-300 delay-150"
-                                x-transition:enter-start="opacity-0 translate-y-2"
-                                x-transition:enter-end="opacity-100 translate-y-0"
-                                x-transition:leave="transition ease-in duration-200"
-                                x-transition:leave-start="opacity-100 translate-y-0"
-                                x-transition:leave-end="opacity-0 translate-y-2"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                x-transition:leave-end="opacity-0 translate-y-2 scale-95"
                                 x-cloak
+                                class="absolute right-0 top-full mt-2 w-64 max-h-80 overflow-y-auto bg-[#24140A]/95 backdrop-blur-xl border border-[#8B5E3C]/40 rounded-2xl shadow-2xl p-2 z-50 flex flex-col gap-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-[#D4A574]/30 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
                             >
-                                <div class="flex justify-between items-center mb-5">
-                                    <span class="text-[#D4A574] font-bold text-sm uppercase tracking-wider pl-1">Filter Portofolio</span>
-                                    <button @click.stop="open = false" class="text-gray-400 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10">
-                                        <i class="fas fa-times"></i>
-                                    </button>
+                                <div class="px-3 py-2 border-b border-[#8B5E3C]/20 mb-1 flex items-center justify-between">
+                                    <span class="text-xs font-bold text-[#D4A574] uppercase tracking-wider">{{ __('Kategori Portofolio') }}</span>
+                                    <span class="text-[10px] text-white/50 px-2 py-0.5 rounded-full bg-white/5 font-semibold">{{ count($categories) + 1 }}</span>
                                 </div>
-                                <div class="flex flex-col gap-2.5 w-full overflow-y-auto pr-1">
+
+                                <!-- Option: Semua -->
+                                <button 
+                                    type="button"
+                                    @click="activeCategory = 'all'; activeCategoryName = '{{ __('Semua') }}'; open = false" 
+                                    :class="activeCategory === 'all' 
+                                        ? 'bg-[#D4A574] text-[#1A0F07] font-bold shadow-md' 
+                                        : 'text-[#F5EFE7] hover:bg-white/5 hover:text-[#D4A574] font-medium'" 
+                                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm transition-all flex items-center justify-between group"
+                                >
+                                    <span>{{ __('Semua') }}</span>
+                                    <svg x-show="activeCategory === 'all'" class="w-4 h-4 text-[#1A0F07]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </button>
+
+                                <!-- Category Options -->
+                                @foreach($categories as $cat)
+                                    @php
+                                        $catNameData = $cat->nama_kategori ?: ($cat->getRawOriginal ? $cat->getRawOriginal('nama_kategori') : '');
+                                        if (is_string($catNameData) && str_starts_with($catNameData, '{')) {
+                                            $catNameArray = json_decode($catNameData, true);
+                                        } else {
+                                            $catNameArray = $catNameData;
+                                        }
+                                        if (is_array($catNameArray)) {
+                                            $catTitle = $catNameArray[app()->getLocale()] ?? $catNameArray['id'] ?? $catNameArray['en'] ?? collect($catNameArray)->first() ?? '';
+                                        } else {
+                                            $catTitle = $catNameArray;
+                                        }
+                                    @endphp
                                     <button 
-                                        @click="activeCategory = 'all'; open = false" 
-                                        :class="activeCategory === 'all' ? 'bg-[#D4A574] text-[#1A0F07] font-bold shadow-md' : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white'" 
-                                        class="w-full text-left px-4 py-3 rounded-xl text-sm transition-all">
-                                        {{ __('Semua') }}
+                                        type="button"
+                                        @click="activeCategory = {{ $cat->id }}; activeCategoryName = '{{ addslashes($catTitle) }}'; open = false" 
+                                        :class="activeCategory == {{ $cat->id }} 
+                                            ? 'bg-[#D4A574] text-[#1A0F07] font-bold shadow-md' 
+                                            : 'text-[#F5EFE7] hover:bg-white/5 hover:text-[#D4A574] font-medium'" 
+                                        class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm transition-all flex items-center justify-between group"
+                                    >
+                                        <span class="truncate pr-2">{{ $catTitle }}</span>
+                                        <svg x-show="activeCategory == {{ $cat->id }}" class="w-4 h-4 text-[#1A0F07] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
                                     </button>
-                                    @foreach($categories as $cat)
-                                        @php
-                                            $catNameData = $cat->nama_kategori ?: ($cat->getRawOriginal ? $cat->getRawOriginal('nama_kategori') : '');
-                                            if (is_string($catNameData) && str_starts_with($catNameData, '{')) {
-                                                $catNameArray = json_decode($catNameData, true);
-                                            } else {
-                                                $catNameArray = $catNameData;
-                                            }
-                                            if (is_array($catNameArray)) {
-                                                $catTitle = $catNameArray[app()->getLocale()] ?? $catNameArray['id'] ?? $catNameArray['en'] ?? collect($catNameArray)->first() ?? '';
-                                            } else {
-                                                $catTitle = $catNameArray;
-                                            }
-                                        @endphp
-                                        <button 
-                                            @click="activeCategory = {{ $cat->id }}; open = false" 
-                                            :class="activeCategory == {{ $cat->id }} ? 'bg-[#D4A574] text-[#1A0F07] font-bold shadow-md' : 'bg-[#5C3317]/30 border border-[#8B5E3C]/30 text-[#F5EFE7] hover:bg-[#5C3317]/60 hover:text-white'" 
-                                            class="w-full text-left px-4 py-3 rounded-xl text-sm transition-all">
-                                            {{ $catTitle }}
-                                        </button>
-                                    @endforeach
-                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>

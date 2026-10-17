@@ -72,23 +72,27 @@
                 @endphp
                 <div class="service-content {{ $activeTab == $index ? '' : 'hidden' }}" data-content="{{ $index }}">
                     <div class="bg-[#F9F0D6] rounded-3xl shadow-xl overflow-hidden border border-[#D4A569]/20 max-w-5xl mx-auto">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
-                            <!-- Image -->
-                            <div class="h-64 md:h-auto overflow-hidden relative">
-                                <img src="{{ Str::startsWith($brand->gambar, 'http') ? $brand->gambar : asset('storage/image_brand/' . $brand->gambar) }}" 
-                                    alt="{{ \App\Helpers\SeoHelper::getImageAlt('brand', $brand->judul ?? $brand->nama_brand ?? 'Brand Activity') }}"
-                                    class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-0 items-center">
+                            <!-- Image (Gambarnya dulu di atas pada tablet & mobile) -->
+                            <div class="relative w-full xl:h-full flex items-center justify-center p-4 sm:p-6 md:p-8">
+                                <!-- Clean Frame matching calendar image aspect ratio (never cropped) -->
+                                <div class="w-full max-w-[480px] sm:max-w-[540px] md:max-w-[600px] xl:max-w-[460px] rounded-2xl overflow-hidden bg-[#F0F4F7] flex items-center justify-center border border-black/5" style="aspect-ratio: 655/481;">
+                                    <img src="{{ Str::startsWith($brand->gambar, 'http') ? $brand->gambar : asset('storage/image_brand/' . $brand->gambar) }}" 
+                                        alt="{{ \App\Helpers\SeoHelper::getImageAlt('brand', $brand->judul ?? $brand->nama_brand ?? 'Brand Activity') }}"
+                                        class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                                        loading="lazy">
+                                </div>
                             </div>
-                            <!-- Text -->
-                            <div class="p-8 md:p-12 flex flex-col justify-center">
-                                <h3 class="text-3xl font-black text-gray-900 mb-6 uppercase tracking-tight">
+                            <!-- Text (Teksnya di bawah pada tablet & mobile) -->
+                            <div class="p-6 sm:p-8 md:p-10 xl:p-12 flex flex-col justify-center">
+                                <h3 class="text-2xl sm:text-3xl font-black text-gray-900 mb-4 sm:mb-6 uppercase tracking-tight">
                                     {{ $judul }}
                                 </h3>
-                                <div class="prose prose-lg text-gray-600 font-light leading-relaxed mb-8">
+                                <div class="prose prose-base md:prose-lg text-gray-600 font-light leading-relaxed mb-6 md:mb-8">
                                     {!! $deskripsi !!}
                                 </div>
                                 <div>
-                                    <a href="https://wa.me/6281122334455?text=Hello,%20I%20am%20interested%20in%20Brand%20Activity:%20{{ urlencode($judul) }}" class="inline-flex px-8 py-4 bg-gray-900 text-white font-bold rounded-full hover:bg-[#5C3317] hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                    <a href="https://wa.me/6281122334455?text=Hello,%20I%20am%20interested%20in%20Brand%20Activity:%20{{ urlencode($judul) }}" class="inline-flex px-6 sm:px-8 py-3.5 sm:py-4 bg-gray-900 text-white text-sm sm:text-base font-bold rounded-full hover:bg-[#5C3317] hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                                         {{ __('Get Now') }} <i class="fa-solid fa-arrow-right ml-2 mt-1"></i>
                                     </a>
                                 </div>
@@ -105,11 +109,10 @@
                             $dDesc = is_array($d['description'] ?? '') ? (($d['description'][app()->getLocale()] ?? '') ?: ($d['description']['en'] ?? '') ?: ($d['description']['id'] ?? '')) : ($d['description'] ?? '');
                         @endphp
                         <div class="bg-[#F9F0D6] rounded-3xl shadow-xl overflow-hidden border border-[#D4A569]/20 group transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl">
-                            <div class="h-48 overflow-hidden relative">
+                            <div class="aspect-[2.3/1] overflow-hidden relative bg-white">
                                 <img src="{{ Str::startsWith($d['image_url'], 'http') ? $d['image_url'] : asset('storage/image_brand_details/' . $d['image_url']) }}" 
-                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                    class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" 
                                     alt="{{ \App\Helpers\SeoHelper::getImageAlt('brand', $d['title'] ?? 'Brand Activity Detail') }}">
-                                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
                             </div>
                             <div class="p-6 text-center">
                                 <h4 class="text-xl font-bold text-gray-900 mb-2 uppercase tracking-tight">{{ $dTitle }}</h4>

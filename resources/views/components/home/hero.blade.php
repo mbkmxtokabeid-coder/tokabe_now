@@ -71,24 +71,24 @@
                 @endif
                 
                 <!-- Content Depan untuk Slide Ini -->
-                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pt-16">
-                    <div class="max-w-[1600px] w-full mx-auto px-6 sm:px-8 lg:px-12 mb-12">
+                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pt-16 sm:pt-20 lg:pt-28 pb-14 sm:pb-20">
+                    <div class="max-w-[1600px] w-full mx-auto px-4 sm:px-8 lg:px-12">
                         @php
                             $hasCounts = $hero->dooh_count > 0 || $hero->ooh_count > 0;
                         @endphp
                         
-                        <div class="flex {{ $hasCounts ? 'flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 max-w-5xl' : 'flex-col items-center justify-center max-w-5xl' }} w-full mx-auto">
+                        <div class="flex {{ $hasCounts ? 'flex-col lg:flex-row items-center justify-center gap-3 sm:gap-6 lg:gap-12 max-w-5xl' : 'flex-col items-center justify-center max-w-5xl' }} w-full mx-auto">
                             
                              <!-- Teks -->
-                            <div class="reveal-target-left {{ $index === 0 ? 'reveal-left-active' : 'reveal-left-hidden' }} delay-text {{ $hasCounts ? 'text-center lg:text-left flex-1' : 'text-center w-full mb-12' }}">
+                            <div class="reveal-target-left {{ $index === 0 ? 'reveal-left-active' : 'reveal-left-hidden' }} delay-text {{ $hasCounts ? 'text-center lg:text-left flex-1' : 'text-center w-full' }}">
                                 @php
                                     $deskripsi = is_array($hero->deskripsi) ? ($hero->deskripsi[app()->getLocale()] ?? $hero->deskripsi['id'] ?? $hero->deskripsi['en'] ?? collect($hero->deskripsi)->first() ?? '') : $hero->deskripsi;
                                 @endphp
-                                <h1 class="text-4xl md:text-5xl lg:text-6xl font-semibold text-white leading-snug uppercase tracking-tight drop-shadow-2xl">
+                                <h1 class="text-xl xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight sm:leading-snug uppercase tracking-tight drop-shadow-2xl">
                                     {!! $judul !!}
-                                </h2>
+                                </h1>
                                 @if($deskripsi)
-                                <p class="mt-6 text-base md:text-lg lg:text-xl text-gray-200 font-light drop-shadow-md leading-relaxed {{ !$hasCounts ? 'mx-auto max-w-3xl' : '' }}">
+                                <p class="mt-1.5 sm:mt-6 text-[11px] xs:text-xs sm:text-base md:text-lg lg:text-xl text-gray-200 font-light drop-shadow-md leading-relaxed {{ !$hasCounts ? 'mx-auto max-w-3xl' : '' }}">
                                     {!! $deskripsi !!}
                                 </p>
                                 @endif
@@ -96,30 +96,30 @@
 
                             @if($hasCounts)
                             <!-- Kotak Statistik Sebelah Kanan -->
-                            <div class="flex-shrink-0 flex flex-wrap justify-center gap-5">
+                            <div class="flex-shrink-0 flex flex-row flex-wrap sm:flex-nowrap lg:flex-wrap justify-center items-center gap-2 sm:gap-5 mt-2 sm:mt-6 lg:mt-0">
                                 @if($hero->dooh_count > 0)
-                                <div class="reveal-target-right {{ $index === 0 ? 'reveal-right-active' : 'reveal-right-hidden' }} delay-box-1 bg-white/10 backdrop-blur-md rounded-xl w-44 lg:w-52 aspect-square p-5 border border-white/20 shadow-xl text-center flex flex-col justify-center items-center group hover:-translate-y-2 hover:bg-white/20 hover:border-[#D4A574]/50 transition-all duration-500">
-                                    <div class="w-12 h-12 bg-gradient-to-r from-[#8B5E3C] to-[#A0522D] text-white rounded-xl flex items-center justify-center text-xl mb-3 shadow-lg group-hover:scale-110 transition-transform">
+                                <div class="reveal-target-right {{ $index === 0 ? 'reveal-right-active' : 'reveal-right-hidden' }} delay-box-1 bg-white/10 backdrop-blur-md rounded-xl w-28 xs:w-32 sm:w-44 lg:w-52 p-2 sm:p-5 border border-white/20 shadow-xl text-center flex flex-col justify-center items-center group hover:-translate-y-2 hover:bg-white/20 hover:border-[#D4A574]/50 transition-all duration-500">
+                                    <div class="w-7 h-7 sm:w-12 sm:h-12 bg-gradient-to-r from-[#8B5E3C] to-[#A0522D] text-white rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-xl mb-1 sm:mb-3 shadow-lg group-hover:scale-110 transition-transform">
                                         <i class="fas fa-tv"></i>
                                     </div>
-                                    <div class="flex items-baseline justify-center text-white mb-2">
-                                        <span class="rolling-counter text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->dooh_count }}">{{ $index === 0 ? $hero->dooh_count : '0' }}</span>
-                                        <span class="text-xl font-black text-[#D4A574] ml-1">+</span>
+                                    <div class="flex items-baseline justify-center text-white mb-0.5 sm:mb-2">
+                                        <span class="rolling-counter text-xl sm:text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->dooh_count }}">{{ $index === 0 ? $hero->dooh_count : '0' }}</span>
+                                        <span class="text-sm sm:text-xl font-black text-[#D4A574] ml-0.5 sm:ml-1">+</span>
                                     </div>
-                                    <h2 class="text-xs font-bold text-gray-200 uppercase tracking-widest group-hover:text-white mt-auto">DOOH / VIDEOTRON</h2>
+                                    <h2 class="text-[8px] sm:text-xs font-bold text-gray-200 uppercase tracking-wider group-hover:text-white mt-auto">DOOH / VIDEOTRON</h2>
                                 </div>
                                 @endif
 
                                 @if($hero->ooh_count > 0)
-                                <div class="reveal-target-right {{ $index === 0 ? 'reveal-right-active' : 'reveal-right-hidden' }} delay-box-2 bg-white/10 backdrop-blur-md rounded-xl w-44 lg:w-52 aspect-square p-5 border border-white/20 shadow-xl text-center flex flex-col justify-center items-center group hover:-translate-y-2 hover:bg-white/20 hover:border-[#D4A574]/50 transition-all duration-500">
-                                    <div class="w-12 h-12 bg-gradient-to-r from-[#8B5E3C] to-[#A0522D] text-white rounded-xl flex items-center justify-center text-xl mb-3 shadow-lg group-hover:scale-110 transition-transform">
+                                <div class="reveal-target-right {{ $index === 0 ? 'reveal-right-active' : 'reveal-right-hidden' }} delay-box-2 bg-white/10 backdrop-blur-md rounded-xl w-28 xs:w-32 sm:w-44 lg:w-52 p-2 sm:p-5 border border-white/20 shadow-xl text-center flex flex-col justify-center items-center group hover:-translate-y-2 hover:bg-white/20 hover:border-[#D4A574]/50 transition-all duration-500">
+                                    <div class="w-7 h-7 sm:w-12 sm:h-12 bg-gradient-to-r from-[#8B5E3C] to-[#A0522D] text-white rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-xl mb-1 sm:mb-3 shadow-lg group-hover:scale-110 transition-transform">
                                         <i class="fas fa-layer-group"></i>
                                     </div>
-                                    <div class="flex items-baseline justify-center text-white mb-2">
-                                        <span class="rolling-counter text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->ooh_count }}">{{ $index === 0 ? $hero->ooh_count : '0' }}</span>
-                                        <span class="text-xl font-black text-[#D4A574] ml-1">+</span>
+                                    <div class="flex items-baseline justify-center text-white mb-0.5 sm:mb-2">
+                                        <span class="rolling-counter text-xl sm:text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->ooh_count }}">{{ $index === 0 ? $hero->ooh_count : '0' }}</span>
+                                        <span class="text-sm sm:text-xl font-black text-[#D4A574] ml-0.5 sm:ml-1">+</span>
                                     </div>
-                                    <h2 class="text-xs font-bold text-gray-200 uppercase tracking-widest group-hover:text-white mt-auto">OOH / BILLBOARD</h2>
+                                    <h2 class="text-[8px] sm:text-xs font-bold text-gray-200 uppercase tracking-wider group-hover:text-white mt-auto">OOH / BILLBOARD</h2>
                                 </div>
                                 @endif
                             </div>
@@ -139,19 +139,26 @@
     </div>
 
     <!-- Tombol Contact Us Tetap di Tengah Bawah -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
+    <div class="absolute bottom-3 sm:bottom-8 left-1/2 -translate-x-1/2 z-30">
         @php
             $heroPhone = isset($globalContact) && $globalContact->phone ? $globalContact->phone : '628115239999';
+            $cleanHeroPhone = preg_replace('/[^0-9]/', '', $heroPhone);
+            if (str_starts_with($cleanHeroPhone, '0')) {
+                $cleanHeroPhone = '62' . substr($cleanHeroPhone, 1);
+            }
+            if (empty($cleanHeroPhone)) {
+                $cleanHeroPhone = '628115239999';
+            }
             $isEn = app()->getLocale() === 'en';
             $heroDefaultMsg = $isEn
                 ? 'Hello Tokabe.id, I am interested in consulting about advertising needs for my company.'
                 : 'Halo Tokabe.id, saya tertarik untuk konsultasi kebutuhan periklanan untuk perusahaan saya.';
             $heroMsgText = (isset($globalContact) && $globalContact->message) ? $globalContact->message : $heroDefaultMsg;
             $heroMessage = urlencode($heroMsgText);
-            $heroUrl = "https://api.whatsapp.com/send/?phone={$heroPhone}&text={$heroMessage}";
+            $heroUrl = "https://wa.me/{$cleanHeroPhone}?text={$heroMessage}";
         @endphp
-        <a href="{{ $heroUrl }}" target="_blank" class="px-5 py-2.5 sm:px-8 sm:py-3.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold text-sm sm:text-base rounded-full hover:from-[#F0C97A] hover:to-[#C8902A] shadow-[0_0_25px_rgba(212,165,105,0.6)] hover:shadow-[0_0_40px_rgba(240,201,122,0.8)] flex items-center justify-center gap-2 sm:gap-3 transition-all duration-300 hover:scale-105 hover:-translate-y-1 whitespace-nowrap w-max mx-auto">
-            <i class="fa-brands fa-whatsapp text-lg sm:text-xl"></i> {{ strip_tags(__('Contact Us')) }}
+        <a href="{{ $heroUrl }}" target="_blank" class="px-3.5 py-1.5 sm:px-8 sm:py-3.5 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold text-[11px] sm:text-base rounded-full hover:from-[#F0C97A] hover:to-[#C8902A] shadow-[0_0_25px_rgba(212,165,105,0.6)] hover:shadow-[0_0_40px_rgba(240,201,122,0.8)] flex items-center justify-center gap-1.5 sm:gap-3 transition-all duration-300 hover:scale-105 hover:-translate-y-1 whitespace-nowrap w-max mx-auto">
+            <i class="fa-brands fa-whatsapp text-sm sm:text-xl"></i> {{ strip_tags(__('Contact Us')) }}
         </a>
     </div>
 

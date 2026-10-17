@@ -2,6 +2,13 @@
     @php
         $globalContact = \App\Models\Contact::first();
         $ctaPhone = isset($globalContact) && $globalContact->phone ? $globalContact->phone : '628115239999';
+        $cleanCtaPhone = preg_replace('/[^0-9]/', '', $ctaPhone);
+        if (str_starts_with($cleanCtaPhone, '0')) {
+            $cleanCtaPhone = '62' . substr($cleanCtaPhone, 1);
+        }
+        if (empty($cleanCtaPhone)) {
+            $cleanCtaPhone = '628115239999';
+        }
         $isEn = app()->getLocale() === 'en';
         $ctaMsgText = $isEn 
             ? 'Hello, I am interested in starting an advertising campaign with Tokabe.id'
@@ -26,7 +33,7 @@
                 </p>
                 
                 <div class="flex flex-wrap items-center gap-4">
-                    <a href="https://api.whatsapp.com/send/?phone={{ $ctaPhone }}&text={{ $ctaMessage }}" target="_blank" class="px-8 py-3.5 lg:px-5 lg:py-2.5 xl:px-8 xl:py-3.5 lg:text-sm xl:text-base bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-extrabold rounded-full shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-1 hover:scale-105 transition-all duration-300">
+                    <a href="https://wa.me/{{ $cleanCtaPhone }}?text={{ $ctaMessage }}" target="_blank" class="px-8 py-3.5 lg:px-5 lg:py-2.5 xl:px-8 xl:py-3.5 lg:text-sm xl:text-base bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-extrabold rounded-full shadow-[0_0_15px_rgba(212,165,105,0.6)] hover:shadow-[0_0_25px_rgba(240,201,122,0.8)] hover:from-[#F0C97A] hover:to-[#C8902A] transform hover:-translate-y-1 hover:scale-105 transition-all duration-300">
                         {{ __('Hubungi Kami') }}
                     </a>
                     <a href="{{ route('portofolio') }}" class="px-8 py-3.5 lg:px-5 lg:py-2.5 xl:px-8 xl:py-3.5 lg:text-sm xl:text-base bg-transparent border border-gray-500 text-gray-300 font-bold rounded-full hover:border-[#F0C97A] hover:text-[#F0C97A] hover:-translate-y-1 transition-all duration-300">

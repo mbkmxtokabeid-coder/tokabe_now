@@ -9,11 +9,7 @@ export default defineConfig({
         }),
     ],
     server: {
-        // host: localhost,
-        host: '0.0.0.0',
-        hmr: {
-            host: '192.168.3.83',
-        },
+        host: 'localhost',
         cors: true,
     },
 });

@@ -46,7 +46,7 @@
                     <div class="w-full h-full bg-gradient-to-br from-[#2C1A0E] via-[#5C3317] to-[#8B5E3C] rounded-3xl overflow-hidden shadow-xl border border-white/25 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between">
                         <div>
                             <!-- Image Container -->
-                            <div class="w-full aspect-[16/10] overflow-hidden bg-gray-900 relative">
+                            <div class="w-full aspect-video overflow-hidden bg-gray-900 relative">
                                 @if(Str::endsWith($item->gambar, ['.mp4', '.webm', '.ogg']))
                                     <video autoplay loop muted playsinline class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out">
                                         <source src="{{ asset('storage/image_service/' . $item->gambar) }}" type="video/mp4">
