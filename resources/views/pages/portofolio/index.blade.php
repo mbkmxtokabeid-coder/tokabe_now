@@ -25,6 +25,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 <body class="bg-[#2C1A0E] antialiased text-gray-900 font-sans">
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T6SH8FXD"
@@ -134,9 +137,9 @@
 
                         <!-- Morphing Container -->
                         <div 
-                            class="absolute top-0 right-0 bg-[#2C1A0E]/85 border border-[#8B5E3C]/40 backdrop-blur-md shadow-2xl transition-all duration-300 overflow-hidden flex flex-col z-50"
+                            class="w-12 h-12 rounded-3xl p-0 cursor-pointer hover:bg-[#5C3317]/70 absolute top-0 right-0 bg-[#2C1A0E]/85 border border-[#8B5E3C]/40 backdrop-blur-md shadow-2xl transition-all duration-300 overflow-hidden flex flex-col z-50"
                             style="transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);"
-                            :class="open ? 'w-[calc(100vw-48px)] sm:w-[400px] h-[430px] rounded-3xl p-5' : 'w-12 h-12 rounded-3xl p-0 cursor-pointer hover:bg-[#5C3317]/70'"
+                            :class="open ? 'w-[calc(100vw-48px)] sm:w-[400px] h-[430px] rounded-3xl p-5 cursor-default' : 'w-12 h-12 rounded-3xl p-0 cursor-pointer hover:bg-[#5C3317]/70'"
                             @click="if(!open) open = true"
                             @click.away="open = false"
                         >
@@ -152,6 +155,7 @@
                             <div 
                                 class="flex flex-col w-full h-full"
                                 x-show="open"
+                                style="display: none;"
                                 x-transition:enter="transition ease-out duration-300 delay-150"
                                 x-transition:enter-start="opacity-0 translate-y-2"
                                 x-transition:enter-end="opacity-100 translate-y-0"
@@ -231,13 +235,13 @@
                         <!-- Translate Container -->
                         <div class="transform translate-y-[56px] group-hover:translate-y-0 transition-transform duration-500 ease-out flex flex-col">
                             
-                            <h3 class="text-2xl sm:text-3xl font-black text-white leading-tight mb-5 drop-shadow-lg line-clamp-2">
+                            <h2 class="text-2xl sm:text-3xl font-black text-white leading-tight mb-5 drop-shadow-lg line-clamp-2">
                                 {{ __($namaKategori) }}
-                            </h3>
+                            </h2>
                             
                             <!-- Overview -->
                             <div class="mb-4">
-                                <h4 class="text-[10px] font-bold text-white uppercase tracking-widest mb-2 drop-shadow-md opacity-90">{{ __('Overview') }}</h4>
+                                <p class="text-[10px] font-bold text-white uppercase tracking-widest mb-2 drop-shadow-md opacity-90">{{ __('Overview') }}</p>
                                 <p class="text-xs sm:text-sm text-gray-300 line-clamp-3 leading-relaxed drop-shadow-md">
                                     {{ __('Jelajahi berbagai karya terbaik kami dalam kategori ini. Kami berkomitmen memberikan hasil yang luar biasa dan berdampak nyata untuk setiap klien.') }}
                                 </p>

@@ -86,6 +86,7 @@
                  alt="{{ \App\Helpers\SeoHelper::getImageAlt('logo', 'Logo Tokabe.id') }}" 
                  width="171" height="48" decoding="async"
                  class="h-12 w-auto object-contain filter drop-shadow-md onError-fallback"
+                 style="aspect-ratio: 171 / 48;"
                  onerror="this.style.display='none'; document.getElementById('logo-text-fallback').style.display='block';">
             <span id="logo-text-fallback" class="hidden text-xl font-bold text-white tracking-tight drop-shadow-md">
                 Tokabe<span class="text-[#D4A574]">.id</span>
