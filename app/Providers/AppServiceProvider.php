@@ -47,13 +47,16 @@ class AppServiceProvider extends ServiceProvider
             }
         }
 
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('contacts')) {
-                $globalContact = \App\Models\Contact::first();
-                \Illuminate\Support\Facades\View::share('globalContact', $globalContact);
-            }
-        } catch (\Exception $e) {
-            // Ignore for initial migrations
+        if (!$this->app->runningInConsole()) {
+            \Illuminate\Support\Facades\View::composer('*', function ($view) {
+                try {
+                    if (\Illuminate\Support\Facades\Schema::hasTable('contacts')) {
+                        $view->with('globalContact', \App\Models\Contact::first());
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore database connection issues during boot/render
+                }
+            });
         }
 
         if (class_exists(\Illuminate\Foundation\Console\ServeCommand::class)) {

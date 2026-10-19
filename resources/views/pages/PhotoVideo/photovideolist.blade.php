@@ -40,7 +40,7 @@
                         <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
                     </div>
                     <div class="p-8 text-center">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-3 uppercase tracking-tight">{{ $title }}</h3>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-3 uppercase tracking-tight">{{ $title }}</h2>
                         <p class="text-gray-600 font-light leading-relaxed">
                             {{ $description }}
                         </p>

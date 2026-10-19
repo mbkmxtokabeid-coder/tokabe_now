@@ -87,7 +87,7 @@
     <div class="max-w-[1600px] mx-auto flex items-center justify-between gap-2 sm:gap-6 lg:gap-8">
         
         <!-- Logo -->
-        <a href="/" class="flex-shrink-0 flex items-center group">
+        <a href="/" aria-label="Tokabe.id Home" class="flex-shrink-0 flex items-center group">
             <img src="{{ asset('images/Logo-TOKABE.png') }}" 
                  alt="{{ \App\Helpers\SeoHelper::getImageAlt('logo', 'Logo Tokabe.id') }}" 
                  width="171" height="48" decoding="async"

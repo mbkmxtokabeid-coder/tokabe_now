@@ -65,9 +65,9 @@
                             
                             <!-- Content -->
                             <div class="p-6">
-                                <h3 class="text-lg font-bold text-white mb-3 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
+                                <h2 class="text-lg font-bold text-white mb-3 line-clamp-2 uppercase tracking-wide group-hover:text-[#D4A574] transition-colors">
                                     {{ $judul }}
-                                </h3>
+                                </h2>
                                 <div class="border-t border-white/20 pt-4 text-xs sm:text-sm text-gray-200">
                                     <p class="line-clamp-2">
                                         {{ $shortDesc }}

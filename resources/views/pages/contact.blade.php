@@ -86,8 +86,9 @@
                         <div class="flex flex-col gap-6">
                             <!-- Email Details -->
                             <div class="flex items-center gap-4 group">
-                                <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $contactEmail }}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300">
-                                    <i class="fas fa-envelope text-lg"></i>
+                                <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $contactEmail }}" target="_blank" rel="noopener noreferrer" aria-label="{{ __('Kirim email ke :email', ['email' => $contactEmail]) }}" title="{{ __('Kirim email ke :email', ['email' => $contactEmail]) }}" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300">
+                                    <i class="fas fa-envelope text-lg" aria-hidden="true"></i>
+                                    <span class="sr-only">{{ __('Kirim email ke :email', ['email' => $contactEmail]) }}</span>
                                 </a>
                                 <div class="min-w-0 flex-1">
                                     <span class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Email:') }}</span>
@@ -97,8 +98,9 @@
                             
                             <!-- Phone Details -->
                             <div class="flex items-center gap-4 group">
-                                <a href="https://wa.me/{{ $cleanPhone }}" target="_blank" rel="noopener noreferrer" title="{{ __('Hubungi via WhatsApp / Telepon') }}" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300">
-                                    <i class="fas fa-phone-alt text-lg"></i>
+                                <a href="https://wa.me/{{ $cleanPhone }}" target="_blank" rel="noopener noreferrer" aria-label="{{ __('Hubungi via WhatsApp :phone', ['phone' => $displayPhone]) }}" title="{{ __('Hubungi via WhatsApp / Telepon') }}" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300">
+                                    <i class="fas fa-phone-alt text-lg" aria-hidden="true"></i>
+                                    <span class="sr-only">{{ __('Hubungi via WhatsApp :phone', ['phone' => $displayPhone]) }}</span>
                                 </a>
                                 <div class="min-w-0 flex-1">
                                     <span class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Phone:') }}</span>
@@ -108,8 +110,9 @@
                             
                             <!-- Location Details -->
                             <div class="flex items-start gap-4 group">
-                                <a href="https://maps.app.goo.gl/m2DKjqNtE15Muzqg6" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300 mt-0.5">
-                                    <i class="fas fa-map-marker-alt text-lg"></i>
+                                <a href="https://maps.app.goo.gl/m2DKjqNtE15Muzqg6" target="_blank" rel="noopener noreferrer" aria-label="{{ __('Buka lokasi kantor Tokabe di Google Maps') }}" title="{{ __('Buka lokasi di Google Maps') }}" class="w-12 h-12 rounded-2xl bg-[#D4A574]/10 flex items-center justify-center text-[#D4A574] shadow-sm border border-[#D4A574]/20 flex-shrink-0 group-hover:bg-[#D4A574] group-hover:text-white transition-all duration-300 mt-0.5">
+                                    <i class="fas fa-map-marker-alt text-lg" aria-hidden="true"></i>
+                                    <span class="sr-only">{{ __('Buka lokasi kantor Tokabe di Google Maps') }}</span>
                                 </a>
                                 <div class="min-w-0 flex-1">
                                     <span class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Location:') }}</span>
@@ -150,7 +153,7 @@
                                             <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                                         </a>
                                     </div>
-                                    <button type="button" id="close-wa-fallback" class="text-amber-400/80 hover:text-amber-200 p-1 text-base leading-none">
+                                    <button type="button" id="close-wa-fallback" aria-label="{{ __('Tutup notifikasi') }}" class="text-amber-400/80 hover:text-amber-200 p-1 text-base leading-none">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>

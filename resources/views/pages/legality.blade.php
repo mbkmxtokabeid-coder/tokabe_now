@@ -131,7 +131,7 @@
                         <div class="text-[#8B5E3C]"><i class="fas fa-certificate fa-3x"></i></div>
                     @endif
                 </div>
-                <h3 class="text-xl font-bold text-[#F5EFE7] mb-2 text-center">{{ app()->getLocale() == 'en' ? $legality->name_en : $legality->name_id }}</h3>
+                <h2 class="text-xl font-bold text-[#F5EFE7] mb-2 text-center">{{ app()->getLocale() == 'en' ? $legality->name_en : $legality->name_id }}</h2>
                 <p class="text-[#D4A574] font-medium text-center text-sm">{!! nl2br(e(app()->getLocale() == 'en' ? $legality->description_en : $legality->description_id)) !!}</p>
             </div>
             @endforeach

@@ -135,15 +135,17 @@
                     <!-- Search Form -->
                     <div class="md:w-1/2 w-full">
                         <form method="GET" action="{{ route('discover') }}" class="bg-[#1F1611]/60 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
-                            <h3 class="text-xl font-bold mb-4 text-white">{{ __('Search Strategic Location') }}</h3>
+                            <h2 class="text-xl font-bold mb-4 text-white">{{ __('Search Strategic Location') }}</h2>
                             <div class="flex flex-col sm:flex-row gap-3">
-                                <select name="region" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">
+                                <label for="filter-region" class="sr-only">{{ __('Pilih Provinsi') }}</label>
+                                <select id="filter-region" name="region" aria-label="{{ __('Pilih Provinsi') }}" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">
                                     <option value="">{{ __('Semua Provinsi') }}</option>
                                     @foreach($allProvinces as $prov)
                                         <option value="{{ $prov }}" {{ (request('region') === $prov || __(request('region')) === __($prov) || str_replace('Sumatra', 'Sumatera', request('region')) === $prov) ? 'selected' : '' }}>{{ __($prov) }}</option>
                                     @endforeach
                                 </select>
-                                <select name="type" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">
+                                <label for="filter-type" class="sr-only">{{ __('Pilih Tipe Media') }}</label>
+                                <select id="filter-type" name="type" aria-label="{{ __('Pilih Tipe Media') }}" class="form-select w-full sm:w-auto rounded-xl border-white/20 bg-white/5 text-white shadow-sm focus:border-[#D4A574] focus:ring focus:ring-[#D4A574] focus:ring-opacity-50 [&>option]:text-black">
                                     <option value="" {{ !request('type') ? 'selected' : '' }}>{{ __('Semua Tipe') }}</option>
                                     <option value="DOOH" {{ request('type') === 'DOOH' ? 'selected' : '' }}>DOOH</option>
                                     <option value="OOH" {{ request('type') === 'OOH' ? 'selected' : '' }}>OOH</option>
@@ -254,9 +256,9 @@
                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 text-[#D4A574] mb-4 border border-white/10">
                     <i class="fas fa-search text-2xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-white mb-2">No Locations Found</h3>
-                <p class="text-gray-400">We couldn't find any DOOH or OOH locations matching your criteria.</p>
-                <a href="{{ route('discover') }}" class="inline-block mt-6 px-6 py-2 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold rounded-lg hover:from-[#F0C97A] hover:to-[#C8902A] shadow-[0_0_15px_rgba(212,165,105,0.4)] transition-all">Clear Search</a>
+                <h2 class="text-2xl font-bold text-white mb-2">{{ __('No Locations Found') }}</h2>
+                <p class="text-gray-400">{{ __('We couldn\'t find any DOOH or OOH locations matching your criteria.') }}</p>
+                <a href="{{ route('discover') }}" class="inline-block mt-6 px-6 py-2 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] text-[#1F1611] font-bold rounded-lg hover:from-[#F0C97A] hover:to-[#C8902A] shadow-[0_0_15px_rgba(212,165,105,0.4)] transition-all">{{ __('Clear Search') }}</a>
             </div>
             @endif
 
@@ -272,7 +274,7 @@
             <i class="fas fa-exclamation-circle text-xl"></i>
         </div>
         <div>
-            <h4 class="font-bold text-white">Notice</h4>
+            <p class="font-bold text-white">{{ __('Notice') }}</p>
             <p class="text-sm text-gray-300">{{ $notificationMessage }}</p>
         </div>
         <button onclick="document.getElementById('notification-toast').style.display='none'" class="text-gray-400 hover:text-white">

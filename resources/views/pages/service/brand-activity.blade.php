@@ -85,9 +85,9 @@
                             </div>
                             <!-- Text (Teksnya di bawah pada tablet & mobile) -->
                             <div class="p-6 sm:p-8 md:p-10 xl:p-12 flex flex-col justify-center">
-                                <h3 class="text-2xl sm:text-3xl font-black text-gray-900 mb-4 sm:mb-6 uppercase tracking-tight">
+                                <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mb-4 sm:mb-6 uppercase tracking-tight">
                                     {{ $judul }}
-                                </h3>
+                                </h2>
                                 <div class="prose prose-base md:prose-lg text-gray-600 font-light leading-relaxed mb-6 md:mb-8">
                                     {!! $deskripsi !!}
                                 </div>
@@ -115,7 +115,7 @@
                                     alt="{{ \App\Helpers\SeoHelper::getImageAlt('brand', $d['title'] ?? 'Brand Activity Detail') }}">
                             </div>
                             <div class="p-6 text-center">
-                                <h4 class="text-xl font-bold text-gray-900 mb-2 uppercase tracking-tight">{{ $dTitle }}</h4>
+                                <h3 class="text-xl font-bold text-gray-900 mb-2 uppercase tracking-tight">{{ $dTitle }}</h3>
                                 <p class="text-gray-600 font-light">{{ $dDesc }}</p>
                             </div>
                         </div>
