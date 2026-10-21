@@ -19,17 +19,92 @@
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-T6SH8FXD');</script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecg.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    @if(isset($categories) && count($categories) > 0 && $categories->first()->image)
+    <link rel="preload" as="image" href="{{ asset('storage/' . $categories->first()->image) }}" fetchpriority="high">
+    @endif
+    
+    @if (! \Illuminate\Support\Facades\Vite::isRunningHot())
+        <style id="app-css-inline">{!! \Illuminate\Support\Facades\Vite::content('resources/css/app.css') !!}</style>
+        @vite('resources/js/app.js')
+    @else
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
+
     <link rel="icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/LogoTKB.png') }}?v=3">
     <style>
         [x-cloak] { display: none !important; }
+
+        /* Inlined Poppins font-face to eliminate render-blocking external Google Fonts request */
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 300;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1xlFQ.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecg.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1xlFQ.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+        body { font-family: 'Poppins', sans-serif; }
+
+        /* Font Awesome font-display: swap override to eliminate font display warning */
+        @font-face {
+            font-family: 'Font Awesome 6 Free';
+            font-style: normal;
+            font-weight: 900;
+            font-display: swap;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2") format("woff2");
+        }
+        @font-face {
+            font-family: 'Font Awesome 6 Brands';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-brands-400.woff2") format("woff2");
+        }
     </style>
 </head>
-<body class="bg-[#2C1A0E] antialiased text-gray-900 font-sans">
+<body class="bg-[#2C1A0E] antialiased text-[#F5EFE7] font-sans">
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T6SH8FXD"
         height="0" width="0" style="display:none;visibility:hidden">
     </iframe></noscript>
@@ -38,8 +113,8 @@
         <!-- Header Hero Section -->
         <div class="bg-gradient-to-br from-[#1A0F07] via-[#2C1A0E] to-[#5C3317] pt-28 sm:pt-36 md:pt-40 pb-12 sm:pb-16 md:pb-24 text-center relative overflow-hidden">
             <!-- Decorative subtle glowing blur circles -->
-            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-white opacity-5 blur-3xl"></div>
-            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-[#D4A574] opacity-10 blur-3xl"></div>
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-white opacity-5 blur-3xl pointer-events-none" aria-hidden="true"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-[#D4A574] opacity-10 blur-3xl pointer-events-none" aria-hidden="true"></div>
             
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" data-aos="fade-up" data-aos-duration="1000">
                 <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight mb-3 sm:mb-4 drop-shadow-md">
@@ -98,7 +173,7 @@
                         <div class="absolute top-0 left-0 h-12 flex items-center z-40 transition-all duration-300 pl-2 w-[calc(100%-56px)]">
                             <!-- Mobile Active Category Display -->
                             <div class="md:hidden flex items-center gap-2 overflow-hidden pr-2">
-                                <span class="text-xs text-white/50 uppercase tracking-wider font-medium flex-shrink-0">{{ __('Kategori') }}:</span>
+                                <span class="text-xs text-[#F5EFE7] uppercase tracking-wider font-semibold flex-shrink-0">{{ __('Kategori') }}:</span>
                                 <span class="text-[#D4A574] font-bold text-sm tracking-wide truncate" x-text="activeCategoryName"></span>
                             </div>
                             
@@ -174,7 +249,7 @@
                             >
                                 <div class="px-3 py-2 border-b border-[#8B5E3C]/20 mb-1 flex items-center justify-between">
                                     <span class="text-xs font-bold text-[#D4A574] uppercase tracking-wider">{{ __('Kategori Portofolio') }}</span>
-                                    <span class="text-[10px] text-white/50 px-2 py-0.5 rounded-full bg-white/5 font-semibold">{{ count($categories) + 1 }}</span>
+                                    <span class="text-[10px] text-[#F5EFE7] px-2 py-0.5 rounded-full bg-white/10 font-semibold">{{ count($categories) + 1 }}</span>
                                 </div>
 
                                 <!-- Option: Semua -->
@@ -247,7 +322,13 @@
                     <img src="{{ $item->image ? asset('storage/' . $item->image) : asset('images/default-category.jpg') }}" 
                          alt="{{ \App\Helpers\SeoHelper::getImageAlt('event', $namaKategori) }}" 
                          class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                         loading="lazy">
+                         @if($loop->first)
+                             fetchpriority="high"
+                             loading="eager"
+                         @else
+                             loading="lazy"
+                             decoding="async"
+                         @endif>
                          
                     <!-- Gradient Overlay -->
                     <div class="absolute inset-0 bg-gradient-to-t from-[#5C3317]/95 via-[#8B5E3C]/60 to-transparent transition-opacity duration-500"></div>
