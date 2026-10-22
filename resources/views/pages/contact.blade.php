@@ -59,7 +59,7 @@
                     <!-- Left Column: Info -->
                     <div class="lg:col-span-5" data-aos="fade-right" data-aos-duration="1000">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-[#D4A574]/10 border border-[#D4A574]/30 text-[#D4A574] text-xs font-bold rounded-lg uppercase tracking-wider">
-                            <i class="far fa-envelope text-xs"></i> {{ __('Contact') }}
+                            <i class="fa-solid fa-envelope text-xs"></i> {{ __('Contact') }}
                         </span>
                         
                         <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-[#F5EFE7] tracking-tight leading-tight mt-6 mb-4">

@@ -31,11 +31,26 @@
 @endphp
     <title>Portofolio - {{ $namaKat }}</title>
     <!-- Fo nts -->
+    <link rel="preload" as="font" type="font/woff2" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
     <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecg.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2" crossorigin>
     <link rel="canonical" href="{{ \App\Helpers\SeoHelper::getCanonicalUrl() }}">
+    @php
+        $firstPortfolio = $portfolios->first();
+        $lcpImage = null;
+        if ($firstPortfolio) {
+            if ($firstPortfolio->gambar) {
+                $lcpImage = str_starts_with($firstPortfolio->gambar, 'http') ? $firstPortfolio->gambar : asset('storage/' . ltrim($firstPortfolio->gambar, '/'));
+            } elseif ($firstPortfolio->firstImage) {
+                $lcpImage = asset('storage/' . ltrim($firstPortfolio->firstImage->image, '/'));
+            }
+        }
+    @endphp
+    @if($lcpImage)
+    <link rel="preload" as="image" href="{{ $lcpImage }}" fetchpriority="high">
+    @endif
     @if (! \Illuminate\Support\Facades\Vite::isRunningHot())
         <style id="app-css-inline">{!! \Illuminate\Support\Facades\Vite::content('resources/css/app.css') !!}</style>
         @vite('resources/js/app.js')
@@ -165,6 +180,13 @@
             src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2") format("woff2");
         }
         @font-face {
+            font-family: 'Font Awesome 6 Free';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-regular-400.woff2") format("woff2");
+        }
+        @font-face {
             font-family: 'Font Awesome 6 Brands';
             font-style: normal;
             font-weight: 400;
@@ -271,7 +293,7 @@
                         <div class="premium-card-img-container bg-[#1A0F07]">
                             <div class="img-gradient-overlay pointer-events-none"></div>
                             @if($imgSrc)
-                                <img src="{{ $imgSrc }}" alt="{{ $judulText }}" class="premium-card-img" loading="lazy">
+                                <img src="{{ $imgSrc }}" alt="{{ $judulText }}" class="premium-card-img" @if($loop->first) fetchpriority="high" loading="eager" @else loading="lazy" decoding="async" @endif>
                             @else
                                 <div class="w-full h-full bg-[#1A0F07] flex items-center justify-center">
                                     <i class="fa-solid fa-image text-3xl text-gray-700"></i>
@@ -297,7 +319,7 @@
                             </h3>
                             
                             <div class="flex items-center text-gray-400 text-sm mt-4 font-medium">
-                                <i class="fa-regular fa-calendar mr-2 text-[#D6A24C]"></i>
+                                <i class="fa-solid fa-calendar mr-2 text-[#D6A24C]"></i>
                                 {{ $date }}
                             </div>
                         </div>

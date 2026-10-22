@@ -86,6 +86,13 @@
             src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2") format("woff2");
         }
         @font-face {
+            font-family: 'Font Awesome 6 Free';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-regular-400.woff2") format("woff2");
+        }
+        @font-face {
             font-family: 'Font Awesome 6 Brands';
             font-style: normal;
             font-weight: 400;

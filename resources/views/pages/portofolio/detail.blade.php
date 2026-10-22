@@ -58,6 +58,17 @@
     <link rel="preload" as="font" type="font/woff2" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+    @php
+        $heroImage = null;
+        if (isset($event->gambar) && $event->gambar) {
+            $heroImage = str_starts_with($event->gambar, 'http') ? $event->gambar : asset('storage/' . ltrim($event->gambar, '/'));
+        } elseif (isset($mainImage) && $mainImage) {
+            $heroImage = asset('storage/' . ltrim($mainImage->image, '/'));
+        }
+    @endphp
+    @if($heroImage)
+    <link rel="preload" as="image" href="{{ $heroImage }}" fetchpriority="high">
+    @endif
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -128,6 +139,13 @@
             src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2") format("woff2");
         }
         @font-face {
+            font-family: 'Font Awesome 6 Free';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-regular-400.woff2") format("woff2");
+        }
+        @font-face {
             font-family: 'Font Awesome 6 Brands';
             font-style: normal;
             font-weight: 400;
@@ -150,11 +168,13 @@
             @if($event->gambar)
                 <img id="main-gallery-image" src="{{ str_starts_with($event->gambar, 'http') ? $event->gambar : asset('storage/' . ltrim($event->gambar, '/')) }}" 
                      alt="{{ \App\Helpers\SeoHelper::getImageAlt('event', $judulText) }}" 
-                     class="w-full h-full object-cover transition-transform duration-700 ease-in-out">
+                     class="w-full h-full object-cover transition-transform duration-700 ease-in-out"
+                     fetchpriority="high">
             @elseif($mainImage)
                 <img id="main-gallery-image" src="{{ asset('storage/' . $mainImage->image) }}" 
                      alt="{{ \App\Helpers\SeoHelper::getImageAlt('event', $judulText) }}" 
-                     class="w-full h-full object-cover transition-transform duration-700 ease-in-out">
+                     class="w-full h-full object-cover transition-transform duration-700 ease-in-out"
+                     fetchpriority="high">
             @else
                 <div class="w-full h-full bg-gray-200 flex items-center justify-center">
                     <i class="fas fa-image text-6xl text-gray-400"></i>
