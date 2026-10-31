@@ -57,25 +57,71 @@
                                 <p class="cb-ff cb-fs-18 cb-fw-400 cb-lh-27 cb-color-gray300 mt-25" data-aos="fade-up"
                                     data-aos-duration="3000">{!! $descOoh !!}</p>
                             </div>
+                            @php
+                                $rawTotal = trim((string)($lokasiooh->daily_total_traffic ?? ''));
+                                $rawMotor = trim((string)($lokasiooh->motor ?? ''));
+                                $rawMobil = trim((string)($lokasiooh->mobil ?? ''));
+
+                                if ($rawTotal !== '' && $rawTotal !== '-' && ($rawMotor === '' || $rawMotor === '-') && ($rawMobil === '' || $rawMobil === '-')) {
+                                    $digits = preg_replace('/[^0-9]/', '', $rawTotal);
+                                    $totalNum = $digits !== '' ? (int) $digits : 0;
+                                    if ($totalNum > 0) {
+                                        $motorNum = (int) round($totalNum * 0.80);
+                                        $mobilNum = $totalNum - $motorNum;
+                                        $prefix = str_contains($rawTotal, '±') ? '± ' : '';
+                                        $useDot = str_contains($rawTotal, '.');
+                                        $rawMotor = $prefix . ($useDot ? number_format($motorNum, 0, ',', '.') : (string) $motorNum);
+                                        $rawMobil = $prefix . ($useDot ? number_format($mobilNum, 0, ',', '.') : (string) $mobilNum);
+                                    }
+                                } elseif (($rawTotal === '' || $rawTotal === '-') && (($rawMotor !== '' && $rawMotor !== '-') || ($rawMobil !== '' && $rawMobil !== '-'))) {
+                                    $motorDigits = preg_replace('/[^0-9]/', '', $rawMotor);
+                                    $mobilDigits = preg_replace('/[^0-9]/', '', $rawMobil);
+                                    $motorNum = $motorDigits !== '' ? (int) $motorDigits : 0;
+                                    $mobilNum = $mobilDigits !== '' ? (int) $mobilDigits : 0;
+                                    $totalNum = $motorNum + $mobilNum;
+                                    if ($totalNum > 0) {
+                                        $prefix = (str_contains($rawMotor, '±') || str_contains($rawMobil, '±')) ? '± ' : '';
+                                        $useDot = str_contains($rawMotor, '.') || str_contains($rawMobil, '.');
+                                        $rawTotal = $prefix . ($useDot ? number_format($totalNum, 0, ',', '.') : (string) $totalNum);
+                                    }
+                                }
+
+                                $formatTraffic = function (string $val): string {
+                                    $val = trim(str_replace('+-', '', $val));
+                                    if ($val === '' || $val === '-') {
+                                        return '-';
+                                    }
+                                    $val = ltrim(str_replace('±', '', $val));
+                                    return '± ' . $val;
+                                };
+
+                                $valMotor = $formatTraffic($rawMotor);
+                                $valMobil = $formatTraffic($rawMobil);
+                                $valTotalTraffic = $formatTraffic($rawTotal);
+                            @endphp
                             <div class="col-12 col-lg-4">
                                 <div class="serevice-get-touch cb-br-20 cb-bg-color-white overflow-hidden p-3 border">
                                     <div class="serevice-get-touch-heading mb-30">
-                                        <h2 class="cb-ff cb-fs-36 cb-fw-400 cb-lh-42">Vehicle / Day</h2>
+                                        <h2 class="cb-ff cb-fs-36 cb-fw-400 cb-lh-42">{{ __('Vehicle / Day') }}</h2>
                                     </div>
                                     <div class="serevice-get-touch-body">
                                         <div class="service-get-content d-flex align-items-center mb-15">
                                             <div class="touch-icon cb-bg-color-brown rounded-circle center mr-15">
-                                                <i class="fa-solid fa-car"></i>
+                                                <i class="fa-solid fa-motorcycle"></i>
                                             </div>
-                                            <p class="cb-ff cb-fs-18 cb-fw-400 cb-lh-27">Car : {{ $lokasiooh->mobil }}</p>
+                                            <p class="cb-ff cb-fs-18 cb-fw-400 cb-lh-27">{{ __('Motorcycle') }} : {{ $valMotor }}</p>
                                         </div>
                                         <div class="service-get-content d-flex align-items-center mb-15">
                                             <div class="touch-icon cb-bg-color-brown rounded-circle center mr-15">
-                                                <i class="fa-solid fa-motorcycle"></i>
+                                                <i class="fa-solid fa-car"></i>
                                             </div>
-                                            <p class="cb-ff cb-fs-18 cb-fw-400 cb-lh-27">Motorcycle :
-                                                {{ $lokasiooh->motor }}
-                                            </p>
+                                            <p class="cb-ff cb-fs-18 cb-fw-400 cb-lh-27">{{ __('Car') }} : {{ $valMobil }}</p>
+                                        </div>
+                                        <div class="service-get-content d-flex align-items-center mb-15">
+                                            <div class="touch-icon cb-bg-color-brown rounded-circle center mr-15">
+                                                <i class="fa-solid fa-road"></i>
+                                            </div>
+                                            <p class="cb-ff cb-fs-18 cb-fw-400 cb-lh-27">{{ __('Total Vehicles / Day') }} : {{ $valTotalTraffic }}</p>
                                         </div>
                                     </div>
                                 </div>

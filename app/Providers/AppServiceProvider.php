@@ -49,13 +49,21 @@ class AppServiceProvider extends ServiceProvider
 
         if (!$this->app->runningInConsole()) {
             \Illuminate\Support\Facades\View::composer('*', function ($view) {
-                try {
-                    if (\Illuminate\Support\Facades\Schema::hasTable('contacts')) {
-                        $view->with('globalContact', \App\Models\Contact::first());
+                static $resolved = false;
+                static $globalContact = null;
+
+                if (!$resolved) {
+                    $resolved = true;
+                    try {
+                        if (\Illuminate\Support\Facades\Schema::hasTable('contacts')) {
+                            $globalContact = \App\Models\Contact::first();
+                        }
+                    } catch (\Throwable $e) {
+                        // Ignore database connection issues during boot/render
                     }
-                } catch (\Throwable $e) {
-                    // Ignore database connection issues during boot/render
                 }
+
+                $view->with('globalContact', $globalContact);
             });
         }
 

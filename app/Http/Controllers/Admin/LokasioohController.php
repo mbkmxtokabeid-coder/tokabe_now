@@ -51,8 +51,9 @@ class LokasioohController extends Controller
             'media' => 'required',
             'size' => 'required',
             'type' => 'required|in:Horizontal,Vertical',
-            'motor' => 'required',
-            'mobil' => 'required',
+            'motor' => 'nullable|string|max:255',
+            'mobil' => 'nullable|string|max:255',
+            'daily_total_traffic' => 'nullable|string|max:255',
             'wilayah' => 'required',
             'lighting' => 'required',
             'provinsi' => 'required',
@@ -83,8 +84,7 @@ class LokasioohController extends Controller
         $lokasiooh->media = $request->media;
         $lokasiooh->size = $request->size;
         $lokasiooh->type = $request->type;
-        $lokasiooh->motor = $request->motor;
-        $lokasiooh->mobil = $request->mobil;
+        [$lokasiooh->motor, $lokasiooh->mobil, $lokasiooh->daily_total_traffic] = $this->resolveTrafficProportion($request);
         $lokasiooh->lighting = $request->lighting;
         $lokasiooh->status = $request->status ?? 'Tidak aktif';
         $lokasiooh->availability = $request->availability ?? 'Available';
@@ -128,8 +128,9 @@ class LokasioohController extends Controller
             'media' => 'required',
             'size' => 'required',
             'type' => 'required|in:Horizontal,Vertical',
-            'motor' => 'required',
-            'mobil' => 'required',
+            'motor' => 'nullable|string|max:255',
+            'mobil' => 'nullable|string|max:255',
+            'daily_total_traffic' => 'nullable|string|max:255',
             'lighting' => 'required',
             'provinsi' => 'required',
             'gambar' => 'nullable|image|max:10240',
@@ -156,8 +157,7 @@ class LokasioohController extends Controller
         $lokasiooh->media = $request->media;
         $lokasiooh->size = $request->size;
         $lokasiooh->type = $request->type;
-        $lokasiooh->motor = $request->motor;
-        $lokasiooh->mobil = $request->mobil;
+        [$lokasiooh->motor, $lokasiooh->mobil, $lokasiooh->daily_total_traffic] = $this->resolveTrafficProportion($request, $lokasiooh);
         $lokasiooh->status = $request->status ?? 'Tidak aktif';
         $lokasiooh->availability = $request->availability ?? 'Available';
         $lokasiooh->provinsi = $request->provinsi;
@@ -280,5 +280,74 @@ class LokasioohController extends Controller
     {
         $tampil = Lokasiooh::where('status', 'aktif')->get();
         return view('admin.lokasiooh.index', compact('tampil'));
+    }
+
+    /**
+     * Hitung otomatis dua arah:
+     * 1) Jika Motor/Mobil diisi -> Total Kendaraan Harian = Motor + Mobil
+     * 2) Jika Total Kendaraan Harian diisi -> Motor = 80%, Mobil = 20% (tanpa desimal, akurat 100%)
+     */
+    private function resolveTrafficProportion(Request $request, ?Lokasiooh $existing = null): array
+    {
+        $totalRaw = trim((string) ($request->daily_total_traffic ?? ''));
+        $motorRaw = trim((string) ($request->motor ?? ''));
+        $mobilRaw = trim((string) ($request->mobil ?? ''));
+
+        $isTotalEmpty = $totalRaw === '' || $totalRaw === '-';
+        $isMotorEmpty = $motorRaw === '' || $motorRaw === '-';
+        $isMobilEmpty = $mobilRaw === '' || $mobilRaw === '-';
+
+        $motorOrMobilChanged = $existing
+            && ($motorRaw !== trim((string) ($existing->motor ?? '')) || $mobilRaw !== trim((string) ($existing->mobil ?? '')))
+            && $totalRaw === trim((string) ($existing->daily_total_traffic ?? ''));
+
+        $totalChanged = $existing
+            && $totalRaw !== trim((string) ($existing->daily_total_traffic ?? ''))
+            && $motorRaw === trim((string) ($existing->motor ?? ''))
+            && $mobilRaw === trim((string) ($existing->mobil ?? ''));
+
+        // Arah 1: Motor atau Mobil diisi/diubah -> Hitung Total = Motor + Mobil
+        if ((!$isMotorEmpty || !$isMobilEmpty) && ($isTotalEmpty || $motorOrMobilChanged)) {
+            $motorDigits = preg_replace('/[^0-9]/', '', $motorRaw);
+            $mobilDigits = preg_replace('/[^0-9]/', '', $mobilRaw);
+            $motorNum = $motorDigits !== '' ? (int) $motorDigits : 0;
+            $mobilNum = $mobilDigits !== '' ? (int) $mobilDigits : 0;
+            $totalNum = $motorNum + $mobilNum;
+
+            if ($totalNum > 0) {
+                $useDotSeparator = str_contains($motorRaw, '.') || str_contains($mobilRaw, '.');
+                $totalRaw = '± ' . ($useDotSeparator ? number_format($totalNum, 0, ',', '.') : (string) $totalNum);
+            }
+        }
+        // Arah 2: Total diisi/diubah -> Hitung 80% Motor & 20% Mobil
+        elseif (!$isTotalEmpty && (($isMotorEmpty && $isMobilEmpty) || $totalChanged)) {
+            $digits = preg_replace('/[^0-9]/', '', $totalRaw);
+            $totalNum = $digits !== '' ? (int) $digits : 0;
+
+            if ($totalNum > 0) {
+                $motorNum = (int) round($totalNum * 0.80);
+                $mobilNum = $totalNum - $motorNum;
+
+                $useDotSeparator = str_contains($totalRaw, '.');
+
+                $motorRaw = '± ' . ($useDotSeparator ? number_format($motorNum, 0, ',', '.') : (string) $motorNum);
+                $mobilRaw = '± ' . ($useDotSeparator ? number_format($mobilNum, 0, ',', '.') : (string) $mobilNum);
+            }
+        }
+
+        $ensurePlusMinus = function (string $val): string {
+            $val = trim(str_replace('+-', '', $val));
+            if ($val === '' || $val === '-') {
+                return '';
+            }
+            $val = ltrim(str_replace('±', '', $val));
+            return '± ' . $val;
+        };
+
+        $motorRaw = $ensurePlusMinus($motorRaw);
+        $mobilRaw = $ensurePlusMinus($mobilRaw);
+        $totalRaw = $ensurePlusMinus($totalRaw);
+
+        return [$motorRaw, $mobilRaw, $totalRaw !== '' ? $totalRaw : null];
     }
 }

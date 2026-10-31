@@ -164,15 +164,24 @@
 
                                                 <div class="col-lg-4 mb-3">
                                                     <label class="form-label">Motorcycle Traffic</label>
-                                                    <input type="text" name="motor" class="form-control" value="{{ old('motor', $lokasiooh->motor) }}">
+                                                    <input type="text" name="motor" id="input_motor" class="form-control" placeholder="ex: ± 35.002" value="{{ old('motor', $lokasiooh->motor) }}">
                                                     @error('motor') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
                                                 <div class="col-lg-4 mb-3">
                                                     <label class="form-label">Car Traffic</label>
-                                                    <input type="text" name="mobil" class="form-control" value="{{ old('mobil', $lokasiooh->mobil) }}">
+                                                    <input type="text" name="mobil" id="input_mobil" class="form-control" placeholder="ex: ± 35.002" value="{{ old('mobil', $lokasiooh->mobil) }}">
                                                     @error('mobil') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
                                                 <div class="col-lg-4 mb-3">
+                                                    <label class="form-label">Total Kendaraan Harian</label>
+                                                    <input type="text" name="daily_total_traffic" id="input_daily_total_traffic" class="form-control" placeholder="ex: ± 70.000" value="{{ old('daily_total_traffic', $lokasiooh->daily_total_traffic) }}">
+                                                    @error('daily_total_traffic') <div class="text-danger small">{{ $message }}</div> @enderror
+                                                </div>
+                                                <div class="col-12 mb-3">
+                                                    <small class="text-muted"><i class="fa-solid fa-circle-info me-1"></i> Data Traffic (Opsional Bersyarat): Anda dapat mengisi rincian (Motor & Mobil) atau hanya mengisi estimasi agregat (Total Kendaraan Harian).</small>
+                                                </div>
+
+                                                <div class="col-lg-12 mb-3">
                                                     <label class="form-label">Lighting</label>
                                                     <input type="text" name="lighting" class="form-control" value="{{ old('lighting', $lokasiooh->lighting) }}">
                                                     @error('lighting') <div class="text-danger small">{{ $message }}</div> @enderror
@@ -238,6 +247,71 @@
                                                 
                                                 availabilitySelect.addEventListener('change', checkAvailability);
                                                 checkAvailability();
+
+                                                // Kalkulasi otomatis dua arah:
+                                                // 1) Total diisi -> 80% Motor & 20% Mobil
+                                                // 2) Motor / Mobil diisi -> Total = Motor + Mobil
+                                                const inputTotal = document.getElementById('input_daily_total_traffic');
+                                                const inputMotor = document.getElementById('input_motor');
+                                                const inputMobil = document.getElementById('input_mobil');
+
+                                                if (inputTotal && inputMotor && inputMobil) {
+                                                    const fmtNum = (n, useDot) => useDot ? n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') : n.toString();
+                                                    const ensurePrefix = (el) => {
+                                                        const v = el.value.replace(/\+-|±/g, '').trim();
+                                                        if (v && v !== '-') {
+                                                            el.value = '± ' + v;
+                                                        }
+                                                    };
+
+                                                    inputTotal.addEventListener('input', function () {
+                                                        const raw = this.value.trim();
+                                                        const digits = raw.replace(/[^0-9]/g, '');
+                                                        if (!digits) {
+                                                            inputMotor.value = '';
+                                                            inputMobil.value = '';
+                                                            return;
+                                                        }
+                                                        const total = parseInt(digits, 10);
+                                                        if (total > 0) {
+                                                            const motor = Math.round(total * 0.80);
+                                                            const mobil = total - motor;
+                                                            const useDot = raw.includes('.');
+                                                            inputMotor.value = '± ' + fmtNum(motor, useDot);
+                                                            inputMobil.value = '± ' + fmtNum(mobil, useDot);
+                                                        }
+                                                    });
+
+                                                    const updateTotalFromMotorMobil = function () {
+                                                        const rawMotor = inputMotor.value.trim();
+                                                        const rawMobil = inputMobil.value.trim();
+                                                        const digitsMotor = rawMotor.replace(/[^0-9]/g, '');
+                                                        const digitsMobil = rawMobil.replace(/[^0-9]/g, '');
+
+                                                        if (!digitsMotor && !digitsMobil) {
+                                                            inputTotal.value = '';
+                                                            return;
+                                                        }
+
+                                                        const motor = digitsMotor ? parseInt(digitsMotor, 10) : 0;
+                                                        const mobil = digitsMobil ? parseInt(digitsMobil, 10) : 0;
+                                                        const total = motor + mobil;
+
+                                                        if (total > 0) {
+                                                            const useDot = rawMotor.includes('.') || rawMobil.includes('.');
+                                                            inputTotal.value = '± ' + fmtNum(total, useDot);
+                                                        }
+                                                    };
+
+                                                    inputMotor.addEventListener('input', updateTotalFromMotorMobil);
+                                                    inputMobil.addEventListener('input', updateTotalFromMotorMobil);
+
+                                                    [inputTotal, inputMotor, inputMobil].forEach(el => {
+                                                        el.addEventListener('blur', function () {
+                                                            ensurePrefix(this);
+                                                        });
+                                                    });
+                                                }
                                             });
                                         </script>
                                     </div>

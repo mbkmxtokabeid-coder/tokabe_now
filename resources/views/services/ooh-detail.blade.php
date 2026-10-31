@@ -279,66 +279,146 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                     <!-- Right Column: Specs & Traffic -->
                     <div class="space-y-6 sm:space-y-8">
+                        @php
+                            $rawTotal = trim((string)($lokasiooh->daily_total_traffic ?? ''));
+                            $rawMotor = trim((string)($lokasiooh->motor ?? ''));
+                            $rawMobil = trim((string)($lokasiooh->mobil ?? ''));
+
+                            if ($rawTotal !== '' && $rawTotal !== '-' && ($rawMotor === '' || $rawMotor === '-') && ($rawMobil === '' || $rawMobil === '-')) {
+                                $digits = preg_replace('/[^0-9]/', '', $rawTotal);
+                                $totalNum = $digits !== '' ? (int) $digits : 0;
+                                if ($totalNum > 0) {
+                                    $motorNum = (int) round($totalNum * 0.80);
+                                    $mobilNum = $totalNum - $motorNum;
+                                    $prefix = str_contains($rawTotal, '±') ? '± ' : '';
+                                    $useDot = str_contains($rawTotal, '.');
+                                    $rawMotor = $prefix . ($useDot ? number_format($motorNum, 0, ',', '.') : (string) $motorNum);
+                                    $rawMobil = $prefix . ($useDot ? number_format($mobilNum, 0, ',', '.') : (string) $mobilNum);
+                                }
+                            } elseif (($rawTotal === '' || $rawTotal === '-') && (($rawMotor !== '' && $rawMotor !== '-') || ($rawMobil !== '' && $rawMobil !== '-'))) {
+                                $motorDigits = preg_replace('/[^0-9]/', '', $rawMotor);
+                                $mobilDigits = preg_replace('/[^0-9]/', '', $rawMobil);
+                                $motorNum = $motorDigits !== '' ? (int) $motorDigits : 0;
+                                $mobilNum = $mobilDigits !== '' ? (int) $mobilDigits : 0;
+                                $totalNum = $motorNum + $mobilNum;
+                                if ($totalNum > 0) {
+                                    $prefix = (str_contains($rawMotor, '±') || str_contains($rawMobil, '±')) ? '± ' : '';
+                                    $useDot = str_contains($rawMotor, '.') || str_contains($rawMobil, '.');
+                                    $rawTotal = $prefix . ($useDot ? number_format($totalNum, 0, ',', '.') : (string) $totalNum);
+                                }
+                            }
+
+                            $formatTraffic = function (string $val): string {
+                                $val = trim(str_replace('+-', '', $val));
+                                if ($val === '' || $val === '-') {
+                                    return '-';
+                                }
+                                $val = ltrim(str_replace('±', '', $val));
+                                return '± ' . $val;
+                            };
+
+                            $valMotor = $formatTraffic($rawMotor);
+                            $valMobil = $formatTraffic($rawMobil);
+                            $valTotalTraffic = $formatTraffic($rawTotal);
+                        @endphp
+
                         <!-- Traffic Stats -->
                         <div class="bg-[#2C1A0E] rounded-2xl p-4 sm:p-6 lg:p-8 border border-[#D4A569]/30 shadow-lg">
                             <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-[#F2EBE2] mb-4">{{ __('Vehicle / Day') }}</h3>
                             <div class="space-y-3 sm:space-y-4">
                                 <div class="flex items-center gap-3 sm:gap-4 bg-[#3B2516] p-3 sm:p-4 rounded-xl shadow-sm border border-[#D4A569]/10 hover:border-[#D4A569]/30 transition-colors">
                                     <div class="w-10 h-10 sm:w-12 sm:h-12 bg-[#D4A569]/10 text-[#D4A569] rounded-full flex items-center justify-center text-lg sm:text-xl shrink-0 shadow-[0_0_10px_rgba(212,165,105,0.2)]">
-                                        <i class="fa-solid fa-car"></i>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <div class="text-xs sm:text-sm text-gray-400 font-medium">{{ __('Car') }}</div>
-                                        <div class="text-base sm:text-lg lg:text-xl font-bold text-[#F2EBE2] truncate">{{ $lokasiooh->mobil ?? '-' }}</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3 sm:gap-4 bg-[#3B2516] p-3 sm:p-4 rounded-xl shadow-sm border border-[#D4A569]/10 hover:border-[#D4A569]/30 transition-colors">
-                                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-[#D4A569]/10 text-[#D4A569] rounded-full flex items-center justify-center text-lg sm:text-xl shrink-0 shadow-[0_0_10px_rgba(212,165,105,0.2)]">
                                         <i class="fa-solid fa-motorcycle"></i>
                                     </div>
                                     <div class="min-w-0">
                                         <div class="text-xs sm:text-sm text-gray-400 font-medium">{{ __('Motorcycle') }}</div>
-                                        <div class="text-base sm:text-lg lg:text-xl font-bold text-[#F2EBE2] truncate">{{ $lokasiooh->motor ?? '-' }}</div>
+                                        <div class="text-base sm:text-lg lg:text-xl font-bold text-[#F2EBE2] truncate">{{ $valMotor }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-3 sm:gap-4 bg-[#3B2516] p-3 sm:p-4 rounded-xl shadow-sm border border-[#D4A569]/10 hover:border-[#D4A569]/30 transition-colors">
+                                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-[#D4A569]/10 text-[#D4A569] rounded-full flex items-center justify-center text-lg sm:text-xl shrink-0 shadow-[0_0_10px_rgba(212,165,105,0.2)]">
+                                        <i class="fa-solid fa-car"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="text-xs sm:text-sm text-gray-400 font-medium">{{ __('Car') }}</div>
+                                        <div class="text-base sm:text-lg lg:text-xl font-bold text-[#F2EBE2] truncate">{{ $valMobil }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-3 sm:gap-4 bg-[#3B2516] p-3 sm:p-4 rounded-xl shadow-sm border border-[#D4A569]/10 hover:border-[#D4A569]/30 transition-colors">
+                                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-[#D4A569]/10 text-[#D4A569] rounded-full flex items-center justify-center text-lg sm:text-xl shrink-0 shadow-[0_0_10px_rgba(212,165,105,0.2)]">
+                                        <i class="fa-solid fa-road"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="text-xs sm:text-sm text-gray-400 font-medium">{{ __('Total Vehicles / Day') }}</div>
+                                        <div class="text-base sm:text-lg lg:text-xl font-bold text-[#F2EBE2] truncate">{{ $valTotalTraffic }}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        @php
+                            $valMedia = $formatValue($lokasiooh->media);
+                            $valType = $formatValue($lokasiooh->type);
+                            $valSize = $formatValue($lokasiooh->size);
+                            $valLighting = $formatValue($lokasiooh->lighting);
+
+                            $hasMedia = !empty($lokasiooh->media) && $valMedia !== '-';
+                            $hasType = !empty($lokasiooh->type) && $valType !== '-';
+                            $hasSize = !empty($lokasiooh->size) && $valSize !== '-';
+                            $hasLighting = !empty($lokasiooh->lighting) && $valLighting !== '-';
+                            $hasAnySpecs = $hasMedia || $hasType || $hasSize || $hasLighting;
+                        @endphp
+
+                        @if($hasAnySpecs)
                         <!-- Specifications Grid -->
                         <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                            @if($hasMedia)
                             <!-- Media -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
                                 <div class="w-8 h-8 sm:w-10 sm:h-10 mx-auto bg-[#D4A569]/10 text-[#D4A569] rounded-full flex items-center justify-center mb-2 sm:mb-3 group-hover:scale-110 transition-transform shrink-0 shadow-[0_0_10px_rgba(212,165,105,0.2)]">
                                     <i class="fa-solid fa-photo-film text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Media') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasiooh->media) }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $valMedia }}</div>
                             </div>
+                            @endif
+
+                            @if($hasType)
                             <!-- Type -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
                                 <div class="w-8 h-8 sm:w-10 sm:h-10 mx-auto bg-[#D4A569]/10 text-[#D4A569] rounded-full flex items-center justify-center mb-2 sm:mb-3 group-hover:scale-110 transition-transform shrink-0 shadow-[0_0_10px_rgba(212,165,105,0.2)]">
                                     <i class="fa-solid fa-expand text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Type') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasiooh->type) }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $valType }}</div>
                             </div>
+                            @endif
+
+                            @if($hasSize)
                             <!-- Size -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
                                 <div class="w-8 h-8 sm:w-10 sm:h-10 mx-auto bg-[#D4A569]/10 text-[#D4A569] rounded-full flex items-center justify-center mb-2 sm:mb-3 group-hover:scale-110 transition-transform shrink-0 shadow-[0_0_10px_rgba(212,165,105,0.2)]">
                                     <i class="fa-solid fa-up-right-and-down-left-from-center text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Size') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasiooh->size) }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $valSize }}</div>
                             </div>
+                            @endif
+
+                            @if($hasLighting)
                             <!-- Lighting -->
                             <div class="bg-[#2C1A0E] p-3 xl:p-6 rounded-2xl shadow-lg border border-[#D4A569]/20 text-center hover:shadow-[0_0_15px_rgba(212,165,105,0.15)] transition-all group hover:-translate-y-1 flex flex-col justify-center items-center">
                                 <div class="w-8 h-8 sm:w-10 sm:h-10 mx-auto bg-[#D4A569]/10 text-[#D4A569] rounded-full flex items-center justify-center mb-2 sm:mb-3 group-hover:scale-110 transition-transform shrink-0 shadow-[0_0_10px_rgba(212,165,105,0.2)]">
                                     <i class="fa-solid fa-lightbulb text-sm sm:text-base"></i>
                                 </div>
                                 <div class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase mb-1">{{ __('Lighting') }}</div>
-                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $formatValue($lokasiooh->lighting) }}</div>
+                                <div class="text-xs sm:text-sm font-semibold text-[#F2EBE2] break-words line-clamp-2 w-full">{{ $valLighting }}</div>
                             </div>
+                            @endif
                         </div>
+                        @endif
                         
                         @php
                             $oohPhone = isset($globalContact) && $globalContact->phone ? $globalContact->phone : '628115239999';

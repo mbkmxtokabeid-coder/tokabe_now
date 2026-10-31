@@ -275,6 +275,16 @@
 
                     <!-- Right Column: Specs & Traffic -->
                     <div class="space-y-6 sm:space-y-8">
+                        @php
+                            $formatTraffic = function ($val): string {
+                                $val = trim(str_replace('+-', '', (string) $val));
+                                if ($val === '' || $val === '-') {
+                                    return '-';
+                                }
+                                $val = ltrim(str_replace('±', '', $val));
+                                return '± ' . $val;
+                            };
+                        @endphp
                         <!-- Traffic Stats -->
                         <div class="bg-[#2C1A0E] rounded-2xl p-4 sm:p-6 lg:p-8 border border-[#D4A569]/30 shadow-lg">
                             <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-[#F2EBE2] mb-4">{{ __('Vehicle / Day') }}</h3>
@@ -285,7 +295,7 @@
                                     </div>
                                     <div class="min-w-0">
                                         <div class="text-xs sm:text-sm text-gray-400 font-medium">{{ __('Car') }}</div>
-                                        <div class="text-base sm:text-lg lg:text-xl font-bold text-[#F2EBE2] truncate">{{ $lokasi->mobil ?? '-' }}</div>
+                                        <div class="text-base sm:text-lg lg:text-xl font-bold text-[#F2EBE2] truncate">{{ $formatTraffic($lokasi->mobil) }}</div>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3 sm:gap-4 bg-[#3B2516] p-3 sm:p-4 rounded-xl shadow-sm border border-[#D4A569]/10 hover:border-[#D4A569]/30 transition-colors">
@@ -294,7 +304,7 @@
                                     </div>
                                     <div class="min-w-0">
                                         <div class="text-xs sm:text-sm text-gray-400 font-medium">{{ __('Motorcycle') }}</div>
-                                        <div class="text-base sm:text-lg lg:text-xl font-bold text-[#F2EBE2] truncate">{{ $lokasi->motor ?? '-' }}</div>
+                                        <div class="text-base sm:text-lg lg:text-xl font-bold text-[#F2EBE2] truncate">{{ $formatTraffic($lokasi->motor) }}</div>
                                     </div>
                                 </div>
                             </div>
