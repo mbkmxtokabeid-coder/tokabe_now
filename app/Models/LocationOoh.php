@@ -48,9 +48,13 @@ class LocationOoh extends Model
     {
         static::saved(function () {
             \Illuminate\Support\Facades\Cache::forget('homepage_data');
+            \Illuminate\Support\Facades\Cache::forget('sumatra_map_data_v3_id');
+            \Illuminate\Support\Facades\Cache::forget('sumatra_map_data_v3_en');
         });
         static::deleted(function () {
             \Illuminate\Support\Facades\Cache::forget('homepage_data');
+            \Illuminate\Support\Facades\Cache::forget('sumatra_map_data_v3_id');
+            \Illuminate\Support\Facades\Cache::forget('sumatra_map_data_v3_en');
         });
     }
 }

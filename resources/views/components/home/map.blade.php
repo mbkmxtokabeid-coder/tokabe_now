@@ -228,7 +228,14 @@ function initMap() {
                 'Lampung': '{{ __('Lampung') }}'
             };
             const name = provTranslations[rawName] || rawName;
-            const found = data.find(item => item.provinsi && rawName.toLowerCase().includes(item.provinsi.toLowerCase()));
+            const normalizeProvName = (str) => (str || '')
+                .toLowerCase()
+                .replace(/sumatra/g, 'sumatera')
+                .replace(/-/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+            const targetProv = normalizeProvName(rawName);
+            const found = data.find(item => item.provinsi && normalizeProvName(item.provinsi) === targetProv);
             
             const billboards = found ? found.billboards : 0;
             const videotron = found ? found.videotron : 0;

@@ -101,17 +101,31 @@
                                                 </div>
                                                 <div class="form-group row">
                                                     <div class="col-lg-6">
-                                                        <label class="form-label">Jumlah DOOH (Kosongkan jika tidak ditampilkan):</label>
-                                                        <input class="form-control" type="number" min="0" name="dooh_count"
-                                                            placeholder="ex: 18">
+                                                        <input type="hidden" name="dooh_count" value="0">
+                                                        <label class="form-label">Tampilkan Statistik DOOH:</label>
+                                                        <div class="form-check form-switch custom-switch-v1 mb-2">
+                                                            <input type="checkbox"
+                                                                class="form-check-input input-success custom-control-input"
+                                                                id="switch-dooh-count" name="dooh_count" value="1"
+                                                                {{ old('dooh_count') ? 'checked' : '' }}>
+                                                            <label class="form-check-label align-text-top"
+                                                                for="switch-dooh-count">Tampilkan (otomatis dari database: {{ \App\Models\Lokasi::count() }}+)</label>
+                                                        </div>
                                                         @error('dooh_count')
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
                                                     <div class="col-lg-6">
-                                                        <label class="form-label">Jumlah OOH (Kosongkan jika tidak ditampilkan):</label>
-                                                        <input class="form-control" type="number" min="0" name="ooh_count"
-                                                            placeholder="ex: 271">
+                                                        <input type="hidden" name="ooh_count" value="0">
+                                                        <label class="form-label">Tampilkan Statistik OOH:</label>
+                                                        <div class="form-check form-switch custom-switch-v1 mb-2">
+                                                            <input type="checkbox"
+                                                                class="form-check-input input-success custom-control-input"
+                                                                id="switch-ooh-count" name="ooh_count" value="1"
+                                                                {{ old('ooh_count') ? 'checked' : '' }}>
+                                                            <label class="form-check-label align-text-top"
+                                                                for="switch-ooh-count">Tampilkan (otomatis dari database: {{ \App\Models\Lokasiooh::count() }}+)</label>
+                                                        </div>
                                                         @error('ooh_count')
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror

@@ -1,4 +1,8 @@
 @props(['heroes' => []])
+@php
+    $dbDoohCount = \App\Models\Lokasi::count();
+    $dbOohCount = \App\Models\Lokasiooh::count();
+@endphp
 <style>
     /* --- Sihir Animasi Masuk (Reveal) --- */
     
@@ -74,7 +78,9 @@
                 <div class="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pt-16 sm:pt-20 lg:pt-28 pb-14 sm:pb-20">
                     <div class="max-w-[1600px] w-full mx-auto px-4 sm:px-8 lg:px-12">
                         @php
-                            $hasCounts = $hero->dooh_count > 0 || $hero->ooh_count > 0;
+                            $showDooh = $hero->dooh_count > 0 && $dbDoohCount > 0;
+                            $showOoh = $hero->ooh_count > 0 && $dbOohCount > 0;
+                            $hasCounts = $showDooh || $showOoh;
                         @endphp
                         
                         <div class="flex {{ $hasCounts ? 'flex-col lg:flex-row items-center justify-center gap-3 sm:gap-6 lg:gap-12 max-w-5xl' : 'flex-col items-center justify-center max-w-5xl' }} w-full mx-auto">
@@ -97,26 +103,26 @@
                             @if($hasCounts)
                             <!-- Kotak Statistik Sebelah Kanan -->
                             <div class="flex-shrink-0 flex flex-row flex-wrap sm:flex-nowrap lg:flex-wrap justify-center items-center gap-2 sm:gap-5 mt-2 sm:mt-6 lg:mt-0">
-                                @if($hero->dooh_count > 0)
+                                @if($showDooh)
                                 <div class="reveal-target-right {{ $index === 0 ? 'reveal-right-active' : 'reveal-right-hidden' }} delay-box-1 bg-white/10 backdrop-blur-md rounded-xl w-28 xs:w-32 sm:w-44 lg:w-52 p-2 sm:p-5 border border-white/20 shadow-xl text-center flex flex-col justify-center items-center group hover:-translate-y-2 hover:bg-white/20 hover:border-[#D4A574]/50 transition-all duration-500">
                                     <div class="w-7 h-7 sm:w-12 sm:h-12 bg-gradient-to-r from-[#8B5E3C] to-[#A0522D] text-white rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-xl mb-1 sm:mb-3 shadow-lg group-hover:scale-110 transition-transform">
                                         <i class="fas fa-tv"></i>
                                     </div>
                                     <div class="flex items-baseline justify-center text-white mb-0.5 sm:mb-2">
-                                        <span class="rolling-counter text-xl sm:text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->dooh_count }}">{{ $index === 0 ? $hero->dooh_count : '0' }}</span>
+                                        <span class="rolling-counter text-xl sm:text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $dbDoohCount }}">{{ $index === 0 ? $dbDoohCount : '0' }}</span>
                                         <span class="text-sm sm:text-xl font-black text-[#D4A574] ml-0.5 sm:ml-1">+</span>
                                     </div>
                                     <h2 class="text-[8px] sm:text-xs font-bold text-gray-200 uppercase tracking-wider group-hover:text-white mt-auto">DOOH / VIDEOTRON</h2>
                                 </div>
                                 @endif
 
-                                @if($hero->ooh_count > 0)
+                                @if($showOoh)
                                 <div class="reveal-target-right {{ $index === 0 ? 'reveal-right-active' : 'reveal-right-hidden' }} delay-box-2 bg-white/10 backdrop-blur-md rounded-xl w-28 xs:w-32 sm:w-44 lg:w-52 p-2 sm:p-5 border border-white/20 shadow-xl text-center flex flex-col justify-center items-center group hover:-translate-y-2 hover:bg-white/20 hover:border-[#D4A574]/50 transition-all duration-500">
                                     <div class="w-7 h-7 sm:w-12 sm:h-12 bg-gradient-to-r from-[#8B5E3C] to-[#A0522D] text-white rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-xl mb-1 sm:mb-3 shadow-lg group-hover:scale-110 transition-transform">
                                         <i class="fas fa-layer-group"></i>
                                     </div>
                                     <div class="flex items-baseline justify-center text-white mb-0.5 sm:mb-2">
-                                        <span class="rolling-counter text-xl sm:text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $hero->ooh_count }}">{{ $index === 0 ? $hero->ooh_count : '0' }}</span>
+                                        <span class="rolling-counter text-xl sm:text-4xl lg:text-5xl font-black tracking-tight drop-shadow-md" data-target="{{ $dbOohCount }}">{{ $index === 0 ? $dbOohCount : '0' }}</span>
                                         <span class="text-sm sm:text-xl font-black text-[#D4A574] ml-0.5 sm:ml-1">+</span>
                                     </div>
                                     <h2 class="text-[8px] sm:text-xs font-bold text-gray-200 uppercase tracking-wider group-hover:text-white mt-auto">OOH / BILLBOARD</h2>

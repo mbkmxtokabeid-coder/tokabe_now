@@ -201,8 +201,11 @@ class MapController extends Controller
             $doohLocations = LocationDooh::all();
 
             $normalizeProv = function($prov) {
-                if (empty($prov)) return 'Sumatera Utara';
-                return str_replace('Sumatra', 'Sumatera', $prov);
+                $prov = trim((string) $prov);
+                if ($prov === '') return 'Sumatera Utara';
+                $prov = str_ireplace('Sumatra', 'Sumatera', $prov);
+                $prov = str_replace('-', ' ', $prov);
+                return preg_replace('/\s+/', ' ', $prov);
             };
 
             // Group by wilayah/region (provinsi)

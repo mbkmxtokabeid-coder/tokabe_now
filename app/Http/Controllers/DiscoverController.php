@@ -22,18 +22,26 @@ class DiscoverController extends Controller
             'West Sumatra' => 'Sumatera Barat',
             'South Sumatra' => 'Sumatera Selatan',
             'Riau Islands' => 'Kepulauan Riau',
+            'Bangka-Belitung' => 'Bangka Belitung',
         ];
-        $normRegion = $region ? ($provinceMap[$region] ?? $region) : null;
+        $trimmedRegion = $region ? trim($region) : null;
+        $normRegion = $trimmedRegion ? ($provinceMap[$trimmedRegion] ?? $trimmedRegion) : null;
+
+        $regionCandidates = [];
+        if ($normRegion) {
+            $regionCandidates = array_values(array_unique(array_filter([
+                $trimmedRegion,
+                $normRegion,
+                str_replace('Sumatera', 'Sumatra', $normRegion),
+                str_replace('Sumatra', 'Sumatera', $normRegion),
+                str_replace('-', ' ', $normRegion),
+            ])));
+        }
 
         // Query untuk OOH
         $queryOoh = LocationOoh::query();
-        if ($normRegion) {
-            $dbRegionSearch = str_replace('Sumatera', 'Sumatra', $normRegion);
-            $queryOoh->where(function($q) use ($normRegion, $dbRegionSearch, $region) {
-                $q->where('provinsi', 'LIKE', "%{$normRegion}%")
-                  ->orWhere('provinsi', 'LIKE', "%{$dbRegionSearch}%")
-                  ->orWhere('provinsi', 'LIKE', "%{$region}%");
-            });
+        if (!empty($regionCandidates)) {
+            $queryOoh->whereIn('provinsi', $regionCandidates);
         }
         if ($search) {
             $queryOoh->where(function($q) use ($search) {
@@ -46,13 +54,8 @@ class DiscoverController extends Controller
 
         // Query untuk DOOH
         $queryDooh = Lokasi::query();
-        if ($normRegion) {
-            $dbRegionSearch = str_replace('Sumatera', 'Sumatra', $normRegion);
-            $queryDooh->where(function($q) use ($normRegion, $dbRegionSearch, $region) {
-                $q->where('provinsi', 'LIKE', "%{$normRegion}%")
-                  ->orWhere('provinsi', 'LIKE', "%{$dbRegionSearch}%")
-                  ->orWhere('provinsi', 'LIKE', "%{$region}%");
-            });
+        if (!empty($regionCandidates)) {
+            $queryDooh->whereIn('provinsi', $regionCandidates);
         }
         if ($search) {
             $queryDooh->where(function($q) use ($search) {
