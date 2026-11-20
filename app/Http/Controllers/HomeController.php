@@ -182,14 +182,18 @@ class HomeController extends Controller
                     'West Sumatra' => 'Sumatera Barat',
                     'South Sumatra' => 'Sumatera Selatan',
                     'Riau Islands' => 'Kepulauan Riau',
+                    'Bangka-Belitung' => 'Bangka Belitung',
                 ];
-                $normProv = $provinceMap[$province] ?? $province;
-                $dbProvinceSearch = str_replace('Sumatera', 'Sumatra', $normProv);
-                $query->where(function($q) use ($normProv, $dbProvinceSearch, $province) {
-                    $q->where('provinsi', 'LIKE', "%{$normProv}%")
-                      ->orWhere('provinsi', 'LIKE', "%{$dbProvinceSearch}%")
-                      ->orWhere('provinsi', 'LIKE', "%{$province}%");
-                });
+                $trimmedProv = trim($province);
+                $normProv = $provinceMap[$trimmedProv] ?? $trimmedProv;
+                $provinceCandidates = array_values(array_unique(array_filter([
+                    $trimmedProv,
+                    $normProv,
+                    str_replace('Sumatera', 'Sumatra', $normProv),
+                    str_replace('Sumatra', 'Sumatera', $normProv),
+                    str_replace('-', ' ', $normProv),
+                ])));
+                $query->whereIn('provinsi', $provinceCandidates);
             }
             
             if ($search) {
@@ -244,14 +248,18 @@ class HomeController extends Controller
                     'West Sumatra' => 'Sumatera Barat',
                     'South Sumatra' => 'Sumatera Selatan',
                     'Riau Islands' => 'Kepulauan Riau',
+                    'Bangka-Belitung' => 'Bangka Belitung',
                 ];
-                $normProv = $provinceMap[$province] ?? $province;
-                $dbProvinceSearch = str_replace('Sumatera', 'Sumatra', $normProv);
-                $query->where(function($q) use ($normProv, $dbProvinceSearch, $province) {
-                    $q->where('provinsi', 'LIKE', "%{$normProv}%")
-                      ->orWhere('provinsi', 'LIKE', "%{$dbProvinceSearch}%")
-                      ->orWhere('provinsi', 'LIKE', "%{$province}%");
-                });
+                $trimmedProv = trim($province);
+                $normProv = $provinceMap[$trimmedProv] ?? $trimmedProv;
+                $provinceCandidates = array_values(array_unique(array_filter([
+                    $trimmedProv,
+                    $normProv,
+                    str_replace('Sumatera', 'Sumatra', $normProv),
+                    str_replace('Sumatra', 'Sumatera', $normProv),
+                    str_replace('-', ' ', $normProv),
+                ])));
+                $query->whereIn('provinsi', $provinceCandidates);
             }
             
             if ($search) {
