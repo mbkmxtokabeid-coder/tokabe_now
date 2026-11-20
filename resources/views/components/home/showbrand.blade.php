@@ -1,4 +1,4 @@
-@props(['brands' => collect([]), 'activeTab' => 0])
+@props(['brands' => collect([]), 'activeTab' => 0, 'service' => null])
 
 <style>
     .hide-scrollbar::-webkit-scrollbar {
@@ -180,6 +180,19 @@
             </div>
         </div>
         @endif
+
+        @php
+            $portfolioUrl = $brand->portfolio_url ?? route('portofolio');
+            $portfolioBtnLabel = app()->getLocale() === 'id' ? 'Lihat Portofolio' : 'View Portfolio';
+        @endphp
+
+        <!-- Portfolio CTA Button Below Small Cards -->
+        <div class="mt-10 sm:mt-12 flex justify-center max-w-4xl mx-auto px-2 sm:px-0">
+            <a href="{{ $portfolioUrl }}"
+               class="inline-flex items-center justify-center w-full sm:w-auto sm:min-w-[240px] px-6 sm:px-10 py-3.5 sm:py-4 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#1F1611] border-0 text-sm sm:text-base font-bold rounded-full shadow-[0_0_20px_rgba(212,165,105,0.45)] hover:shadow-[0_0_35px_rgba(240,201,122,0.7)] transform hover:-translate-y-1 transition-all duration-300 text-center">
+                <span>{{ $portfolioBtnLabel }}</span>
+            </a>
+        </div>
     </div>
     @endforeach
 </div>

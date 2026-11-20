@@ -220,7 +220,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <!-- Dynamic Categories Section (Showbrand Component) -->
                 @if(isset($brands) && $brands->count() > 0)
                 <div class="mt-20">
-                    <x-home.showbrand :brands="$brands" :activeTab="$activeTab ?? 0" />
+                    <x-home.showbrand :brands="$brands" :activeTab="$activeTab ?? 0" :service="$service" />
+                </div>
+                @elseif(isset($servicePortfolio))
+                @php
+                    $fallbackPortUrl = $servicePortfolio['url'] ?? route('portofolio');
+                    $fallbackPortLabel = app()->getLocale() === 'id' ? 'Lihat Portofolio' : 'View Portfolio';
+                @endphp
+                <div class="mt-12 sm:mt-16 flex justify-center max-w-4xl mx-auto px-2 sm:px-0">
+                    <a href="{{ $fallbackPortUrl }}"
+                       class="inline-flex items-center justify-center w-full sm:w-auto sm:min-w-[240px] px-6 sm:px-10 py-3.5 sm:py-4 bg-gradient-to-r from-[#C8902A] via-[#F0C97A] to-[#C8902A] hover:from-[#F0C97A] hover:to-[#C8902A] text-[#1F1611] border-0 text-sm sm:text-base font-bold rounded-full shadow-[0_0_20px_rgba(212,165,105,0.45)] hover:shadow-[0_0_35px_rgba(240,201,122,0.7)] transform hover:-translate-y-1 transition-all duration-300 text-center">
+                        <span>{{ $fallbackPortLabel }}</span>
+                    </a>
                 </div>
                 @endif
             </div>

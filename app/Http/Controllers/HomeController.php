@@ -21,6 +21,131 @@ class HomeController extends Controller
         }
         return $fallback;
     }
+
+    /**
+     * Cocokkan layanan atau tab kategori layanan ke kategori portofolio terkait.
+     */
+    private function resolvePortfolioTarget($service, $cat = null, $portfolioCategories = null): array
+    {
+        $portfolioCategories = $portfolioCategories ?? \App\Models\PortofolioCategory::all();
+
+        $extractNames = function ($raw): array {
+            if (is_string($raw) && str_starts_with(trim($raw), '{')) {
+                $decoded = json_decode($raw, true);
+                if (is_array($decoded)) {
+                    $raw = $decoded;
+                }
+            }
+            if (is_array($raw)) {
+                return [
+                    'id' => trim((string) ($raw['id'] ?? '')),
+                    'en' => trim((string) ($raw['en'] ?? '')),
+                    'local' => trim((string) (($raw[app()->getLocale()] ?? '') ?: ($raw['id'] ?? '') ?: ($raw['en'] ?? '') ?: (collect($raw)->first() ?? ''))),
+                ];
+            }
+            $str = trim((string) $raw);
+            return ['id' => $str, 'en' => $str, 'local' => $str];
+        };
+
+        $matchCategory = function (array $candidates) use ($portfolioCategories, $extractNames) {
+            $slugs = [];
+            foreach ($candidates as $c) {
+                $s = \Illuminate\Support\Str::slug((string) $c);
+                if ($s !== '') {
+                    $slugs[] = $s;
+                }
+            }
+            $slugs = array_values(array_unique($slugs));
+            if (empty($slugs)) {
+                return null;
+            }
+
+            // 1. Cocokkan langsung dengan endpoint atau slug nama_kategori di database
+            foreach ($portfolioCategories as $pc) {
+                $pcEndpoint = \Illuminate\Support\Str::slug((string) ($pc->endpoint ?? ''));
+                $pcNames = $extractNames($pc->nama_kategori ?: ($pc->getRawOriginal ? $pc->getRawOriginal('nama_kategori') : ''));
+                $pcSlugId = \Illuminate\Support\Str::slug($pcNames['id']);
+                $pcSlugEn = \Illuminate\Support\Str::slug($pcNames['en']);
+
+                foreach ($slugs as $slug) {
+                    if ($slug === $pcEndpoint || $slug === $pcSlugId || $slug === $pcSlugEn) {
+                        return $pc;
+                    }
+                }
+            }
+
+            // 2. Pemetaan alias kata kunci layanan ke endpoint kategori portofolio
+            $aliasRules = [
+                'booth-activity'         => ['booth-activity', 'booth'],
+                'it-event-solution'      => ['it-event-solution', 'it-event', 'it-solution'],
+                'outdoor-activity'       => ['outdoor-activity', 'outdoor'],
+                'event-organizer'        => ['event-organizer', 'event-activity', 'kegiatan-acara', 'penyelenggara-acara', 'brand-activity', 'organizer', 'event', 'acara'],
+                'videography-fotography' => ['videografi-fotografi', 'videography-fotography', 'videografi', 'fotografi', 'videography', 'photography', 'fotography'],
+                'digital-printing'       => ['digital-printing', 'printing', 'percetakan'],
+                'k3-spesialis'           => ['simbol-k3-spesialis', 'k3-spesialis', 'simbol-k3', 'k3'],
+                'dooh'                   => ['periklanan-videotron-dooh', 'advertising-dooh', 'videotron', 'dooh'],
+                'ooh'                    => ['advertising-ooh', 'billboard', 'baliho', 'ooh'],
+            ];
+
+            foreach ($slugs as $slug) {
+                foreach ($aliasRules as $targetEndpoint => $keywords) {
+                    foreach ($keywords as $kw) {
+                        if ($slug === $kw || str_contains($slug, $kw)) {
+                            // Jangan salah mencocokkan 'dooh' atau 'booth' ke 'ooh'
+                            if ($targetEndpoint === 'ooh' && (str_contains($slug, 'dooh') || str_contains($slug, 'booth'))) {
+                                continue;
+                            }
+                            $found = $portfolioCategories->first(function ($pc) use ($targetEndpoint, $extractNames) {
+                                $ep = strtolower((string) $pc->endpoint);
+                                if ($ep === $targetEndpoint) {
+                                    return true;
+                                }
+                                $names = $extractNames($pc->nama_kategori ?: ($pc->getRawOriginal ? $pc->getRawOriginal('nama_kategori') : ''));
+                                return $targetEndpoint === 'event-organizer'
+                                    && (str_contains(strtolower($names['id']), 'penyelenggara acara')
+                                        || str_contains(strtolower($names['en']), 'event organizer'));
+                            });
+                            if ($found) {
+                                return $found;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
+        };
+
+        $catNames = $cat ? $extractNames($cat->nama ?? '') : ['id' => '', 'en' => '', 'local' => ''];
+        $svcNames = $extractNames($service->judul ?? '');
+        $svcEndpoint = trim((string) ($service->endpoint ?? ''));
+
+        // Prioritas 1: Cocokkan berdasarkan Tab / Kategori Layanan yang sedang aktif
+        $matched = null;
+        if ($cat) {
+            $matched = $matchCategory([$catNames['id'], $catNames['en'], $catNames['local']]);
+        }
+
+        // Prioritas 2: Cocokkan berdasarkan Layanan Induk (Service)
+        if (!$matched) {
+            $matched = $matchCategory([$svcEndpoint, $svcNames['id'], $svcNames['en'], $svcNames['local']]);
+        }
+
+        $displayName = $catNames['local'] ?: $svcNames['local'];
+
+        if ($matched && !empty($matched->endpoint)) {
+            $matchedNames = $extractNames($matched->nama_kategori ?: ($matched->getRawOriginal ? $matched->getRawOriginal('nama_kategori') : ''));
+            return [
+                'url'  => route('portofolio.list', $matched->endpoint),
+                'name' => $matchedNames['local'] ?: $displayName,
+            ];
+        }
+
+        return [
+            'url'  => route('portofolio'),
+            'name' => $displayName,
+        ];
+    }
     public function servicesIndex()
     {
         $services = \App\Models\Service::all();
@@ -185,30 +310,36 @@ class HomeController extends Controller
         $items = collect([]);
         $idServices = $service->id;
         $categories = \App\Models\ServiceCategory::with('serviceDetails')->where('service_id', $idServices)->get();
-            $brands = $categories->map(function($cat) {
-                $firstDetail = $cat->serviceDetails->where('tipe_card', 'main')->first();
-                $otherDetails = $cat->serviceDetails->where('tipe_card', 'sub');
-                
-                return (object)[
-                    'id' => $cat->id,
-                    'tab_title' => $cat->nama,
-                    'has_main' => $firstDetail ? true : false,
-                    'nama_brand' => is_array($cat->nama) ? ($cat->nama['id'] ?? '') : $cat->nama,
-                    'judul' => $firstDetail ? $firstDetail->judul : '',
-                    'deskripsi' => $firstDetail ? $firstDetail->deskripsi : '',
-                    'gambar' => $firstDetail ? ($firstDetail->gambar ? asset('storage/service_details/' . $firstDetail->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=1200&auto=format&fit=crop') : '',
-                    'detail' => $otherDetails->map(function($d) {
-                        return [
-                            'title' => $d->judul,
-                            'description' => $d->deskripsi,
-                            'image_url' => $d->gambar ? asset('storage/service_details/' . $d->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=400&auto=format&fit=crop'
-                        ];
-                    })->toArray()
-                ];
-            });
-            $activeTab = (int) $request->query('tab', 0);
+        $portfolioCategories = \App\Models\PortofolioCategory::all();
+        $servicePortfolio = $this->resolvePortfolioTarget($service, null, $portfolioCategories);
 
-            return view('services.detail', compact('service', 'brands', 'activeTab'));
+        $brands = $categories->map(function($cat) use ($service, $portfolioCategories) {
+            $firstDetail = $cat->serviceDetails->where('tipe_card', 'main')->first();
+            $otherDetails = $cat->serviceDetails->where('tipe_card', 'sub');
+            $portfolioTarget = $this->resolvePortfolioTarget($service, $cat, $portfolioCategories);
+            
+            return (object)[
+                'id' => $cat->id,
+                'tab_title' => $cat->nama,
+                'has_main' => $firstDetail ? true : false,
+                'nama_brand' => is_array($cat->nama) ? ($cat->nama['id'] ?? '') : $cat->nama,
+                'judul' => $firstDetail ? $firstDetail->judul : '',
+                'deskripsi' => $firstDetail ? $firstDetail->deskripsi : '',
+                'gambar' => $firstDetail ? ($firstDetail->gambar ? asset('storage/service_details/' . $firstDetail->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=1200&auto=format&fit=crop') : '',
+                'portfolio_url' => $portfolioTarget['url'],
+                'portfolio_name' => $portfolioTarget['name'],
+                'detail' => $otherDetails->map(function($d) {
+                    return [
+                        'title' => $d->judul,
+                        'description' => $d->deskripsi,
+                        'image_url' => $d->gambar ? asset('storage/service_details/' . $d->gambar) : 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=400&auto=format&fit=crop'
+                    ];
+                })->toArray()
+            ];
+        });
+        $activeTab = (int) $request->query('tab', 0);
+
+        return view('services.detail', compact('service', 'brands', 'activeTab', 'servicePortfolio'));
         // $service = \App\Models\Service::where('endpoint', $endpoint)->first();
         // if (!$service) {
         //     $service = (object)[
